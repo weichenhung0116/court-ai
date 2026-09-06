@@ -560,6 +560,28 @@ let gsiLoadFailed = false;
 let googleAccessToken = null;
 let oauthClientId = null;
 
+// window.storage 只存在於 Claude 預覽環境；正式部署到 GitHub Pages 等一般網站時
+// 改用瀏覽器 localStorage 做為相容層，介面（get/set/delete 回傳格式）保持一致。
+if(typeof window.storage === 'undefined'){
+  window.storage = {
+    async get(key){
+      try{
+        const raw = localStorage.getItem('courtai:'+key);
+        if(raw === null) return null;
+        return {key, value: raw};
+      }catch(e){ return null; }
+    },
+    async set(key, value){
+      localStorage.setItem('courtai:'+key, value);
+      return {key, value};
+    },
+    async delete(key){
+      localStorage.removeItem('courtai:'+key);
+      return {key, deleted:true};
+    }
+  };
+}
+
 function escapeHtml(s){
   return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
