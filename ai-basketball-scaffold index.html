@@ -1,0 +1,1044 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COURT.AI ｜ 籃球戰術後設認知鷹架</title>
+<style>
+  :root{
+    --void:#05060a;
+    --panel:#0d0f14;
+    --panel-2:#12151c;
+    --panel-3:#181c25;
+    --hair:rgba(255,255,255,0.09);
+    --hair-strong:rgba(255,255,255,0.18);
+    --orange:#ff5a1f;
+    --orange-dim:#a83e16;
+    --cyan:#22d3ee;
+    --cyan-dim:#0e8fa8;
+    --text:#eef1f6;
+    --text-dim:#8b93a3;
+    --success:#3ddc84;
+    --danger:#ff4d5e;
+    --clip: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    --clip-sm: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% -10%, rgba(255,90,31,0.10), transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(34,211,238,0.08), transparent 40%),
+      var(--void);
+    color:var(--text);
+    font-family: ui-sans-serif, "Segoe UI", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    min-height:100vh;
+    background-attachment:fixed;
+  }
+  .mono{font-family:"SFMono-Regular","Consolas","Menlo",monospace;letter-spacing:0.04em;}
+
+  /* ===== info / gate overlay ===== */
+  .info-banner{
+    background:rgba(34,211,238,0.08);
+    border-bottom:1px solid var(--cyan-dim);
+    color:var(--text-dim);
+    font-size:12.5px;
+    padding:10px 28px;
+    line-height:1.6;
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .info-banner b{color:var(--cyan);}
+  .info-banner button{
+    background:none;border:1px solid var(--hair-strong);color:var(--text-dim);
+    padding:3px 10px;font-size:11px;cursor:pointer;flex-shrink:0;
+  }
+  #gateOverlay{
+    position:fixed;inset:0;background:rgba(5,6,10,0.96);
+    display:flex;align-items:center;justify-content:center;z-index:999;
+    flex-direction:column;gap:16px;text-align:center;padding:20px;
+  }
+  #gateOverlay.hidden{display:none;}
+  #gateOverlay h2{margin:0;font-size:20px;}
+  #gateOverlay p{color:var(--text-dim);font-size:13px;max-width:420px;line-height:1.6;}
+  #gsiButtonHolder{margin-top:6px;}
+  #gateSkip{margin-top:14px;font-size:12px;color:var(--text-dim);text-decoration:underline;cursor:pointer;background:none;border:none;}
+
+  /* ===== header / logo ===== */
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+    padding:22px 28px;
+    border-bottom:1px solid var(--hair);
+    background:linear-gradient(180deg, rgba(255,90,31,0.06), transparent);
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand svg{width:46px;height:46px;filter:drop-shadow(0 0 10px rgba(255,90,31,0.55));}
+  .brand h1{margin:0;font-size:22px;font-weight:800;letter-spacing:0.02em;line-height:1.15;}
+  .brand h1 span{color:var(--orange);}
+  .brand p{margin:2px 0 0;color:var(--text-dim);font-size:12.5px;letter-spacing:0.02em;}
+  .header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .role-badge{
+    font-size:12.5px;color:var(--text-dim);border:1px solid var(--hair-strong);
+    padding:9px 16px;clip-path:var(--clip-sm);background:var(--panel);
+  }
+  .role-badge b{color:var(--cyan);font-weight:700;}
+  .user-badge{
+    font-size:12px;color:var(--text-dim);border:1px solid var(--hair-strong);
+    padding:9px 14px;clip-path:var(--clip-sm);background:var(--panel);
+    display:flex;align-items:center;gap:8px;
+  }
+  .user-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--text-dim);}
+  .user-badge.on .dot{background:var(--success);}
+
+  /* ===== nav ===== */
+  nav.tabs{
+    display:flex;gap:2px;padding:0 28px;background:var(--panel);
+    overflow-x:auto;border-bottom:1px solid var(--hair);
+  }
+  nav.tabs button{
+    background:transparent;border:none;color:var(--text-dim);padding:15px 20px;
+    font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap;
+    border-bottom:2px solid transparent;position:relative;
+  }
+  nav.tabs button .n{color:var(--orange);font-weight:800;margin-right:6px;}
+  nav.tabs button.active{
+    color:var(--text);border-bottom-color:var(--orange);
+    box-shadow: 0 12px 18px -14px rgba(255,90,31,0.9);
+  }
+  nav.tabs button:hover{color:var(--text);}
+
+  main{padding:30px 28px 70px;max-width:1120px;margin:0 auto;}
+  section.panel{display:none;}
+  section.panel.active{display:block;}
+
+  .section-head{
+    display:flex;align-items:baseline;gap:12px;margin-bottom:6px;
+    border-bottom:1px solid var(--hair);padding-bottom:12px;
+  }
+  .section-head h2{margin:0;font-size:21px;font-weight:800;}
+  .section-head span.note{color:var(--cyan);font-size:12px;}
+  .section-desc{color:var(--text-dim);font-size:13.5px;margin:12px 0 24px;max-width:760px;line-height:1.65;}
+
+  .callout{
+    border:1px solid var(--hair-strong);background:var(--panel);
+    padding:14px 16px;font-size:12.5px;color:var(--text-dim);line-height:1.65;margin:14px 0 22px;
+  }
+  .callout b{color:var(--cyan);}
+  .callout.warn{border-color:rgba(255,90,31,0.4);}
+  .callout.warn b{color:var(--orange);}
+
+  /* ===== video library ===== */
+  .cat-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .cat-tabs button{
+    background:var(--panel);border:1px solid var(--hair-strong);color:var(--text-dim);
+    padding:8px 16px;font-size:13px;cursor:pointer;clip-path:var(--clip-sm);
+  }
+  .cat-tabs button.active{background:var(--orange);color:#1a0d06;border-color:var(--orange);font-weight:700;}
+  .video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+  .video-card{background:var(--panel-2);border:1px solid var(--hair);padding:12px;clip-path:var(--clip);transition:border-color .15s;}
+  .video-card:hover{border-color:var(--hair-strong);}
+  .video-card .frame{position:relative;padding-top:56.25%;background:#000;margin-bottom:10px;}
+  .video-card .frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+  .video-card h4{margin:0 0 6px;font-size:14px;font-weight:600;line-height:1.4;}
+  .video-card .tag{display:inline-block;font-size:10.5px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:2px 8px;margin-top:2px;}
+  .video-card .del{float:right;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:11.5px;}
+  .video-card .del:hover{color:var(--danger);}
+  .empty-state{border:1px dashed var(--hair-strong);padding:34px 20px;text-align:center;color:var(--text-dim);font-size:13.5px;}
+  .add-video-form{
+    background:var(--panel);border:1px solid var(--hair);padding:18px;margin-top:20px;
+    display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;clip-path:var(--clip);
+  }
+  .field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:170px;}
+  .field label{font-size:11.5px;color:var(--text-dim);}
+  input[type=text],input[type=url],input[type=password],select,textarea{
+    background:var(--void);border:1px solid var(--hair-strong);color:var(--text);
+    padding:9px 11px;font-size:13.5px;width:100%;
+  }
+  input:focus,select:focus,textarea:focus{outline:1px solid var(--cyan);}
+  textarea{resize:vertical;font-family:inherit;}
+  button.primary{
+    background:var(--orange);color:#1a0d06;border:none;padding:10px 20px;
+    font-weight:700;font-size:13.5px;cursor:pointer;clip-path:var(--clip-sm);
+  }
+  button.primary:hover{background:#ff7440;}
+  button.primary:disabled{background:var(--hair-strong);color:var(--text-dim);cursor:not-allowed;}
+  button.ghost{
+    background:transparent;border:1px solid var(--hair-strong);color:var(--text);
+    padding:10px 18px;font-size:13px;cursor:pointer;
+  }
+  button.ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+  button.small{padding:6px 12px;font-size:12px;}
+
+  /* ===== role selection ===== */
+  .role-cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  @media(max-width:720px){.role-cols{grid-template-columns:1fr;}}
+  .role-group h3{font-size:14px;margin:0 0 14px;color:var(--orange);letter-spacing:0.02em;}
+  .chip-set{display:flex;flex-wrap:wrap;gap:9px;}
+  .chip{border:1px solid var(--hair-strong);background:var(--panel);color:var(--text);padding:9px 15px;font-size:13.5px;cursor:pointer;clip-path:var(--clip-sm);}
+  .chip.selected{border-color:var(--cyan);background:rgba(34,211,238,0.12);color:var(--cyan);font-weight:700;}
+  .save-row{margin-top:24px;display:flex;gap:12px;align-items:center;}
+  .save-row .status{font-size:13px;color:var(--success);}
+
+  /* ===== roster (section 3) ===== */
+  .roster-box{background:var(--panel);border:1px solid var(--hair);padding:18px;clip-path:var(--clip);margin-bottom:24px;}
+  .roster-box h3{margin:0 0 4px;font-size:14.5px;color:var(--orange);}
+  .roster-form{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:flex-end;}
+  .roster-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .roster-chip{
+    background:var(--void);border:1px solid var(--hair-strong);padding:6px 10px 6px 12px;
+    font-size:12.5px;display:flex;align-items:center;gap:8px;
+  }
+  .roster-chip button{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:11px;}
+  .roster-chip button:hover{color:var(--danger);}
+  .folder-preview{margin-top:14px;font-size:12.5px;color:var(--text-dim);}
+  .folder-preview b{color:var(--cyan);}
+
+  .drive-box{background:var(--panel);border:1px solid var(--hair);padding:18px;clip-path:var(--clip);margin-bottom:26px;}
+  .drive-box h3{margin:0 0 8px;font-size:14.5px;color:var(--cyan);}
+  .drive-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-top:10px;}
+  .drive-status{font-size:12.5px;margin-top:10px;color:var(--text-dim);}
+  .drive-status.on{color:var(--success);}
+  .drive-status.err{color:var(--danger);}
+  details.advanced{margin-top:14px;}
+  details.advanced summary{cursor:pointer;font-size:12px;color:var(--text-dim);}
+  details.advanced .inner{margin-top:12px;}
+
+  .upload-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;}
+  .upload-slot{background:var(--panel-2);border:1px solid var(--hair);padding:16px;clip-path:var(--clip);}
+  .upload-slot h4{margin:0 0 10px;font-size:13.5px;color:var(--text);}
+  .upload-box{border:1px dashed var(--hair-strong);padding:22px 14px;text-align:center;background:var(--panel);}
+  .upload-box p{color:var(--text-dim);font-size:12.5px;margin:5px 0;}
+  .limit-badge{display:inline-block;border:1px solid var(--cyan-dim);color:var(--cyan);padding:3px 10px;font-size:11px;margin-top:8px;}
+  .preview-wrap{margin-top:14px;}
+  video.preview{width:100%;display:block;background:#000;border:1px solid var(--hair);}
+  .clip-warning{color:var(--danger);font-size:12.5px;margin-top:8px;}
+  .slot-meta{font-size:12.5px;color:var(--text-dim);margin-top:8px;}
+  .slot-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;}
+
+  /* ===== chat ===== */
+  .chat-setup{
+    display:flex;gap:20px;flex-wrap:wrap;margin-bottom:18px;
+    background:var(--panel);border:1px solid var(--hair);padding:16px 18px;clip-path:var(--clip);
+  }
+  .mode-pick{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .mode-pick .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .mode-btn{
+    border:1px solid var(--hair-strong);background:var(--void);color:var(--text);
+    padding:10px 16px;font-size:13px;cursor:pointer;text-align:left;max-width:280px;flex:1;min-width:220px;
+  }
+  .mode-btn small{display:block;color:var(--text-dim);font-size:11.5px;margin-top:3px;line-height:1.4;}
+  .mode-btn.selected{border-color:var(--orange);background:rgba(255,90,31,0.10);color:var(--orange);}
+
+  .example-box{background:var(--panel);border:1px solid var(--hair);padding:14px 16px;margin-bottom:16px;}
+  .example-box .ex-head{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--cyan);margin-bottom:10px;}
+  .ex-list{display:flex;flex-direction:column;gap:8px;}
+  .ex-item{background:var(--void);border:1px solid var(--hair);padding:10px 13px;font-size:13px;color:var(--text-dim);cursor:pointer;line-height:1.5;}
+  .ex-item:hover{border-color:var(--cyan);color:var(--text);}
+  .ex-item b{color:var(--text);font-weight:600;}
+
+  .prompt-out{
+    background:var(--void);border:1px solid var(--hair-strong);padding:14px;
+    font-size:12.5px;color:var(--text-dim);white-space:pre-wrap;line-height:1.6;
+    max-height:260px;overflow-y:auto;margin-top:12px;
+  }
+  .handoff-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  .chat-log{margin-top:20px;}
+  .chat-log h4{font-size:13px;color:var(--orange);margin-bottom:10px;}
+  .chat-window{height:300px;overflow-y:auto;background:var(--void);border:1px solid var(--hair);padding:18px;display:flex;flex-direction:column;gap:12px;}
+  .msg{max-width:78%;padding:11px 14px;font-size:14px;line-height:1.6;}
+  .msg.user{align-self:flex-end;background:var(--orange);color:#1a0d06;font-weight:500;}
+  .msg.ai{align-self:flex-start;background:var(--panel-2);border:1px solid var(--hair);}
+  .msg.sys{align-self:center;color:var(--text-dim);font-size:12px;font-style:italic;}
+  .chat-input-row{display:flex;gap:10px;margin-top:14px;}
+  .chat-input-row textarea{flex:1;min-height:56px;}
+
+  /* ===== survey ===== */
+  .survey-list{display:flex;flex-direction:column;gap:10px;margin-top:18px;}
+  .survey-item{display:flex;justify-content:space-between;align-items:center;background:var(--panel-2);border:1px solid var(--hair);padding:13px 16px;font-size:13.5px;}
+  .survey-item .status-tag{font-size:10.5px;color:var(--text-dim);border:1px solid var(--hair-strong);padding:3px 9px;}
+
+  /* ===== rules section ===== */
+  .rule-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+  .rule-card{background:var(--panel-2);border:1px solid var(--hair);padding:18px;clip-path:var(--clip);display:flex;flex-direction:column;gap:10px;}
+  .rule-card .kicker{font-size:10.5px;color:var(--cyan);}
+  .rule-card h4{margin:0;font-size:15px;}
+  .rule-card p{margin:0;font-size:12.5px;color:var(--text-dim);line-height:1.6;flex:1;}
+  .rule-card a{
+    align-self:flex-start;color:#1a0d06;background:var(--cyan);text-decoration:none;
+    font-size:12.5px;font-weight:700;padding:8px 14px;clip-path:var(--clip-sm);
+  }
+  .rule-card a:hover{background:#5be3fa;}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--hair-strong);}
+</style>
+</head>
+<body>
+
+<div class="info-banner" id="infoBanner">
+  <div>
+    <b>教師須知：</b> 本頁的「Google 登入」與「上傳至雲端硬碟」需要你自己在 Google Cloud Console 建立 OAuth 用戶端 ID，並在下方對應設定區貼入。若尚未設定，平台仍可正常瀏覽與示範，但登入闡與雲端硬碟上傳會停用。若要把此頁面變成固定的公開網址讓任何知道連結的人使用，建議把這個 HTML 檔案部署到你自己的網站空間（例如學校網頁、GitHub Pages、Google Sites 嵌入），這樣才有固定網域可以在 Google Cloud Console 登記為授權來源，登入與雲端硬碟功能也才會穩定運作。
+  </div>
+  <button onclick="document.getElementById('infoBanner').style.display='none'">關閉</button>
+</div>
+
+<div id="gateOverlay" class="hidden">
+  <h2>請先使用 Google 帳號登入</h2>
+  <p>這是老師設定的存取限制，登入後才能使用戰術影片庫、上傳比賽片段與 AI 助教。</p>
+  <div id="gsiButtonHolder"></div>
+  <button id="gateSkip" onclick="skipGate()">（測試用）略過登入</button>
+</div>
+
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" stroke="var(--orange)" stroke-width="3.5"/>
+      <path d="M4 50h92" stroke="var(--orange)" stroke-width="3"/>
+      <path d="M50 4v92" stroke="var(--orange)" stroke-width="3"/>
+      <path d="M14 14c14 12 22 24 22 36s-8 24-22 36" stroke="var(--orange)" stroke-width="3" fill="none"/>
+      <path d="M86 14c-14 12-22 24-22 36s8 24 22 36" stroke="var(--orange)" stroke-width="3" fill="none"/>
+      <circle cx="50" cy="50" r="46" stroke="var(--cyan)" stroke-width="0.6" opacity="0.5"/>
+    </svg>
+    <div class="title-block">
+      <h1>COURT<span>.AI</span></h1>
+      <p>籃球戰術後設認知鷹架 — 不直接給答案，用提問引導你看懂比賽。</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="user-badge" id="userBadge"><span class="dot"></span><span>未登入 Google 帳號</span></div>
+    <div class="role-badge" id="roleBadge">尚未設定角色 → 請至「角色選擇」分頁設定</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="videos" class="active"><span class="n">01</span>戰術影片庫</button>
+  <button data-tab="roles"><span class="n">02</span>角色選擇</button>
+  <button data-tab="upload"><span class="n">03</span>我的比賽片段</button>
+  <button data-tab="chat"><span class="n">04</span>AI 後設認知助教</button>
+  <button data-tab="survey"><span class="n">05</span>問卷評量</button>
+  <button data-tab="rules"><span class="n">06</span>籃球規則與裁判法</button>
+</nav>
+
+<main>
+
+  <!-- ================= 1. VIDEO LIBRARY ================= -->
+  <section class="panel active" id="panel-videos">
+    <div class="section-head"><h2>戰術影片庫</h2><span class="note mono">OFFENSE · DEFENSE · COMBO</span></div>
+    <p class="section-desc">已預先放入幾支可直接觀看的戰術示範影片，方便課程立即上線使用。老師或助教仍可隨時貼上新的 YouTube 連結擴充影片庫。</p>
+
+    <div class="cat-tabs" id="catTabs">
+      <button data-cat="offense" class="active">進攻戰術</button>
+      <button data-cat="defense">防守戰術</button>
+      <button data-cat="combo">小組配合</button>
+    </div>
+
+    <div class="video-grid" id="videoGrid"></div>
+
+    <div class="add-video-form">
+      <div class="field" style="flex:2;">
+        <label>YouTube 影片網址</label>
+        <input type="url" id="vidUrl" placeholder="https://www.youtube.com/watch?v=...">
+      </div>
+      <div class="field">
+        <label>影片標題</label>
+        <input type="text" id="vidTitle" placeholder="例如：擋拆戰術示範">
+      </div>
+      <div class="field" style="max-width:150px;">
+        <label>加入分類</label>
+        <select id="vidCat">
+          <option value="offense">進攻戰術</option>
+          <option value="defense">防守戰術</option>
+          <option value="combo">小組配合</option>
+        </select>
+      </div>
+      <button class="primary" onclick="addVideo()">＋ 新增到影片庫</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:10px;">影片庫為全班共用資料，新增或刪除會被所有同學看到。</p>
+  </section>
+
+  <!-- ================= 2. ROLE SELECTION ================= -->
+  <section class="panel" id="panel-roles">
+    <div class="section-head"><h2>角色選擇</h2></div>
+    <p class="section-desc">選擇你在球場上的位置與在課堂研究中的角色，AI 助教會依此調整戰術提問的角度。</p>
+
+    <div class="role-cols">
+      <div class="role-group">
+        <h3>球場位置</h3>
+        <div class="chip-set" id="positionChips">
+          <div class="chip" data-val="控球後衛（1號位）">控球後衛（1號位）</div>
+          <div class="chip" data-val="得分後衛（2號位）">得分後衛（2號位）</div>
+          <div class="chip" data-val="小前鋒（3號位）">小前鋒（3號位）</div>
+          <div class="chip" data-val="大前鋒（4號位）">大前鋒（4號位）</div>
+          <div class="chip" data-val="中鋒（5號位）">中鋒（5號位）</div>
+        </div>
+      </div>
+      <div class="role-group">
+        <h3>團隊角色</h3>
+        <div class="chip-set" id="teamChips">
+          <div class="chip" data-val="教練">教練</div>
+          <div class="chip" data-val="球員">球員</div>
+          <div class="chip" data-val="球場記錄員">球場記錄員</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-row">
+      <button class="primary" onclick="saveRole()">儲存角色設定</button>
+      <span class="status" id="roleSaveStatus"></span>
+    </div>
+  </section>
+
+  <!-- ================= 3. UPLOAD ================= -->
+  <section class="panel" id="panel-upload">
+    <div class="section-head"><h2>我的比賽片段</h2></div>
+    <p class="section-desc">輸入小隊成員與球場位置，並上傳 3 段比賽片段作為作業繳交。每段限制 24 秒以內，聚焦單一進攻回合的戰術決策。</p>
+
+    <div class="roster-box">
+      <h3>小隊成員名單</h3>
+      <p style="font-size:12px;color:var(--text-dim);margin:0;">名單會用來命名雲端硬碟資料夾（以頓號、區隔），請確認姓名輸入正確。</p>
+      <div class="roster-form">
+        <div class="field" style="max-width:180px;">
+          <label>姓名</label>
+          <input type="text" id="memberName" placeholder="例如：王小明">
+        </div>
+        <div class="field" style="max-width:180px;">
+          <label>球場位置</label>
+          <select id="memberPos">
+            <option>控球後衛（1號位）</option>
+            <option>得分後衛（2號位）</option>
+            <option>小前鋒（3號位）</option>
+            <option>大前鋒（4號位）</option>
+            <option>中鋒（5號位）</option>
+          </select>
+        </div>
+        <button class="primary small" onclick="addMember()">＋ 新增成員</button>
+      </div>
+      <div class="roster-list" id="rosterList"></div>
+      <div class="folder-preview" id="folderPreview">尚未輸入成員，資料夾名稱：<b>（未命名）</b></div>
+    </div>
+
+    <div class="drive-box">
+      <h3>Google 雲端硬碟連接</h3>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:0;">連接後，3 段影片會上傳到以「小隊成員姓名（頓號區隔）」命名的資料夾中，老師可直接在雲端硬碟收作業。</p>
+      <div class="drive-row">
+        <button class="ghost" id="driveConnectBtn" onclick="connectDrive()">連接 Google 雲端硬碟</button>
+        <span class="drive-status" id="driveStatus">尚未連接</span>
+      </div>
+      <details class="advanced">
+        <summary>教師設定（Google OAuth 用戶端 ID）</summary>
+        <div class="inner">
+          <div class="field">
+            <label>OAuth 用戶端 ID（在 Google Cloud Console 建立，需將此頁網域加入已授權的 JavaScript 來源）</label>
+            <input type="text" id="oauthClientId" placeholder="xxxxxxxxxx.apps.googleusercontent.com">
+          </div>
+          <button class="ghost small" style="margin-top:8px;" onclick="saveClientId()">儲存設定</button>
+          <span class="drive-status" id="clientIdStatus"></span>
+        </div>
+      </details>
+    </div>
+
+    <div class="upload-slots" id="uploadSlots"></div>
+
+    <p style="font-size:12px;color:var(--text-dim);margin-top:18px;">
+      提醒：影片會直接從你的瀏覽器上傳到你（或老師）授權的 Google 帳號雲端硬碟，此頁面本身不會保存影片檔案。若未連接雲端硬碟，片段仍可在本機預覽並確認長度是否符合規定。
+    </p>
+  </section>
+
+  <!-- ================= 4. AI CHAT ================= -->
+  <section class="panel" id="panel-chat">
+    <div class="section-head"><h2>AI 後設認知助教</h2></div>
+    <p class="section-desc">
+      這位助教不會直接告訴你「該怎麼打」。它會依照「辨識線索 → 預測結果 → 提出策略 → 說明理由 → 實際驗證 → 反思修正」的流程，用提問引導你自己想清楚。
+    </p>
+
+    <div class="callout warn">
+      <b>使用方式說明：</b> 因為這個頁面可能被放到公開網址上，無法安全地內建需要金鑰保護的 AI 服務。這裡改用「組好提示詞 → 到 ChatGPT 貼上」的方式：你只要先登入自己的 ChatGPT 帳號，按下方按鈕就會開啟 ChatGPT 分頁，再把已經複製好的提示詞貼上即可對話。
+    </div>
+
+    <div class="chat-setup">
+      <div class="mode-pick">
+        <label style="font-size:11.5px;color:var(--text-dim);">選擇後設認知模式</label>
+        <div class="row">
+          <div class="mode-btn selected" data-mode="proactive" onclick="setMode('proactive')">
+            前瞻性後設認知
+            <small>比賽前規劃：預測對手、預先設定戰術</small>
+          </div>
+          <div class="mode-btn" data-mode="reactive" onclick="setMode('reactive')">
+            反應性後設認知
+            <small>比賽中卡關：戰術被破、需要臨場調整</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="example-box">
+      <div class="ex-head mono">▸ 不知道怎麼問？點一句先試試看</div>
+      <div class="ex-list" id="exampleList"></div>
+    </div>
+
+    <div class="chat-input-row">
+      <textarea id="chatInput" placeholder="描述你遇到的戰術情境或問題……"></textarea>
+    </div>
+    <div class="handoff-actions">
+      <button class="primary" onclick="buildAndCopyPrompt()">組合提示詞並複製</button>
+      <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT 分頁</button>
+    </div>
+    <div class="prompt-out" id="promptOut">按「組合提示詞並複製」後，會在這裡顯示完整內容，並自動複製到剪貼簿。</div>
+
+    <div class="chat-log">
+      <h4>我的對話記錄（自行貼回，作為反思紀錄）</h4>
+      <div class="chat-window" id="chatWindow">
+        <div class="msg sys">把你在 ChatGPT 得到的回覆貼回下方，可以留下完整的戰術思考紀錄。</div>
+      </div>
+      <div class="chat-input-row">
+        <textarea id="pasteBack" placeholder="貼上 ChatGPT 的回覆……"></textarea>
+        <button class="primary" onclick="logExchange()">加入紀錄</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 5. SURVEY ================= -->
+  <section class="panel" id="panel-survey">
+    <div class="section-head"><h2>問卷評量區</h2><span class="note mono">STATUS: PENDING</span></div>
+    <p class="section-desc">此區將於研究工具完成心理計量專家檢核後上線，用於蒐集前測、後測與延宕遷移評量資料。</p>
+    <div class="survey-list">
+      <div class="survey-item"><span>後設認知策略量表（前瞻性／反應性）</span><span class="status-tag">規劃中</span></div>
+      <div class="survey-item"><span>AI 信任度與依賴感知問卷</span><span class="status-tag">規劃中</span></div>
+      <div class="survey-item"><span>風險知覺量表</span><span class="status-tag">規劃中</span></div>
+      <div class="survey-item"><span>戰術決策評分規準（教師／專家用）</span><span class="status-tag">規劃中</span></div>
+      <div class="survey-item"><span>無 AI 遷移評量情境測驗</span><span class="status-tag">規劃中</span></div>
+    </div>
+  </section>
+
+  <!-- ================= 6. RULES ================= -->
+  <section class="panel" id="panel-rules">
+    <div class="section-head"><h2>籃球規則與裁判法</h2><span class="note mono">FIBA OFFICIAL · VALID FROM 2024-10-01</span></div>
+    <p class="section-desc">
+      國際籃球總會（FIBA）於 2024 年公布最新版官方規則，自 2024 年 10 月 1 日起生效，目前仍為現行最新正式版本。以下提供官方原文文件與規則異動摘要，建議課程討論戰術合法性時以此為依據。
+    </p>
+
+    <div class="rule-grid">
+      <div class="rule-card">
+        <span class="kicker mono">OFFICIAL RULES 2024</span>
+        <h4>FIBA 正式籃球規則全文</h4>
+        <p>完整規則條文（含比賽規則與器材規格兩部分），自 2024/10/1 生效，是目前最新的正式版本。</p>
+        <a href="https://assets.fiba.basketball/image/upload/documents-corporate-fiba-official-rules-2024-v10.pdf" target="_blank" rel="noopener">開啟 PDF 全文</a>
+      </div>
+      <div class="rule-card">
+        <span class="kicker mono">RULE CHANGES 2024</span>
+        <h4>2024 規則異動摘要</h4>
+        <p>整理本次修訂的重點條文異動（例如界外球、可更正之錯誤、挑戰申請等規則變化），適合先快速掌握修改重點。</p>
+        <a href="https://assets.fiba.basketball/image/upload/documents-corporate-fiba-official-rules-2024-changes---v20a-eng.pdf" target="_blank" rel="noopener">開啟異動摘要 PDF</a>
+      </div>
+      <div class="rule-card">
+        <span class="kicker mono">RULES HUB</span>
+        <h4>FIBA 規則官方總覽頁</h4>
+        <p>FIBA 裁判事務網站的規則專區，可查詢各語言版本、規則解釋文件（Interpretations）與歷年修訂紀錄。</p>
+        <a href="https://refereeing.fiba.basketball/en/rules" target="_blank" rel="noopener">前往官方規則頁</a>
+      </div>
+      <div class="rule-card">
+        <span class="kicker mono">NEWS BRIEFING</span>
+        <h4>2024 規則生效重點說明</h4>
+        <p>FIBA 官方新聞稿，以白話說明本次規則修訂的重點內容與生效時間，適合課堂導讀使用。</p>
+        <a href="https://about.fiba.basketball/en/news/fiba-official-basketball-rules-2024-come-into-force-on-october-1" target="_blank" rel="noopener">閱讀官方說明</a>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:16px;">若 FIBA 公布更新版本，請以「FIBA 規則官方總覽頁」上的最新文件為準。</p>
+  </section>
+
+</main>
+
+<script src="https://accounts.google.com/gsi/client" async defer onerror="gsiLoadFailed=true"></script>
+<script>
+let gsiLoadFailed = false;
+let googleAccessToken = null;
+let oauthClientId = null;
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ---------- tab switching ----------
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ================= Google Sign-in gate =================
+async function loadOauthClientId(){
+  try{
+    const res = await window.storage.get('config:oauthClientId', true);
+    return res ? res.value : null;
+  }catch(e){ return null; }
+}
+async function saveClientId(){
+  const val = document.getElementById('oauthClientId').value.trim();
+  if(!val){ return; }
+  try{
+    await window.storage.set('config:oauthClientId', val, true);
+    oauthClientId = val;
+    document.getElementById('clientIdStatus').textContent = '已儲存，重新整理頁面後生效。';
+    document.getElementById('clientIdStatus').className = 'drive-status on';
+  }catch(e){
+    document.getElementById('clientIdStatus').textContent = '儲存失敗，請再試一次。';
+    document.getElementById('clientIdStatus').className = 'drive-status err';
+  }
+}
+
+function skipGate(){
+  document.getElementById('gateOverlay').classList.add('hidden');
+}
+
+function handleCredentialResponse(resp){
+  try{
+    const payload = JSON.parse(atob(resp.credential.split('.')[1]));
+    updateUserBadge(payload.name || payload.email);
+    document.getElementById('gateOverlay').classList.add('hidden');
+  }catch(e){ console.error(e); }
+}
+
+function updateUserBadge(name){
+  const el = document.getElementById('userBadge');
+  el.classList.add('on');
+  el.innerHTML = `<span class="dot"></span><span>已登入：${escapeHtml(name)}</span>`;
+}
+
+async function initGoogleGate(){
+  oauthClientId = await loadOauthClientId();
+  if(document.getElementById('oauthClientId')){
+    document.getElementById('oauthClientId').value = oauthClientId || '';
+  }
+  if(!oauthClientId){
+    return; // 尚未設定，不啟用登入闡
+  }
+  // 等待 GSI 腳本載入
+  let waited = 0;
+  while(typeof google === 'undefined' && waited < 4000){
+    await new Promise(r=>setTimeout(r,200));
+    waited += 200;
+  }
+  if(typeof google === 'undefined'){
+    console.warn('Google Identity Services 腳本載入失敗，可能是目前環境的網路政策限制。登入闡已略過。');
+    return;
+  }
+  document.getElementById('gateOverlay').classList.remove('hidden');
+  google.accounts.id.initialize({
+    client_id: oauthClientId,
+    callback: handleCredentialResponse
+  });
+  google.accounts.id.renderButton(document.getElementById('gsiButtonHolder'), {theme:'filled_black', size:'large'});
+}
+initGoogleGate();
+
+// ================= Google Drive connection =================
+let driveTokenClient = null;
+
+function connectDrive(){
+  if(!oauthClientId){
+    document.getElementById('driveStatus').textContent = '尚未設定 OAuth 用戶端 ID（見下方「教師設定」）';
+    document.getElementById('driveStatus').className = 'drive-status err';
+    return;
+  }
+  if(typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2){
+    document.getElementById('driveStatus').textContent = 'Google 授權服務無法載入（可能受目前預覽環境的網路政策限制，正式部署到你自己的網域後應可運作）。';
+    document.getElementById('driveStatus').className = 'drive-status err';
+    return;
+  }
+  driveTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: oauthClientId,
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    callback: (resp)=>{
+      if(resp.error){
+        document.getElementById('driveStatus').textContent = '授權失敗：' + resp.error;
+        document.getElementById('driveStatus').className = 'drive-status err';
+        return;
+      }
+      googleAccessToken = resp.access_token;
+      document.getElementById('driveStatus').textContent = '已連接 Google 雲端硬碟 ✓';
+      document.getElementById('driveStatus').className = 'drive-status on';
+    }
+  });
+  driveTokenClient.requestAccessToken();
+}
+
+async function findOrCreateFolder(name){
+  const q = encodeURIComponent(`name = '${name.replace(/'/g,"\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
+  const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}`, {
+    headers:{Authorization:'Bearer '+googleAccessToken}
+  });
+  const searchData = await searchRes.json();
+  if(searchData.files && searchData.files.length>0){
+    return searchData.files[0].id;
+  }
+  const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method:'POST',
+    headers:{Authorization:'Bearer '+googleAccessToken, 'Content-Type':'application/json'},
+    body: JSON.stringify({name, mimeType:'application/vnd.google-apps.folder'})
+  });
+  const createData = await createRes.json();
+  return createData.id;
+}
+
+async function uploadFileToDrive(file, folderId){
+  const metadata = {name:file.name, parents:[folderId]};
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(metadata)], {type:'application/json'}));
+  form.append('file', file);
+  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method:'POST',
+    headers:{Authorization:'Bearer '+googleAccessToken},
+    body: form
+  });
+  return res.json();
+}
+
+// ================= 3. Roster (小隊成員名單) =================
+async function loadRoster(){
+  try{
+    const res = await window.storage.get('roster:mine', false);
+    return res ? JSON.parse(res.value) : [];
+  }catch(e){ return []; }
+}
+async function saveRoster(list){
+  try{ await window.storage.set('roster:mine', JSON.stringify(list), false); }catch(e){}
+}
+async function addMember(){
+  const name = document.getElementById('memberName').value.trim();
+  const pos = document.getElementById('memberPos').value;
+  if(!name){ return; }
+  const list = await loadRoster();
+  list.push({id:Date.now()+'', name, pos});
+  await saveRoster(list);
+  document.getElementById('memberName').value='';
+  renderRoster();
+}
+async function removeMember(id){
+  let list = await loadRoster();
+  list = list.filter(m=>m.id!==id);
+  await saveRoster(list);
+  renderRoster();
+}
+async function renderRoster(){
+  const list = await loadRoster();
+  document.getElementById('rosterList').innerHTML = list.map(m=>`
+    <div class="roster-chip">${escapeHtml(m.name)}｜${escapeHtml(m.pos)} <button onclick="removeMember('${m.id}')">✕</button></div>
+  `).join('');
+  const folderName = list.map(m=>m.name).join('、');
+  document.getElementById('folderPreview').innerHTML = list.length
+    ? `雲端硬碟資料夾名稱：<b>${escapeHtml(folderName)}</b>`
+    : `尚未輸入成員，資料夾名稱：<b>（未命名）</b>`;
+}
+function getFolderName(list){ return list.map(m=>m.name).join('、') || '未命名小隊'; }
+renderRoster();
+
+// ================= 3. Upload slots (3 個影片上傳區) =================
+const SLOT_COUNT = 3;
+function buildUploadSlots(){
+  const wrap = document.getElementById('uploadSlots');
+  let html = '';
+  for(let i=1;i<=SLOT_COUNT;i++){
+    html += `
+    <div class="upload-slot" id="slot-${i}">
+      <h4>影片片段 ${i}</h4>
+      <div class="upload-box">
+        <p>選擇影片檔案</p>
+        <input type="file" accept="video/*" onchange="handleClipSelect(event, ${i})">
+        <div class="limit-badge mono">LIMIT ≤ 24s</div>
+      </div>
+      <div class="preview-wrap" id="previewWrap-${i}" style="display:none;">
+        <video id="clipPreview-${i}" class="preview" controls></video>
+        <p class="slot-meta" id="clipMeta-${i}"></p>
+        <div class="slot-actions" id="clipActions-${i}"></div>
+      </div>
+    </div>`;
+  }
+  wrap.innerHTML = html;
+}
+buildUploadSlots();
+
+const slotFiles = {};
+
+function handleClipSelect(ev, slot){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const url = URL.createObjectURL(file);
+  const video = document.getElementById('clipPreview-'+slot);
+  video.src = url;
+  document.getElementById('previewWrap-'+slot).style.display = 'block';
+  document.getElementById('clipActions-'+slot).innerHTML = '';
+  document.getElementById('clipMeta-'+slot).textContent = '讀取影片長度中…';
+
+  video.onloadedmetadata = ()=>{
+    const dur = video.duration;
+    if(dur > 24){
+      document.getElementById('clipMeta-'+slot).innerHTML =
+        `<span class="clip-warning">影片長度 ${dur.toFixed(1)} 秒，超過 24 秒限制，請重新剪輯後再上傳。</span>`;
+      document.getElementById('clipActions-'+slot).innerHTML = '';
+      slotFiles[slot] = null;
+    } else {
+      document.getElementById('clipMeta-'+slot).textContent = `影片長度 ${dur.toFixed(1)} 秒 ✓ 符合限制`;
+      slotFiles[slot] = file;
+      document.getElementById('clipActions-'+slot).innerHTML =
+        `<button class="primary small" onclick="uploadSlot(${slot})">上傳至雲端硬碟</button>`;
+    }
+  };
+}
+
+async function uploadSlot(slot){
+  const file = slotFiles[slot];
+  if(!file){ return; }
+  if(!googleAccessToken){
+    document.getElementById('clipMeta-'+slot).innerHTML += `<br><span class="clip-warning">請先在上方「連接 Google 雲端硬碟」完成授權。</span>`;
+    return;
+  }
+  const roster = await loadRoster();
+  const folderName = getFolderName(roster);
+  document.getElementById('clipActions-'+slot).innerHTML = `<span class="slot-meta">上傳中…</span>`;
+  try{
+    const folderId = await findOrCreateFolder(folderName);
+    const result = await uploadFileToDrive(file, folderId);
+    if(result.id){
+      document.getElementById('clipActions-'+slot).innerHTML = `<span class="slot-meta" style="color:var(--success);">已上傳至「${escapeHtml(folderName)}」資料夾 ✓</span>`;
+    } else {
+      document.getElementById('clipActions-'+slot).innerHTML = `<span class="clip-warning">上傳失敗：${escapeHtml(JSON.stringify(result))}</span>`;
+    }
+  }catch(err){
+    document.getElementById('clipActions-'+slot).innerHTML = `<span class="clip-warning">上傳發生錯誤，請確認雲端硬碟授權是否有效。</span>`;
+    console.error(err);
+  }
+}
+
+// ================= 1. video library =================
+const SEED_VIDEOS = [
+  {id:'seed1', videoId:'V0pxlMP6H3Q', title:'圖解：擋拆、攻防轉換、傳切、快打(早攻)戰術', category:'offense'},
+  {id:'seed2', videoId:'m_YSHTtN4Gk', title:'擋拆／運球掩護基礎教學', category:'offense'},
+  {id:'seed3', videoId:'rD35JxBMDR4', title:'三角戰術（Triangle Offense）：經典戰術解析', category:'offense'},
+  {id:'seed4', videoId:'9pupaIn_9n0', title:'5-Out 進攻的五個基本打法', category:'offense'},
+  {id:'seed5', videoId:'daUzko6I2cA', title:'進攻體系案例分析：波士頓賽爾提克進攻篇', category:'offense'},
+  {id:'seed6', videoId:'IByvReE49qg', title:'NBA 戰術：Pistol 快速攻擊跑位', category:'offense'},
+  {id:'seed7', videoId:'KwzHW-c5h7M', title:'現代 NBA 防守觀念：換防與防守演進', category:'defense'},
+  {id:'seed8', videoId:'dxORJt02kLU', title:'鬥牛不只是單打：實用 3x3 小組戰術分析', category:'combo'},
+  {id:'seed9', videoId:'OUAjEXe-gTk', title:'歷久不衰的兩人小組配合：擋拆戰術', category:'combo'},
+  {id:'seed10', videoId:'bmR3ksBGUps', title:'牛角戰術（Horns）小組配合實例', category:'combo'}
+];
+
+let currentCat = 'offense';
+const catLabel = {offense:'進攻戰術', defense:'防守戰術', combo:'小組配合'};
+
+document.getElementById('catTabs').addEventListener('click', (e)=>{
+  if(e.target.tagName!=='BUTTON') return;
+  currentCat = e.target.dataset.cat;
+  document.querySelectorAll('#catTabs button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderVideos();
+});
+
+function extractYoutubeId(url){
+  try{
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }catch(e){ return null; }
+}
+
+async function loadVideoCatalog(){
+  try{
+    const res = await window.storage.get('videos:catalog', true);
+    return res ? JSON.parse(res.value) : null;
+  }catch(e){ return null; }
+}
+async function saveVideoCatalog(list){
+  try{ await window.storage.set('videos:catalog', JSON.stringify(list), true); }
+  catch(e){ console.error('storage set failed', e); }
+}
+async function ensureSeeded(){
+  let list = await loadVideoCatalog();
+  if(list === null){
+    list = SEED_VIDEOS.slice();
+    await saveVideoCatalog(list);
+  }
+  return list;
+}
+async function renderVideos(){
+  const grid = document.getElementById('videoGrid');
+  const all = await ensureSeeded();
+  const list = all.filter(v=>v.category===currentCat);
+  if(list.length===0){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+      這個分類（${catLabel[currentCat]}）目前還沒有影片。<br>用下方表單貼上第一支 YouTube 連結吧。
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(v=>`
+    <div class="video-card">
+      <button class="del" onclick="deleteVideo('${v.id}')">刪除 ✕</button>
+      <div class="frame"><iframe src="https://www.youtube.com/embed/${v.videoId}" allowfullscreen></iframe></div>
+      <h4>${escapeHtml(v.title)}</h4>
+      <span class="tag mono">${catLabel[v.category]}</span>
+    </div>
+  `).join('');
+}
+async function addVideo(){
+  const url = document.getElementById('vidUrl').value.trim();
+  const title = document.getElementById('vidTitle').value.trim() || '未命名影片';
+  const cat = document.getElementById('vidCat').value;
+  const vid = extractYoutubeId(url);
+  if(!vid){ alert('無法辨識這個 YouTube 網址，請確認格式。'); return; }
+  const all = await ensureSeeded();
+  all.push({id: Date.now()+'', videoId: vid, title, category: cat});
+  await saveVideoCatalog(all);
+  document.getElementById('vidUrl').value='';
+  document.getElementById('vidTitle').value='';
+  if(cat===currentCat) renderVideos();
+}
+async function deleteVideo(id){
+  let all = await ensureSeeded();
+  all = all.filter(v=>v.id!==id);
+  await saveVideoCatalog(all);
+  renderVideos();
+}
+renderVideos();
+
+// ================= 2. role selection =================
+let selectedPosition = null, selectedTeamRole = null;
+
+document.getElementById('positionChips').addEventListener('click', e=>{
+  if(!e.target.classList.contains('chip')) return;
+  document.querySelectorAll('#positionChips .chip').forEach(c=>c.classList.remove('selected'));
+  e.target.classList.add('selected');
+  selectedPosition = e.target.dataset.val;
+});
+document.getElementById('teamChips').addEventListener('click', e=>{
+  if(!e.target.classList.contains('chip')) return;
+  document.querySelectorAll('#teamChips .chip').forEach(c=>c.classList.remove('selected'));
+  e.target.classList.add('selected');
+  selectedTeamRole = e.target.dataset.val;
+});
+async function saveRole(){
+  if(!selectedPosition || !selectedTeamRole){
+    document.getElementById('roleSaveStatus').style.color = 'var(--danger)';
+    document.getElementById('roleSaveStatus').textContent = '請選擇球場位置與團隊角色後再儲存';
+    return;
+  }
+  const profile = {position:selectedPosition, teamRole:selectedTeamRole};
+  try{ await window.storage.set('profile:role', JSON.stringify(profile), false); }catch(e){}
+  document.getElementById('roleSaveStatus').style.color = 'var(--success)';
+  document.getElementById('roleSaveStatus').textContent = '已儲存！';
+  updateRoleBadge(profile);
+}
+function updateRoleBadge(profile){
+  document.getElementById('roleBadge').innerHTML = `目前角色 → <b>${profile.teamRole}</b>／<b>${profile.position}</b>`;
+}
+async function loadRole(){
+  try{
+    const res = await window.storage.get('profile:role', false);
+    if(res){
+      const profile = JSON.parse(res.value);
+      selectedPosition = profile.position;
+      selectedTeamRole = profile.teamRole;
+      document.querySelectorAll('#positionChips .chip').forEach(c=>{ if(c.dataset.val===profile.position) c.classList.add('selected'); });
+      document.querySelectorAll('#teamChips .chip').forEach(c=>{ if(c.dataset.val===profile.teamRole) c.classList.add('selected'); });
+      updateRoleBadge(profile);
+    }
+  }catch(e){}
+}
+loadRole();
+
+// ================= 4. AI hand-off to ChatGPT =================
+let chatMode = 'proactive';
+
+const EXAMPLES = {
+  proactive: [
+    {label:'預測對手', text:'我們下一場對手的中鋒防守很強，但外線比較弱，我該怎麼設計進攻？'},
+    {label:'賽前規劃', text:'如果我是控球後衛，比賽一開始我該觀察對手防守的哪些線索？'},
+    {label:'預先配置', text:'我猜對方會用區域聯防，我們五個人賽前應該先講好哪些跑位？'}
+  ],
+  reactive: [
+    {label:'戰術被破', text:'我們原本要打擋拆，但對方直接換防了，我當下該怎麼判斷下一步？'},
+    {label:'臨場調整', text:'傳球路線被防守者卡死，我卡在原地不知道要傳給誰，怎麼辦？'},
+    {label:'結果不如預期', text:'我切入後被包夾，球傳丟了，我事後回看應該注意什麼？'}
+  ]
+};
+function renderExamples(){
+  const list = EXAMPLES[chatMode];
+  document.getElementById('exampleList').innerHTML = list.map(ex=>`
+    <div class="ex-item" onclick="useExample(this)" data-text="${escapeHtml(ex.text)}">
+      <b>${escapeHtml(ex.label)}：</b>${escapeHtml(ex.text)}
+    </div>
+  `).join('');
+}
+function useExample(el){
+  document.getElementById('chatInput').value = el.dataset.text;
+  document.getElementById('chatInput').focus();
+}
+renderExamples();
+function setMode(mode){
+  chatMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('selected');
+  renderExamples();
+}
+
+function buildSystemPrompt(){
+  const modeDesc = chatMode==='proactive'
+    ? `目前模式：前瞻性後設認知。學生正在「比賽前」或「回合開始前」思考，重點是預測對手可能的防守方式、預先規劃戰術與跑位，尚未執行動作。`
+    : `目前模式：反應性後設認知。學生正在描述「比賽中已發生」的狀況，例如戰術被防守破壞、傳球路線被阻斷、執行結果不如預期，重點是重新辨識問題並修正行動。`;
+
+  return `你是一位大學初級籃球課程的「AI 戰術後設認知鷹架助教」，用繁體中文回覆。
+
+你的核心原則：
+1. 絕對不要直接告訴學生「應該打哪個戰術」或給出單一標準答案。你的角色是後設認知鷹架，不是戰術決策代理人。
+2. 依循以下循序提問鷹架來引導學生：辨識線索 → 預測結果 → 提出策略 → 說明理由 → 實際驗證 → 反思修正。每次回覆通常只推進一到兩個階段，不要一次講完全部流程。
+3. ${modeDesc}
+4. 用提問、對照選項、請學生比較不同方案的方式，引導學生自己說出判斷與理由，而不是被動接收答案。
+5. 若學生的敘述太模糊，先請他補充關鍵的場上線索，再繼續引導。
+6. 語氣像一位有耐心的教練，簡短、具體、口語化；每次回覆盡量在 4-6 句以內，可用 1-2 個追問結尾。
+7. 若學生直接要求「告訴我答案」，溫和說明你的角色是幫他自己想清楚，並用一個提問把球丟回給他。
+
+---
+學生的問題如下，請依照上述原則回應：
+`;
+}
+
+async function buildAndCopyPrompt(){
+  const text = document.getElementById('chatInput').value.trim();
+  if(!text){ alert('請先輸入你的戰術問題。'); return; }
+  const full = buildSystemPrompt() + text;
+  document.getElementById('promptOut').textContent = full;
+  try{
+    await navigator.clipboard.writeText(full);
+    appendMsg('sys', '提示詞已複製，請到 ChatGPT 貼上（Ctrl+V / Cmd+V）。');
+  }catch(e){
+    appendMsg('sys', '自動複製失敗，請手動選取上方文字並複製。');
+  }
+  appendMsg('user', text);
+}
+function openChatGPT(){
+  window.open('https://chatgpt.com/', '_blank');
+}
+function appendMsg(role, text){
+  const win = document.getElementById('chatWindow');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = text;
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+}
+function logExchange(){
+  const text = document.getElementById('pasteBack').value.trim();
+  if(!text) return;
+  appendMsg('ai', text);
+  document.getElementById('pasteBack').value = '';
+}
+</script>
+</body>
+</html>
