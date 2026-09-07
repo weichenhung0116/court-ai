@@ -648,7 +648,7 @@ let driveTokenClient = null;
 
 function connectDrive(){
   if(!oauthClientId){
-    document.getElementById('driveStatus').textContent = '尚未設定 OAuth 用戶端 ID（見下方「教師設定」）';
+    document.getElementById('driveStatus').textContent = '尚未設定 OAuth 用戶端 ID（請聯絡老師檢查程式碼中的 CONFIG 設定）';
     document.getElementById('driveStatus').className = 'drive-status err';
     return;
   }
