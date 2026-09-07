@@ -147,8 +147,14 @@
   .video-card .frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
   .video-card h4{margin:0 0 6px;font-size:14px;font-weight:600;line-height:1.4;}
   .video-card .tag{display:inline-block;font-size:10.5px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:2px 8px;margin-top:2px;}
-  .video-card .del{float:right;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:11.5px;}
-  .video-card .del:hover{color:var(--danger);}
+  .video-card{position:relative;}
+  .video-card .del{
+    position:absolute;top:20px;right:20px;z-index:5;
+    background:rgba(5,6,10,0.75);border:1px solid var(--danger);color:#fff;
+    padding:5px 10px;font-size:11.5px;cursor:pointer;border-radius:2px;
+    font-weight:700;
+  }
+  .video-card .del:hover{background:var(--danger);}
   .empty-state{border:1px dashed var(--hair-strong);padding:34px 20px;text-align:center;color:var(--text-dim);font-size:13.5px;}
   .add-video-form{
     background:var(--panel);border:1px solid var(--hair);padding:18px;margin-top:20px;
