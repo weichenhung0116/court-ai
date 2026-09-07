@@ -431,14 +431,22 @@
         <span class="drive-status" id="driveStatus">尚未連接</span>
       </div>
       <details class="advanced">
-        <summary>教師設定（Google OAuth 用戶端 ID）</summary>
+        <summary>教師設定（Google OAuth 用戶端 ID／收件信箱）</summary>
         <div class="inner">
           <div class="field">
             <label>OAuth 用戶端 ID（在 Google Cloud Console 建立，需將此頁網域加入已授權的 JavaScript 來源）</label>
             <input type="text" id="oauthClientId" placeholder="xxxxxxxxxx.apps.googleusercontent.com">
           </div>
+          <div class="field" style="margin-top:10px;">
+            <label>老師的 Gmail（學生上傳後，資料夾會自動分享給這個信箱）</label>
+            <input type="text" id="teacherEmail" placeholder="teacher@gmail.com">
+          </div>
           <button class="ghost small" style="margin-top:8px;" onclick="saveClientId()">儲存設定</button>
           <span class="drive-status" id="clientIdStatus"></span>
+          <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;">
+            提醒：影片仍會存在「學生自己」的雲端硬碟裡（因為是用學生的帳號授權上傳），系統只是自動把資料夾分享給老師，
+            老師可以在自己雲端硬碟的「與我共用」找到所有小隊的資料夾，不需要學生手動分享。
+          </p>
         </div>
       </details>
     </div>
@@ -603,11 +611,21 @@ async function loadOauthClientId(){
     return res ? res.value : null;
   }catch(e){ return null; }
 }
+let teacherEmail = null;
+async function loadTeacherEmail(){
+  try{
+    const res = await window.storage.get('config:teacherEmail', true);
+    return res ? res.value : null;
+  }catch(e){ return null; }
+}
+
 async function saveClientId(){
   const val = document.getElementById('oauthClientId').value.trim();
+  const emailVal = document.getElementById('teacherEmail').value.trim();
   if(!val){ return; }
   try{
     await window.storage.set('config:oauthClientId', val, true);
+    if(emailVal){ await window.storage.set('config:teacherEmail', emailVal, true); teacherEmail = emailVal; }
     oauthClientId = val;
     document.getElementById('clientIdStatus').textContent = '已儲存，重新整理頁面後生效。';
     document.getElementById('clientIdStatus').className = 'drive-status on';
@@ -637,8 +655,12 @@ function updateUserBadge(name){
 
 async function initGoogleGate(){
   oauthClientId = await loadOauthClientId();
+  teacherEmail = await loadTeacherEmail();
   if(document.getElementById('oauthClientId')){
     document.getElementById('oauthClientId').value = oauthClientId || '';
+  }
+  if(document.getElementById('teacherEmail')){
+    document.getElementById('teacherEmail').value = teacherEmail || '';
   }
   if(!oauthClientId){
     return; // 尚未設定，不啟用登入闡
@@ -709,6 +731,19 @@ async function findOrCreateFolder(name){
   });
   const createData = await createRes.json();
   return createData.id;
+}
+
+async function shareFolderWithTeacher(folderId){
+  if(!teacherEmail) return;
+  try{
+    await fetch(`https://www.googleapis.com/drive/v3/files/${folderId}/permissions`, {
+      method:'POST',
+      headers:{Authorization:'Bearer '+googleAccessToken, 'Content-Type':'application/json'},
+      body: JSON.stringify({role:'reader', type:'user', emailAddress: teacherEmail})
+    });
+  }catch(e){
+    console.warn('分享資料夾給老師失敗（不影響上傳本身）', e);
+  }
 }
 
 async function uploadFileToDrive(file, folderId){
@@ -828,9 +863,11 @@ async function uploadSlot(slot){
   document.getElementById('clipActions-'+slot).innerHTML = `<span class="slot-meta">上傳中…</span>`;
   try{
     const folderId = await findOrCreateFolder(folderName);
+    await shareFolderWithTeacher(folderId);
     const result = await uploadFileToDrive(file, folderId);
     if(result.id){
-      document.getElementById('clipActions-'+slot).innerHTML = `<span class="slot-meta" style="color:var(--success);">已上傳至「${escapeHtml(folderName)}」資料夾 ✓</span>`;
+      const shareNote = teacherEmail ? `（已自動分享給 ${escapeHtml(teacherEmail)}）` : '（尚未設定老師信箱，資料夾只存在你自己的雲端硬碟）';
+      document.getElementById('clipActions-'+slot).innerHTML = `<span class="slot-meta" style="color:var(--success);">已上傳至「${escapeHtml(folderName)}」資料夾 ✓ ${shareNote}</span>`;
     } else {
       document.getElementById('clipActions-'+slot).innerHTML = `<span class="clip-warning">上傳失敗：${escapeHtml(JSON.stringify(result))}</span>`;
     }
