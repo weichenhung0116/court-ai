@@ -283,7 +283,7 @@
 
 <div class="info-banner" id="infoBanner">
   <div>
-    <b>教師須知：</b> 本頁的「Google 登入」與「上傳至雲端硬碟」需要你自己在 Google Cloud Console 建立 OAuth 用戶端 ID，並在下方對應設定區貼入。若尚未設定，平台仍可正常瀏覽與示範，但登入闡與雲端硬碟上傳會停用。若要把此頁面變成固定的公開網址讓任何知道連結的人使用，建議把這個 HTML 檔案部署到你自己的網站空間（例如學校網頁、GitHub Pages、Google Sites 嵌入），這樣才有固定網域可以在 Google Cloud Console 登記為授權來源，登入與雲端硬碟功能也才會穩定運作。
+    <b>教師須知：</b> 本頁的「Google 登入」與「上傳至雲端硬碟」需要你自己在 Google Cloud Console 建立 OAuth 用戶端 ID，並直接寫入這個 HTML 檔案最上方的 CONFIG 設定裡（不再是頁面上的可編輯欄位，避免任何打開連結的人都能看到或修改）。若要更換 Client ID 或收件信箱，請直接編輯程式碼中的 CONFIG 區塊。若要把此頁面變成固定的公開網址讓任何知道連結的人使用，建議把這個 HTML 檔案部署到你自己的網站空間（例如學校網頁、GitHub Pages、Google Sites 嵌入），這樣才有固定網域可以在 Google Cloud Console 登記為授權來源，登入與雲端硬碟功能也才會穩定運作。
   </div>
   <button onclick="document.getElementById('infoBanner').style.display='none'">關閉</button>
 </div>
@@ -430,25 +430,10 @@
         <button class="ghost" id="driveConnectBtn" onclick="connectDrive()">連接 Google 雲端硬碟</button>
         <span class="drive-status" id="driveStatus">尚未連接</span>
       </div>
-      <details class="advanced">
-        <summary>教師設定（Google OAuth 用戶端 ID／收件信箱）</summary>
-        <div class="inner">
-          <div class="field">
-            <label>OAuth 用戶端 ID（在 Google Cloud Console 建立，需將此頁網域加入已授權的 JavaScript 來源）</label>
-            <input type="text" id="oauthClientId" placeholder="xxxxxxxxxx.apps.googleusercontent.com">
-          </div>
-          <div class="field" style="margin-top:10px;">
-            <label>老師的 Gmail（學生上傳後，資料夾會自動分享給這個信箱）</label>
-            <input type="text" id="teacherEmail" placeholder="teacher@gmail.com">
-          </div>
-          <button class="ghost small" style="margin-top:8px;" onclick="saveClientId()">儲存設定</button>
-          <span class="drive-status" id="clientIdStatus"></span>
-          <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;">
-            提醒：影片仍會存在「學生自己」的雲端硬碟裡（因為是用學生的帳號授權上傳），系統只是自動把資料夾分享給老師，
-            老師可以在自己雲端硬碟的「與我共用」找到所有小隊的資料夾，不需要學生手動分享。
-          </p>
-        </div>
-      </details>
+      <p style="font-size:11.5px;color:var(--text-dim);margin-top:10px;">
+        提醒：影片仍會存在「學生自己」的雲端硬碟裡（因為是用學生的帳號授權上傳），系統只是自動把資料夾分享給老師，
+        老師可以在自己雲端硬碟的「與我共用」找到所有小隊的資料夾，不需要學生手動分享。
+      </p>
     </div>
 
     <div class="upload-slots" id="uploadSlots"></div>
@@ -564,12 +549,24 @@
 
 <script src="https://accounts.google.com/gsi/client" async defer onerror="gsiLoadFailed=true"></script>
 <script>
+// ============================================================
+// 老師設定區：只有這裡的兩個值需要手動填寫，其他人不會看到編輯介面。
+// 之後要更換 Client ID 或收件信箱，直接改這兩行，重新 Commit 到 GitHub 即可。
+// ============================================================
+const CONFIG = {
+  oauthClientId: '658676755170-2rjtrvotmto7uv8rps0lk0jplh0gu99j.apps.googleusercontent.com',
+  teacherEmail: 'weichenlovejesus@gmail.com'
+};
+// ============================================================
+
 let gsiLoadFailed = false;
 let googleAccessToken = null;
-let oauthClientId = null;
+let oauthClientId = CONFIG.oauthClientId;
+let teacherEmail = CONFIG.teacherEmail;
 
 // window.storage 只存在於 Claude 預覽環境；正式部署到 GitHub Pages 等一般網站時
 // 改用瀏覽器 localStorage 做為相容層，介面（get/set/delete 回傳格式）保持一致。
+// 注意：這只用來存「每個使用者自己的」資料（角色、小隊名單），不再用來存 Client ID／老師信箱這類全體共用設定。
 if(typeof window.storage === 'undefined'){
   window.storage = {
     async get(key){
@@ -605,36 +602,6 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
 });
 
 // ================= Google Sign-in gate =================
-async function loadOauthClientId(){
-  try{
-    const res = await window.storage.get('config:oauthClientId', true);
-    return res ? res.value : null;
-  }catch(e){ return null; }
-}
-let teacherEmail = null;
-async function loadTeacherEmail(){
-  try{
-    const res = await window.storage.get('config:teacherEmail', true);
-    return res ? res.value : null;
-  }catch(e){ return null; }
-}
-
-async function saveClientId(){
-  const val = document.getElementById('oauthClientId').value.trim();
-  const emailVal = document.getElementById('teacherEmail').value.trim();
-  if(!val){ return; }
-  try{
-    await window.storage.set('config:oauthClientId', val, true);
-    if(emailVal){ await window.storage.set('config:teacherEmail', emailVal, true); teacherEmail = emailVal; }
-    oauthClientId = val;
-    document.getElementById('clientIdStatus').textContent = '已儲存，重新整理頁面後生效。';
-    document.getElementById('clientIdStatus').className = 'drive-status on';
-  }catch(e){
-    document.getElementById('clientIdStatus').textContent = '儲存失敗，請再試一次。';
-    document.getElementById('clientIdStatus').className = 'drive-status err';
-  }
-}
-
 function skipGate(){
   document.getElementById('gateOverlay').classList.add('hidden');
 }
@@ -654,14 +621,6 @@ function updateUserBadge(name){
 }
 
 async function initGoogleGate(){
-  oauthClientId = await loadOauthClientId();
-  teacherEmail = await loadTeacherEmail();
-  if(document.getElementById('oauthClientId')){
-    document.getElementById('oauthClientId').value = oauthClientId || '';
-  }
-  if(document.getElementById('teacherEmail')){
-    document.getElementById('teacherEmail').value = teacherEmail || '';
-  }
   if(!oauthClientId){
     return; // 尚未設定，不啟用登入闡
   }
