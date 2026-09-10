@@ -191,6 +191,19 @@
   .save-row{margin-top:24px;display:flex;gap:12px;align-items:center;}
   .save-row .status{font-size:13px;color:var(--success);}
 
+  .position-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:16px;}
+  .position-card{
+    background:var(--panel-2);border:1px solid var(--hair);padding:18px;clip-path:var(--clip);
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .player-badge{
+    width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:15px;color:#fff;flex-shrink:0;
+  }
+  .position-card h4{margin:0;font-size:15px;}
+  .position-card p{margin:0;font-size:12.5px;color:var(--text-dim);line-height:1.6;}
+  .player-tag{font-size:11px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:3px 9px;align-self:flex-start;}
+
   /* ===== roster (section 3) ===== */
   .roster-box{background:var(--panel);border:1px solid var(--hair);padding:18px;clip-path:var(--clip);margin-bottom:24px;}
   .roster-box h3{margin:0 0 4px;font-size:14.5px;color:var(--orange);}
@@ -398,6 +411,46 @@
       <button class="primary" onclick="saveRole()">儲存角色設定</button>
       <span class="status" id="roleSaveStatus"></span>
     </div>
+
+    <div class="section-head" style="margin-top:40px;"><h2 style="font-size:18px;">球場位置功能與代表球星</h2></div>
+    <p class="section-desc">
+      每個位置的職責在現代籃球中都在演變，這裡列出的是最基礎、最常被引用的功能定位，搭配一位常被作為範例的 NBA 球星。
+      因為外部圖片連結容易在正式部署後失效，這裡先用球衣背號徽章代表球星，而不是直接嵌入真人照片；
+      如果你想換成真人照片，可以自行找一張圖片網址，把對應卡片裡 <span class="mono">&lt;div class="player-badge"&gt;</span>
+      換成 <span class="mono">&lt;img src="你的圖片網址"&gt;</span> 即可。
+    </p>
+    <div class="position-grid">
+      <div class="position-card">
+        <div class="player-badge" style="background:#1d428a;">SC</div>
+        <h4>控球後衛（1號位）</h4>
+        <p>球隊的場上指揮官，負責運球推進、閱讀防守、分配球權、掌控進攻節奏，通常也是助攻與失誤控制的關鍵角色。</p>
+        <span class="player-tag">代表球星：Stephen Curry</span>
+      </div>
+      <div class="position-card">
+        <div class="player-badge" style="background:#ce1141;">MJ</div>
+        <h4>得分後衛（2號位）</h4>
+        <p>主要得分手之一，需具備外線投射與持球單打能力，並在無球跑動中找到出手空間；防守端常負責盯防對方主力得分後衛。</p>
+        <span class="player-tag">代表球星：Michael Jordan</span>
+      </div>
+      <div class="position-card">
+        <div class="player-badge" style="background:#552583;">LJ</div>
+        <h4>小前鋒（3號位）</h4>
+        <p>場上最全面的位置，兼具外線投射、切入得分與協防換防能力，攻守兩端都需要高度的運動能力與位置彈性。</p>
+        <span class="player-tag">代表球星：LeBron James</span>
+      </div>
+      <div class="position-card">
+        <div class="player-badge" style="background:#007a33;">DN</div>
+        <h4>大前鋒（4號位）</h4>
+        <p>傳統上負責禁區卡位、籃板保護與內線得分；現代籃球中也有愈來愈多大前鋒具備外線投射能力（俗稱 Stretch 4），能拉開空間。</p>
+        <span class="player-tag">代表球星：Dirk Nowitzki</span>
+      </div>
+      <div class="position-card">
+        <div class="player-badge" style="background:#fdb927;color:#1a0d06;">SO</div>
+        <h4>中鋒（5號位）</h4>
+        <p>球隊禁區的核心，負責卡位、籃板保護、阻攻與低位單打，防守端往往是最後一道防線。</p>
+        <span class="player-tag">代表球星：Shaquille O'Neal</span>
+      </div>
+    </div>
   </section>
 
   <!-- ================= 3. UPLOAD ================= -->
@@ -554,6 +607,12 @@
 </main>
 
 <script src="https://accounts.google.com/gsi/client" async defer onerror="gsiLoadFailed=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+if(typeof mermaid !== 'undefined'){
+  mermaid.initialize({startOnLoad:false, theme:'dark', securityLevel:'loose'});
+}
+</script>
 <script>
 // ============================================================
 // 老師設定區：只有這裡的兩個值需要手動填寫，其他人不會看到編輯介面。
@@ -844,16 +903,27 @@ async function uploadSlot(slot){
 
 // ================= 1. video library =================
 const SEED_VIDEOS = [
+  // 進攻戰術
   {id:'seed1', videoId:'V0pxlMP6H3Q', title:'圖解：擋拆、攻防轉換、傳切、快打(早攻)戰術', category:'offense'},
   {id:'seed2', videoId:'m_YSHTtN4Gk', title:'擋拆／運球掩護基礎教學', category:'offense'},
   {id:'seed3', videoId:'rD35JxBMDR4', title:'三角戰術（Triangle Offense）：經典戰術解析', category:'offense'},
   {id:'seed4', videoId:'9pupaIn_9n0', title:'5-Out 進攻的五個基本打法', category:'offense'},
   {id:'seed5', videoId:'daUzko6I2cA', title:'進攻體系案例分析：波士頓賽爾提克進攻篇', category:'offense'},
   {id:'seed6', videoId:'IByvReE49qg', title:'NBA 戰術：Pistol 快速攻擊跑位', category:'offense'},
+  // 防守戰術
   {id:'seed7', videoId:'KwzHW-c5h7M', title:'現代 NBA 防守觀念：換防與防守演進', category:'defense'},
-  {id:'seed8', videoId:'dxORJt02kLU', title:'鬥牛不只是單打：實用 3x3 小組戰術分析', category:'combo'},
-  {id:'seed9', videoId:'OUAjEXe-gTk', title:'歷久不衰的兩人小組配合：擋拆戰術', category:'combo'},
-  {id:'seed10', videoId:'bmR3ksBGUps', title:'牛角戰術（Horns）小組配合實例', category:'combo'}
+  {id:'seed8', videoId:'0XOuT4DHjw8', title:'大學系隊最愛的防守體系：2-3 區域聯防', category:'defense'},
+  {id:'seed9', videoId:'w_rjWX7PAVM', title:'戰術簡析：「摸肩膀」戰術破解三二區域聯防', category:'defense'},
+  {id:'seed10', videoId:'zUq-9O_npKM', title:'【規則知多少】進攻、阻擋犯規判定（防守合法站位觀念）', category:'defense'},
+  {id:'seed11', videoId:'yn8zqCz8TZo', title:'解析 BBALLBREAKDOWN 的創新 NBA 防守體系', category:'defense'},
+  {id:'seed12', videoId:'CSZuhVd1Cmw', title:'盯人防守輪轉觀念教學（Man To Man Defense Rotations）', category:'defense'},
+  // 小組配合
+  {id:'seed13', videoId:'dxORJt02kLU', title:'鬥牛不只是單打：實用 3x3 小組戰術分析', category:'combo'},
+  {id:'seed14', videoId:'OUAjEXe-gTk', title:'歷久不衰的兩人小組配合：擋拆戰術', category:'combo'},
+  {id:'seed15', videoId:'bmR3ksBGUps', title:'牛角戰術（Horns）小組配合實例', category:'combo'},
+  {id:'seed16', videoId:'X2C2Iienffc', title:'兩人配合教學：How To Teach The 2 Man Game', category:'combo'},
+  {id:'seed17', videoId:'O_Z4gkyPNG0', title:'傳切配合基礎教學：How to Run Give and Go', category:'combo'},
+  {id:'seed18', videoId:'LOL5ZNuP7vk', title:'兩人傳切戰術示範：The Give-and-Go', category:'combo'}
 ];
 
 let currentCat = 'offense';
@@ -884,11 +954,28 @@ async function saveVideoCatalog(list){
   try{ await window.storage.set('videos:catalog', JSON.stringify(list), true); }
   catch(e){ console.error('storage set failed', e); }
 }
+const SEED_VERSION = 2;
+
 async function ensureSeeded(){
   let list = await loadVideoCatalog();
+  let seedVerRes = null;
+  try{ seedVerRes = await window.storage.get('videos:seedVersion', true); }catch(e){}
+  const storedVersion = seedVerRes ? parseInt(seedVerRes.value, 10) : 0;
+
   if(list === null){
     list = SEED_VIDEOS.slice();
     await saveVideoCatalog(list);
+    try{ await window.storage.set('videos:seedVersion', String(SEED_VERSION), true); }catch(e){}
+    return list;
+  }
+
+  if(storedVersion < SEED_VERSION){
+    const existingIds = new Set(list.map(v=>v.videoId));
+    SEED_VIDEOS.forEach(sv=>{
+      if(!existingIds.has(sv.videoId)) list.push(sv);
+    });
+    await saveVideoCatalog(list);
+    try{ await window.storage.set('videos:seedVersion', String(SEED_VERSION), true); }catch(e){}
   }
   return list;
 }
@@ -979,17 +1066,32 @@ loadRole();
 
 // ================= 4. AI hand-off to ChatGPT =================
 let chatMode = 'proactive';
+let reflectionLog = [];
 
 const EXAMPLES = {
   proactive: [
     {label:'預測對手', text:'我們下一場對手的中鋒防守很強，但外線比較弱，我該怎麼設計進攻？'},
     {label:'賽前規劃', text:'如果我是控球後衛，比賽一開始我該觀察對手防守的哪些線索？'},
-    {label:'預先配置', text:'我猜對方會用區域聯防，我們五個人賽前應該先講好哪些跑位？'}
+    {label:'預先配置', text:'我猜對方會用區域聯防，我們五個人賽前應該先講好哪些跑位？'},
+    {label:'認識對手習慣', text:'對方後衛很喜歡切入，我防守他之前應該先觀察哪些習慣動作？'},
+    {label:'體能分配', text:'比賽有四節，我該怎麼預先規劃自己在不同節數的體力分配與進攻積極度？'},
+    {label:'先發戰術選擇', text:'如果對方先發五人身材都比我們高大，我們開賽的第一組進攻該怎麼選？'},
+    {label:'預想犯規策略', text:'對方有一位球員很會製造犯規，我該怎麼預先想好防守他的方式？'},
+    {label:'決定輪替時機', text:'如果我是隊長，我該怎麼跟教練討論暫停與換人的時機？'},
+    {label:'讀秒戰術規劃', text:'比賽剩最後一分鐘我們落後3分，我們應該先討論哪些可能的進攻選擇？'},
+    {label:'預判補防位置', text:'我知道自己等一下要協防禁區，我該怎麼預先站位比較能兼顧兩邊？'}
   ],
   reactive: [
     {label:'戰術被破', text:'我們原本要打擋拆，但對方直接換防了，我當下該怎麼判斷下一步？'},
     {label:'臨場調整', text:'傳球路線被防守者卡死，我卡在原地不知道要傳給誰，怎麼辦？'},
-    {label:'結果不如預期', text:'我切入後被包夾，球傳丟了，我事後回看應該注意什麼？'}
+    {label:'結果不如預期', text:'我切入後被包夾，球傳丟了，我事後回看應該注意什麼？'},
+    {label:'突發包夾', text:'我持球到中場突然被兩個人包夾，當下腦筋一片空白，我該怎麼反應？'},
+    {label:'隊友走位失誤', text:'隊友沒有跑到約定的位置，我手上有球卻找不到人可以傳，怎麼辦？'},
+    {label:'裁判誤判後', text:'裁判剛剛吹了一個我覺得不合理的犯規，我情緒有點上來，怎麼讓自己快速冷靜回到比賽？'},
+    {label:'體力透支', text:'到第三節我明顯體力下降，動作變慢，我該怎麼臨場調整自己的打法？'},
+    {label:'對方臨時換陣型', text:'對方突然從盯人防守換成區域聯防，我們沒有事先準備，當下怎麼辦？'},
+    {label:'連續失誤後', text:'我連續兩次傳球失誤，隊友看起來有點不信任我，我該怎麼調整心態繼續打？'},
+    {label:'關鍵時刻卡住', text:'比賽剩10秒，球在我手上，防守者貼很緊，我腦中一片空白不知道該怎麼選擇，怎麼辦？'}
   ]
 };
 function renderExamples(){
@@ -1014,22 +1116,21 @@ function setMode(mode){
 
 function buildSystemPrompt(){
   const modeDesc = chatMode==='proactive'
-    ? `目前模式：前瞻性後設認知。學生正在「比賽前」或「回合開始前」思考，重點是預測對手可能的防守方式、預先規劃戰術與跑位，尚未執行動作。`
-    : `目前模式：反應性後設認知。學生正在描述「比賽中已發生」的狀況，例如戰術被防守破壞、傳球路線被阻斷、執行結果不如預期，重點是重新辨識問題並修正行動。`;
+    ? `我現在是在「比賽前」或「回合開始前」思考，想預測對手可能的防守方式、預先規劃戰術與跑位，還沒有實際執行動作。`
+    : `我現在是在描述「比賽中已經發生」的狀況，例如戰術被防守破壞、傳球路線被阻斷、執行結果不如預期，想重新想清楚問題出在哪、接下來怎麼調整。`;
 
-  return `你是一位大學初級籃球課程的「AI 戰術後設認知鷹架助教」，用繁體中文回覆。
+  return `你好，我是大學籃球課的學生，想請你當我的「戰術思考教練」，用繁體中文陪我對話。
 
-你的核心原則：
-1. 絕對不要直接告訴學生「應該打哪個戰術」或給出單一標準答案。你的角色是後設認知鷹架，不是戰術決策代理人。
-2. 依循以下循序提問鷹架來引導學生：辨識線索 → 預測結果 → 提出策略 → 說明理由 → 實際驗證 → 反思修正。每次回覆通常只推進一到兩個階段，不要一次講完全部流程。
+想麻煩你用這樣的方式陪我想，而不是直接把答案告訴我：
+1. 我想練習自己判斷戰術，所以請不要直接告訴我「該打哪個戰術」或給我單一標準答案，麻煩用提問引導我自己想清楚。
+2. 可以照這個順序一步步問我：先幫我辨識場上的線索 → 讓我試著預測可能的結果 → 引導我提出自己的策略 → 請我說明理由 → 最後可以聊聊怎麼實際驗證、事後怎麼反思修正。每次先推進一到兩個階段就好，不用一次講完全部。
 3. ${modeDesc}
-4. 用提問、對照選項、請學生比較不同方案的方式，引導學生自己說出判斷與理由，而不是被動接收答案。
-5. 若學生的敘述太模糊，先請他補充關鍵的場上線索，再繼續引導。
-6. 語氣像一位有耐心的教練，簡短、具體、口語化；每次回覆盡量在 4-6 句以內，可用 1-2 個追問結尾。
-7. 若學生直接要求「告訴我答案」，溫和說明你的角色是幫他自己想清楚，並用一個提問把球丟回給他。
+4. 可以多用提問、或給我幾個選項讓我比較，讓我自己說出判斷和理由，而不是等我被動接收答案。
+5. 如果我講得不夠清楚（例如沒說防守方式、隊友位置、時間壓力），麻煩先問我補充這些線索，再繼續往下引導。
+6. 語氣像一位有耐心的教練就好，簡短、口語化，每次回覆大概4-6句，可以用1-2個追問收尾。
+7. 如果我忍不住直接跟你要答案，麻煩溫和地提醒我一下，然後用一個問題把球丟回給我，讓我繼續想。
 
----
-學生的問題如下，請依照上述原則回應：
+我的情況是：
 `;
 }
 
@@ -1045,6 +1146,7 @@ async function buildAndCopyPrompt(){
     appendMsg('sys', '自動複製失敗，請手動選取上方文字並複製。');
   }
   appendMsg('user', text);
+  reflectionLog.push({role:'user', text});
 }
 function openChatGPT(){
   window.open('https://chatgpt.com/', '_blank');
@@ -1061,7 +1163,54 @@ function logExchange(){
   const text = document.getElementById('pasteBack').value.trim();
   if(!text) return;
   appendMsg('ai', text);
+  reflectionLog.push({role:'ai', text});
   document.getElementById('pasteBack').value = '';
+}
+
+// ---------- 心智圖（依對話記錄機械式排版，不涉及額外 AI 摘要）----------
+function truncateForNode(s, n){
+  const clean = s.replace(/["“”]/g, "'").replace(/\n/g, ' ').trim();
+  return clean.length > n ? clean.slice(0, n) + '…' : clean;
+}
+function escapeMermaid(s){
+  return s.replace(/"/g, "'");
+}
+async function generateMindMap(){
+  const container = document.getElementById('mindmapContainer');
+  if(reflectionLog.length === 0){
+    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">目前還沒有任何對話紀錄，先送出問題、貼回 ChatGPT 的回覆後，再產出心智圖。</p>';
+    return;
+  }
+  let graph = 'graph TD\n  ROOT["我的戰術思考"]\n';
+  reflectionLog.forEach((item, i)=>{
+    const nodeId = (item.role==='user' ? 'Q' : 'A') + i;
+    const label = escapeMermaid(truncateForNode(item.text, 26));
+    graph += `  ${nodeId}["${label}"]\n`;
+    if(i===0){
+      graph += `  ROOT --> ${nodeId}\n`;
+    } else {
+      const prevItem = reflectionLog[i-1];
+      const prevId = (prevItem.role==='user' ? 'Q' : 'A') + (i-1);
+      graph += `  ${prevId} --> ${nodeId}\n`;
+    }
+  });
+
+  container.innerHTML = '';
+  const pre = document.createElement('pre');
+  pre.className = 'mermaid';
+  pre.textContent = graph;
+  container.appendChild(pre);
+
+  try{
+    if(typeof mermaid === 'undefined'){
+      container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">心智圖繪圖工具載入失敗，請確認網路連線後重新整理頁面再試一次。</p>';
+      return;
+    }
+    await mermaid.run({nodes:[pre]});
+  }catch(e){
+    console.error(e);
+    container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">心智圖產生時發生錯誤，請再試一次。</p>';
+  }
 }
 </script>
 </body>
