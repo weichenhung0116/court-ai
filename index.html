@@ -200,6 +200,10 @@
     width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
     font-weight:800;font-size:15px;color:#fff;flex-shrink:0;
   }
+  .player-photo{
+    width:100%;aspect-ratio:4/3;object-fit:cover;object-position:top center;
+    border:1px solid var(--hair-strong);background:var(--void);
+  }
   .position-card h4{margin:0;font-size:15px;}
   .position-card p{margin:0;font-size:12.5px;color:var(--text-dim);line-height:1.6;}
   .player-tag{font-size:11px;color:var(--cyan);border:1px solid var(--cyan-dim);padding:3px 9px;align-self:flex-start;}
@@ -293,6 +297,18 @@
     font-size:12.5px;font-weight:700;padding:8px 14px;clip-path:var(--clip-sm);
   }
   .rule-card a:hover{background:#5be3fa;}
+
+  .signal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:16px;}
+  .signal-card{
+    background:var(--panel-2);border:1px solid var(--hair);padding:16px;clip-path:var(--clip-sm);
+    text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .signal-icon{width:64px;height:64px;}
+  .signal-icon circle,.signal-icon line,.signal-icon path{
+    stroke:var(--cyan);stroke-width:5;stroke-linecap:round;fill:none;
+  }
+  .signal-card h4{margin:0;font-size:13.5px;}
+  .signal-card p{margin:0;font-size:11.5px;color:var(--text-dim);line-height:1.55;}
 
   ::-webkit-scrollbar{width:8px;}
   ::-webkit-scrollbar-thumb{background:var(--hair-strong);}
@@ -407,30 +423,24 @@
       </div>
     </div>
 
-    <div class="save-row">
-      <button class="primary" onclick="saveRole()">儲存角色設定</button>
-      <span class="status" id="roleSaveStatus"></span>
-    </div>
-
     <div class="section-head" style="margin-top:40px;"><h2 style="font-size:18px;">球場位置功能與代表球星</h2></div>
     <p class="section-desc">
-      每個位置的職責在現代籃球中都在演變，這裡列出的是最基礎、最常被引用的功能定位，搭配一位常被作為範例的 NBA 球星。
-      因為外部圖片連結容易在正式部署後失效，這裡先用球衣背號徽章代表球星，而不是直接嵌入真人照片；
-      如果你想換成真人照片，可以自行找一張圖片網址，把對應卡片裡 <span class="mono">&lt;div class="player-badge"&gt;</span>
-      換成 <span class="mono">&lt;img src="你的圖片網址"&gt;</span> 即可。
+      每個位置的職責在現代籃球中都在演變，這裡列出的是最基礎、最常被引用的功能定位，搭配一位現役 NBA 球星作為範例。
+      其中四位已換成真人照片（來源：維基共享資源，公開授權可使用）；小前鋒（LeBron James）暫時還是球衣徽章，
+      因為目前找不到穩定的圖片連結，你可以自行找一張圖片網址替換。
     </p>
     <div class="position-grid">
       <div class="position-card">
-        <div class="player-badge" style="background:#1d428a;">SC</div>
+        <img class="player-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Stephen_Curry_dribbling_2016.jpg/330px-Stephen_Curry_dribbling_2016.jpg" alt="Stephen Curry" loading="lazy">
         <h4>控球後衛（1號位）</h4>
         <p>球隊的場上指揮官，負責運球推進、閱讀防守、分配球權、掌控進攻節奏，通常也是助攻與失誤控制的關鍵角色。</p>
-        <span class="player-tag">代表球星：Stephen Curry</span>
+        <span class="player-tag">代表球星：Stephen Curry（Golden State Warriors）</span>
       </div>
       <div class="position-card">
-        <div class="player-badge" style="background:#ce1141;">MJ</div>
+        <img class="player-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Anthony_Edwards_Kentavious_Caldwell-Pope_%2851734745028%29_%28cropped%29_%28cropped%29.jpg/330px-Anthony_Edwards_Kentavious_Caldwell-Pope_%2851734745028%29_%28cropped%29_%28cropped%29.jpg" alt="Anthony Edwards" loading="lazy">
         <h4>得分後衛（2號位）</h4>
         <p>主要得分手之一，需具備外線投射與持球單打能力，並在無球跑動中找到出手空間；防守端常負責盯防對方主力得分後衛。</p>
-        <span class="player-tag">代表球星：Michael Jordan</span>
+        <span class="player-tag">代表球星：Anthony Edwards（Minnesota Timberwolves）</span>
       </div>
       <div class="position-card">
         <div class="player-badge" style="background:#552583;">LJ</div>
@@ -439,17 +449,22 @@
         <span class="player-tag">代表球星：LeBron James</span>
       </div>
       <div class="position-card">
-        <div class="player-badge" style="background:#007a33;">DN</div>
+        <img class="player-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kevin_Durant_%28Wizards_v._Warriors%2C_1-24-2019%29_%28cropped%29.jpg/330px-Kevin_Durant_%28Wizards_v._Warriors%2C_1-24-2019%29_%28cropped%29.jpg" alt="Kevin Durant" loading="lazy">
         <h4>大前鋒（4號位）</h4>
         <p>傳統上負責禁區卡位、籃板保護與內線得分；現代籃球中也有愈來愈多大前鋒具備外線投射能力（俗稱 Stretch 4），能拉開空間。</p>
-        <span class="player-tag">代表球星：Dirk Nowitzki</span>
+        <span class="player-tag">代表球星：Kevin Durant（Houston Rockets）</span>
       </div>
       <div class="position-card">
-        <div class="player-badge" style="background:#fdb927;color:#1a0d06;">SO</div>
+        <img class="player-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Victor_Wembanyama_ASVEL.jpg/330px-Victor_Wembanyama_ASVEL.jpg" alt="Victor Wembanyama" loading="lazy">
         <h4>中鋒（5號位）</h4>
         <p>球隊禁區的核心，負責卡位、籃板保護、阻攻與低位單打，防守端往往是最後一道防線。</p>
-        <span class="player-tag">代表球星：Shaquille O'Neal</span>
+        <span class="player-tag">代表球星：Victor Wembanyama（San Antonio Spurs）</span>
       </div>
+    </div>
+
+    <div class="save-row">
+      <button class="primary" onclick="saveRole()">儲存角色設定</button>
+      <span class="status" id="roleSaveStatus"></span>
     </div>
   </section>
 
@@ -570,41 +585,135 @@
 
   <!-- ================= 6. RULES ================= -->
   <section class="panel" id="panel-rules">
-    <div class="section-head"><h2>籃球規則與裁判法</h2><span class="note mono">FIBA OFFICIAL · VALID FROM 2024-10-01</span></div>
+    <div class="section-head"><h2>籃球規則與裁判法</h2><span class="note mono">FIBA OFFICIAL</span></div>
     <p class="section-desc">
-      國際籃球總會（FIBA）於 2024 年公布最新版官方規則，自 2024 年 10 月 1 日起生效，目前仍為現行最新正式版本。以下提供官方原文文件與規則異動摘要，建議課程討論戰術合法性時以此為依據。
+      國際籃球總會（FIBA）已公布 2026 年版官方規則，自 2026 年 10 月 1 日起生效；在此之前，2024 年版規則（2024/10/1 生效）仍是現行版本。
+      以下同時提供兩個版本的官方原文文件，建議課程討論戰術合法性時，依照上課當下實際生效的版本為準。
     </p>
 
     <div class="rule-grid">
       <div class="rule-card">
-        <span class="kicker mono">OFFICIAL RULES 2024</span>
-        <h4>FIBA 正式籃球規則全文</h4>
-        <p>完整規則條文（含比賽規則與器材規格兩部分），自 2024/10/1 生效，是目前最新的正式版本。</p>
-        <a href="https://assets.fiba.basketball/image/upload/documents-corporate-fiba-official-rules-2024-v10.pdf" target="_blank" rel="noopener">開啟 PDF 全文</a>
+        <span class="kicker mono">NEW · RULES 2026</span>
+        <h4>FIBA 正式籃球規則 2026（即將生效）</h4>
+        <p>2026 年版官方規則全文，自 2026 年 10 月 1 日起正式生效，是最新一版的官方文件。</p>
+        <a href="https://assets.fiba.basketball/image/upload/documents-corporate-fiba-official-rules-2026-v1-1.pdf" target="_blank" rel="noopener">開啟 2026 規則 PDF</a>
       </div>
       <div class="rule-card">
-        <span class="kicker mono">RULE CHANGES 2024</span>
-        <h4>2024 規則異動摘要</h4>
-        <p>整理本次修訂的重點條文異動（例如界外球、可更正之錯誤、挑戰申請等規則變化），適合先快速掌握修改重點。</p>
-        <a href="https://assets.fiba.basketball/image/upload/documents-corporate-fiba-official-rules-2024-changes---v20a-eng.pdf" target="_blank" rel="noopener">開啟異動摘要 PDF</a>
+        <span class="kicker mono">RULE CHANGES 2026</span>
+        <h4>2026 規則異動摘要</h4>
+        <p>整理 2026 年版相對於前一版的條文異動重點，適合快速掌握這次修改了什麼。</p>
+        <a href="https://assets.fiba.basketball/image/upload/documents-corporate-fiba-official-rules-2026-rule-changes-v1-1-en.pdf" target="_blank" rel="noopener">開啟異動摘要 PDF</a>
+      </div>
+      <div class="rule-card">
+        <span class="kicker mono">CURRENT · RULES 2024</span>
+        <h4>FIBA 正式籃球規則 2024（現行版本）</h4>
+        <p>完整規則條文（含比賽規則與器材規格兩部分），2024/10/1 生效，2026/9/30 前仍是現行有效版本。</p>
+        <a href="https://assets.fiba.basketball/image/upload/documents-corporate-fiba-official-rules-2024-v10a.pdf" target="_blank" rel="noopener">開啟 2024 規則 PDF</a>
       </div>
       <div class="rule-card">
         <span class="kicker mono">RULES HUB</span>
-        <h4>FIBA 規則官方總覽頁</h4>
-        <p>FIBA 裁判事務網站的規則專區，可查詢各語言版本、規則解釋文件（Interpretations）與歷年修訂紀錄。</p>
-        <a href="https://refereeing.fiba.basketball/en/rules" target="_blank" rel="noopener">前往官方規則頁</a>
-      </div>
-      <div class="rule-card">
-        <span class="kicker mono">NEWS BRIEFING</span>
-        <h4>2024 規則生效重點說明</h4>
-        <p>FIBA 官方新聞稿，以白話說明本次規則修訂的重點內容與生效時間，適合課堂導讀使用。</p>
-        <a href="https://about.fiba.basketball/en/news/fiba-official-basketball-rules-2024-come-into-force-on-october-1" target="_blank" rel="noopener">閱讀官方說明</a>
+        <h4>FIBA 官方規則總覽頁</h4>
+        <p>FIBA 官方網站的規則專區，可查詢各語言版本、規則解釋文件（Interpretations）與歷年修訂紀錄，是版本更新時最準確的查詢起點。</p>
+        <a href="https://about.fiba.basketball/en/our-sport/official-basketball-rules" target="_blank" rel="noopener">前往官方規則頁</a>
       </div>
     </div>
-    <p style="font-size:12px;color:var(--text-dim);margin-top:16px;">若 FIBA 公布更新版本，請以「FIBA 規則官方總覽頁」上的最新文件為準。</p>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:16px;">若 FIBA 之後再公布更新版本，請以「FIBA 官方規則總覽頁」上的最新文件為準。</p>
+
+    <div class="section-head" style="margin-top:40px;"><h2 style="font-size:18px;">中華民國籃球協會｜C 級教練證與裁判證資訊</h2></div>
+    <p class="section-desc">
+      台灣的籃球教練與裁判分為 C、B、A 三級，由中華民國籃球協會依「特定體育團體建立運動教練（裁判）資格檢定及管理辦法」辦理講習與檢定。
+      以下是近年（114 年度，即西元 2025 年）官方公告的實施計畫，列出資格條件、課程時數與費用，實際場次、日期請以協會最新公告為準。
+    </p>
+    <div class="rule-grid">
+      <div class="rule-card">
+        <span class="kicker mono">COACH CERTIFICATION</span>
+        <h4>C 級教練資格檢定實施計畫</h4>
+        <p>資格：年滿 20 歲以上；C 級教練講習時數至少 24 小時（學科＋術科），通過測驗後取得證照，證照有效期 4 年。</p>
+        <a href="https://ctba.meetagile.com/files/message/2431/114%E5%B9%B4%E8%BE%A6%E7%90%86%E6%95%99%E7%B7%B4%E8%B3%87%E6%A0%BC%E6%AA%A2%E5%AE%9A%E5%8F%8A%E7%AE%A1%E7%90%86%E5%AF%A6%E6%96%BD%E8%A8%88%E7%95%AB(%E7%A2%BA%E5%AE%9A).pdf" target="_blank" rel="noopener">開啟教練檢定計畫 PDF</a>
+      </div>
+      <div class="rule-card">
+        <span class="kicker mono">REFEREE CERTIFICATION</span>
+        <h4>C 級裁判資格檢定實施計畫</h4>
+        <p>資格：高級中等以上學校畢業，熟悉比賽規則；費用 C 級裁判講習會新臺幣 3,000 元整，另有體能測驗（20 公尺折返跑）與筆試（70 分及格）。</p>
+        <a href="https://ctba.meetagile.com/files/message/2431/114%E8%BE%A6%E7%90%86%E8%A3%81%E5%88%A4%E8%B3%87%E6%A0%BC%E6%AA%A2%E5%AE%9A%E5%8F%8A%E7%AE%A1%E7%90%86%E5%AF%A6%E6%96%BD%E8%A8%88%E7%95%AB(%E7%A2%BA%E5%AE%9A).pdf" target="_blank" rel="noopener">開啟裁判檢定計畫 PDF</a>
+      </div>
+      <div class="rule-card">
+        <span class="kicker mono">OFFICIAL SITE</span>
+        <h4>中華民國籃球協會官方網站</h4>
+        <p>查詢最新一年度的講習會場次、報名時間與公告事項，實際開課資訊與費用以官網公告及當年度實施計畫為準。</p>
+        <a href="https://www.basketball-tpe.org" target="_blank" rel="noopener">前往協會官網</a>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:16px;">
+      提醒：講習會場次、費用每年可能微調，上面兩份 PDF 是 114 年度（2025 年）的公告版本，報名前請務必到協會官網確認當年度最新實施計畫。
+    </p>
+
+    <div class="section-head" style="margin-top:40px;"><h2 style="font-size:18px;">裁判基本手勢圖解</h2></div>
+    <p class="section-desc">
+      以下是課堂上最常會看到、也最需要學生認得的幾個基本裁判手勢，圖示為簡化示意（非官方教材原圖），完整規範請以 FIBA 官方規則手冊的手勢圖為準。
+    </p>
+    <div class="signal-grid" id="signalGrid"></div>
   </section>
 
 </main>
+
+<script>
+const SIGNALS = [
+  {
+    name: '跳球 / 比賽開始',
+    desc: '雙手向上伸直，用於跳球開始比賽或爭球時判定交替possession。',
+    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="35" x2="25" y2="8"/><line x1="50" y1="35" x2="75" y2="8"/>`
+  },
+  {
+    name: '得分兩分',
+    desc: '單手朝進攻方向伸出，比出「2」，表示該球算兩分。',
+    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="35" x2="80" y2="35"/><line x1="50" y1="35" x2="20" y2="55"/>`
+  },
+  {
+    name: '得分三分',
+    desc: '雙手同時舉起，通常會邊後退邊維持這個姿勢，表示該球算三分。',
+    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="35" x2="20" y2="10"/><line x1="50" y1="35" x2="80" y2="10"/>`
+  },
+  {
+    name: '個人犯規',
+    desc: '一手握拳舉起，另一手指出犯規球員的背號方向。',
+    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="35" x2="30" y2="8"/><circle cx="30" cy="8" r="6" fill="var(--orange)" stroke="none"/><line x1="50" y1="35" x2="82" y2="45"/>`
+  },
+  {
+    name: '走步違例',
+    desc: '兩手在胸前做輪轉動作，表示球員持球移動步伐不合法。',
+    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="40" x2="35" y2="45"/><line x1="50" y1="40" x2="65" y2="45"/><path d="M30 45 a8 8 0 1 1 0 0.1" fill="none"/><path d="M70 45 a8 8 0 1 1 0 0.1" fill="none"/>`
+  },
+  {
+    name: '換人',
+    desc: '雙手在胸前交叉，示意比賽暫停進行球員替換。',
+    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="40" x2="70" y2="55"/><line x1="50" y1="40" x2="30" y2="55"/><line x1="70" y1="40" x2="30" y2="55"/><line x1="30" y1="40" x2="70" y2="55"/>`
+  },
+  {
+    name: '出界',
+    desc: '手臂朝球出界的方向伸直指出，並說明由哪一隊擲球入界。',
+    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="38" x2="90" y2="30"/><line x1="50" y1="42" x2="20" y2="60"/>`
+  },
+  {
+    name: '暫停',
+    desc: '雙手比出「T」字形，表示某隊請求或核准暫停。',
+    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="40" x2="50" y2="15"/><line x1="35" y1="15" x2="65" y2="15"/>`
+  }
+];
+
+function renderSignals(){
+  const grid = document.getElementById('signalGrid');
+  if(!grid) return;
+  grid.innerHTML = SIGNALS.map(sig => `
+    <div class="signal-card">
+      <svg viewBox="0 0 100 100" class="signal-icon">${sig.svg}</svg>
+      <h4>${sig.name}</h4>
+      <p>${sig.desc}</p>
+    </div>
+  `).join('');
+}
+renderSignals();
+</script>
 
 <script src="https://accounts.google.com/gsi/client" async defer onerror="gsiLoadFailed=true"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
