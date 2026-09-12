@@ -310,16 +310,11 @@
   }
   .rule-card a:hover{background:#5be3fa;}
 
-  .signal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:16px;}
+  .signal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px;}
   .signal-card{
-    background:var(--panel-2);border:1px solid var(--hair);padding:16px;clip-path:var(--clip-sm);
-    text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;
+    background:var(--panel-2);border:1px solid var(--hair);padding:14px 16px;clip-path:var(--clip-sm);
   }
-  .signal-icon{width:64px;height:64px;}
-  .signal-icon circle,.signal-icon line,.signal-icon path{
-    stroke:var(--cyan);stroke-width:5;stroke-linecap:round;fill:none;
-  }
-  .signal-card h4{margin:0;font-size:13.5px;}
+  .signal-card h4{margin:0 0 6px;font-size:13.5px;color:var(--cyan);}
   .signal-card p{margin:0;font-size:11.5px;color:var(--text-dim);line-height:1.55;}
 
   ::-webkit-scrollbar{width:8px;}
@@ -584,6 +579,7 @@
       <h4>結構心智圖（依對話順序，立即產生）</h4>
       <p class="mm-desc">把上面累積的對話記錄，依照發生順序畫成一張流程圖，純粹是機械式排版，不涉及語意分析，可以隨時點來看整體脈絡。</p>
       <button class="ghost" onclick="generateMindMap()">產出結構心智圖</button>
+      <button class="ghost" onclick="downloadDiagram('mindmapContainer','籃球戰術結構心智圖')" style="margin-left:8px;">下載圖片</button>
       <div class="mindmap-container" id="mindmapContainer"></div>
     </div>
 
@@ -608,6 +604,7 @@
       <div class="chat-input-row" style="margin-top:16px;">
         <textarea id="conceptMermaidInput" placeholder="把 ChatGPT 回覆的 Mermaid 語法貼在這裡……"></textarea>
         <button class="primary" onclick="renderConceptMap()">渲染概念圖</button>
+        <button class="ghost" onclick="downloadDiagram('conceptMapContainer','籃球戰術概念圖')">下載圖片</button>
       </div>
       <div class="mindmap-container" id="conceptMapContainer"></div>
     </div>
@@ -691,9 +688,25 @@
       提醒：講習會場次、費用每年可能微調，上面兩份 PDF 是 114 年度（2025 年）的公告版本，報名前請務必到協會官網確認當年度最新實施計畫。
     </p>
 
-    <div class="section-head" style="margin-top:40px;"><h2 style="font-size:18px;">裁判基本手勢圖解</h2></div>
+    <div class="section-head" style="margin-top:40px;"><h2 style="font-size:18px;">裁判基本手勢示範（真人影片）</h2></div>
     <p class="section-desc">
-      以下是課堂上最常會看到、也最需要學生認得的幾個基本裁判手勢，圖示為簡化示意（非官方教材原圖），完整規範請以 FIBA 官方規則手冊的手勢圖為準。
+      手勢用文字或畫圖都很難呈現真正的動作節奏，所以這裡直接放真人示範的教學影片，可以看到完整的連貫動作，比任何示意圖都清楚。
+    </p>
+    <div class="video-grid">
+      <div class="video-card">
+        <div class="frame"><iframe src="https://www.youtube.com/embed/k1yNcWsvu84" allowfullscreen></iframe></div>
+        <h4>FIBA 官方手勢完整示範（含跳球、得分、犯規、違例等全套手勢）</h4>
+        <span class="tag mono">REFEREE SIGNALS</span>
+      </div>
+      <div class="video-card">
+        <div class="frame"><iframe src="https://www.youtube.com/embed/mV3MqwbMHSc" allowfullscreen></iframe></div>
+        <h4>FIBA 手勢教學示範（教學演練版本，動作放慢、逐一講解）</h4>
+        <span class="tag mono">REFEREE SIGNALS</span>
+      </div>
+    </div>
+
+    <p class="section-desc" style="margin-top:22px;">
+      看完影片後，可以對照下面的文字重點快速複習每個手勢代表的意思：
     </p>
     <div class="signal-grid" id="signalGrid"></div>
   </section>
@@ -702,46 +715,14 @@
 
 <script>
 const SIGNALS = [
-  {
-    name: '跳球 / 比賽開始',
-    desc: '雙手向上伸直，用於跳球開始比賽或爭球時判定交替possession。',
-    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="35" x2="25" y2="8"/><line x1="50" y1="35" x2="75" y2="8"/>`
-  },
-  {
-    name: '得分兩分',
-    desc: '單手朝進攻方向伸出，比出「2」，表示該球算兩分。',
-    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="35" x2="80" y2="35"/><line x1="50" y1="35" x2="20" y2="55"/>`
-  },
-  {
-    name: '得分三分',
-    desc: '雙手同時舉起，通常會邊後退邊維持這個姿勢，表示該球算三分。',
-    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="35" x2="20" y2="10"/><line x1="50" y1="35" x2="80" y2="10"/>`
-  },
-  {
-    name: '個人犯規',
-    desc: '一手握拳舉起，另一手指出犯規球員的背號方向。',
-    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="35" x2="30" y2="8"/><circle cx="30" cy="8" r="6" fill="var(--orange)" stroke="none"/><line x1="50" y1="35" x2="82" y2="45"/>`
-  },
-  {
-    name: '走步違例',
-    desc: '兩手在胸前做輪轉動作，表示球員持球移動步伐不合法。',
-    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="40" x2="35" y2="45"/><line x1="50" y1="40" x2="65" y2="45"/><path d="M30 45 a8 8 0 1 1 0 0.1" fill="none"/><path d="M70 45 a8 8 0 1 1 0 0.1" fill="none"/>`
-  },
-  {
-    name: '換人',
-    desc: '雙手在胸前交叉，示意比賽暫停進行球員替換。',
-    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="40" x2="70" y2="55"/><line x1="50" y1="40" x2="30" y2="55"/><line x1="70" y1="40" x2="30" y2="55"/><line x1="30" y1="40" x2="70" y2="55"/>`
-  },
-  {
-    name: '出界',
-    desc: '手臂朝球出界的方向伸直指出，並說明由哪一隊擲球入界。',
-    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="38" x2="90" y2="30"/><line x1="50" y1="42" x2="20" y2="60"/>`
-  },
-  {
-    name: '暫停',
-    desc: '雙手比出「T」字形，表示某隊請求或核准暫停。',
-    svg: `<circle cx="50" cy="20" r="9"/><line x1="50" y1="29" x2="50" y2="60"/><line x1="50" y1="60" x2="35" y2="90"/><line x1="50" y1="60" x2="65" y2="90"/><line x1="50" y1="40" x2="50" y2="15"/><line x1="35" y1="15" x2="65" y2="15"/>`
-  }
+  {name:'跳球 / 比賽開始', desc:'雙手向上伸直，用於跳球開始比賽，或爭球時判定交替possession。'},
+  {name:'得分兩分', desc:'單手朝進攻方向伸出比出「2」，表示該球算兩分。'},
+  {name:'得分三分', desc:'單手舉起比出「3」，通常會邊後退邊維持這個姿勢，表示該球算三分。'},
+  {name:'個人犯規', desc:'一手握拳舉起，另一手指出犯規球員的背號方向。'},
+  {name:'走步違例', desc:'雙手在胸前做輪轉動作，表示球員持球移動步伐不合法。'},
+  {name:'換人', desc:'雙手在胸前交叉，示意比賽暫停進行球員替換。'},
+  {name:'出界', desc:'手臂朝球出界的方向伸直指出，並說明由哪一隊擲球入界。'},
+  {name:'暫停', desc:'雙手比出「T」字形，表示某隊請求或核准暫停。'}
 ];
 
 function renderSignals(){
@@ -749,7 +730,6 @@ function renderSignals(){
   if(!grid) return;
   grid.innerHTML = SIGNALS.map(sig => `
     <div class="signal-card">
-      <svg viewBox="0 0 100 100" class="signal-icon">${sig.svg}</svg>
       <h4>${sig.name}</h4>
       <p>${sig.desc}</p>
     </div>
@@ -1439,6 +1419,67 @@ async function renderConceptMap(){
   }catch(e){
     console.error(e);
     container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">這段語法無法正確渲染，請確認貼上的內容是完整的 Mermaid 語法（可能需要回 ChatGPT 請它修正格式後再試一次）。</p>';
+  }
+}
+// ---------- 下載心智圖／概念圖為圖片 ----------
+async function downloadDiagram(containerId, filenameBase){
+  const container = document.getElementById(containerId);
+  const svg = container ? container.querySelector('svg') : null;
+  if(!svg){
+    alert('目前還沒有產生圖表，請先按上面的按鈕產出圖表後再下載。');
+    return;
+  }
+
+  const svgClone = svg.cloneNode(true);
+  svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  if(!svgClone.getAttribute('width') && svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width){
+    svgClone.setAttribute('width', svg.viewBox.baseVal.width);
+    svgClone.setAttribute('height', svg.viewBox.baseVal.height);
+  }
+  const svgString = new XMLSerializer().serializeToString(svgClone);
+  const svgBlob = new Blob([svgString], {type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(svgBlob);
+
+  const bbox = (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width)
+    ? svg.viewBox.baseVal
+    : {width: svg.clientWidth || 900, height: svg.clientHeight || 600};
+  const scale = 2;
+  const width = Math.max(bbox.width, 300) * scale;
+  const height = Math.max(bbox.height, 200) * scale;
+
+  try{
+    const img = new Image();
+    await new Promise((resolve, reject)=>{
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = url;
+    });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#05060a';
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(img, 0, 0, width, height);
+
+    canvas.toBlob(blob=>{
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filenameBase + '.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  }catch(e){
+    console.warn('PNG 轉換失敗，改為下載 SVG', e);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filenameBase + '.svg';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }
 }
 </script>
