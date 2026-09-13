@@ -314,6 +314,7 @@
   .signal-card{
     background:var(--panel-2);border:1px solid var(--hair);padding:14px 16px;clip-path:var(--clip-sm);
   }
+  .signal-emoji{font-size:26px;margin-bottom:6px;line-height:1;}
   .signal-card h4{margin:0 0 6px;font-size:13.5px;color:var(--cyan);}
   .signal-card p{margin:0;font-size:11.5px;color:var(--text-dim);line-height:1.55;}
 
@@ -698,11 +699,6 @@
         <h4>FIBA 官方手勢完整示範（含跳球、得分、犯規、違例等全套手勢）</h4>
         <span class="tag mono">REFEREE SIGNALS</span>
       </div>
-      <div class="video-card">
-        <div class="frame"><iframe src="https://www.youtube.com/embed/_oF1DuHNpTI" allowfullscreen></iframe></div>
-        <h4>裁判手勢大補帖（繁體中文完整教學，含賽前手勢、基本裁判配備介紹）</h4>
-        <span class="tag mono">REFEREE SIGNALS</span>
-      </div>
     </div>
 
     <p class="section-desc" style="margin-top:22px;">
@@ -715,6 +711,35 @@
       <button data-cat="admin">比賽管理</button>
     </div>
     <div class="signal-grid" id="signalGrid"></div>
+
+    <div class="section-head" style="margin-top:40px;"><h2 style="font-size:18px;">官方裁判法文件（中華民國籃球協會編譯）</h2></div>
+    <p class="section-desc">
+      沒有找到現成的簡報檔，但找到更完整的資料：中華民國籃球協會官方翻譯的 FIBA 裁判手冊全文 PDF，
+      其中「個人執法技巧」那份的第三章就是「官方裁判手號」專章，內容比簡報更完整、更權威，適合裁判證照課程使用。
+    </p>
+    <div class="rule-grid">
+      <div class="rule-card">
+        <span class="kicker mono">HAND SIGNALS · CH.3</span>
+        <h4>個人執法技巧（IOT）</h4>
+        <p>第三章「手號與術語」收錄官方裁判手號全表與基本執法術語，是最直接對應「裁判手勢」主題的章節。</p>
+        <a href="https://ctba.meetagile.com/files/message/1814/FIBA%E5%9C%8B%E9%9A%9B%E7%B1%83%E7%90%83%E7%B8%BD%E6%9C%83%E8%A3%81%E5%88%A4%E6%89%8B%E5%86%8A%E5%80%8B%E4%BA%BA%E5%9F%B7%E6%B3%95%E6%8A%80%E5%B7%A7(IOT).pdf" target="_blank" rel="noopener">開啟 PDF</a>
+      </div>
+      <div class="rule-card">
+        <span class="kicker mono">3-PERSON · BASIC</span>
+        <h4>三人裁判法－基礎版</h4>
+        <p>介紹三人裁判制度的基本站位、跳球程序、輪轉與涵蓋範圍，適合初學裁判先建立整體概念。</p>
+        <a href="http://ctba.meetagile.com/files/message/1814/FIBA%E5%9C%8B%E9%9A%9B%E7%B1%83%E7%90%83%E7%B8%BD%E6%9C%83%E8%A3%81%E5%88%A4%E6%89%8B%E5%86%8A_%E4%B8%89%E4%BA%BA%E8%A3%81%E5%88%A4%E6%B3%95%E5%9F%BA%E7%A4%8E%E7%89%88%E4%B8%AD%E6%96%87%E7%89%88.pdf" target="_blank" rel="noopener">開啟 PDF</a>
+      </div>
+      <div class="rule-card">
+        <span class="kicker mono">3-PERSON · ADVANCED</span>
+        <h4>三人裁判法－進階版</h4>
+        <p>在基礎版之上，進一步說明強邊／弱邊執法、攻守轉換時的輪轉與位置調整等進階裁判法概念。</p>
+        <a href="https://ctba.meetagile.com/files/message/1814/FIBA%E5%9C%8B%E9%9A%9B%E7%B1%83%E7%90%83%E7%B8%BD%E6%9C%83%E8%A3%81%E5%88%A4%E6%89%8B%E5%86%8A_%E4%B8%89%E4%BA%BA%E8%A3%81%E5%88%A4%E6%B3%95%E9%80%B2%E9%9A%8E%E7%89%88%E4%B8%AD%E6%96%87.pdf" target="_blank" rel="noopener">開啟 PDF</a>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:16px;">
+      這些文件由中華民國籃球協會編譯自 FIBA 原文教材，存放於協會的線上文件系統，若連結失效，可能是協會調整了檔案路徑，建議改到協會官網或裁判委員會頁面查詢最新版本。
+    </p>
   </section>
 
 </main>
@@ -722,44 +747,44 @@
 <script>
 const SIGNALS = [
   // 得分／計時
-  {cat:'score', name:'跳球 / 交替擁有', desc:'雙手向上伸直，用於跳球開始比賽，或爭球時依交替擁有箭頭判定發球權。'},
-  {cat:'score', name:'計時開始', desc:'手掌朝下，向下劈一次，示意計時員開表計時。'},
-  {cat:'score', name:'計時停止', desc:'單手向上直舉，手掌張開，示意計時員停表。'},
-  {cat:'score', name:'一分罰球得分', desc:'食指舉起並從手腕處向下彎曲一次，表示罰球命中得一分。'},
-  {cat:'score', name:'得分兩分', desc:'單手朝進攻方向伸出比出「2」，表示該球算兩分。'},
-  {cat:'score', name:'三分出手預告', desc:'球員在三分線外出手瞬間，裁判舉手比出三根手指，預告這球若進算三分。'},
-  {cat:'score', name:'三分得分確認', desc:'球進後雙手同時舉起做出三分手勢，確認這球算三分。'},
-  {cat:'score', name:'得分取消 / 不算', desc:'雙手在身前交叉一次，表示這球得分不算（例如犯規在先且非連續動作）。'},
-  {cat:'score', name:'24 秒重新計時', desc:'一手舉起食指朝上並轉一圈，示意進攻時間（24秒／14秒）重新起算。'},
+  {cat:'score', icon:'🏀', name:'跳球 / 交替擁有', desc:'雙手向上伸直，用於跳球開始比賽，或爭球時依交替擁有箭頭判定發球權。'},
+  {cat:'score', icon:'▶️', name:'計時開始', desc:'手掌朝下，向下劈一次，示意計時員開表計時。'},
+  {cat:'score', icon:'⏸️', name:'計時停止', desc:'單手向上直舉，手掌張開，示意計時員停表。'},
+  {cat:'score', icon:'☝️', name:'一分罰球得分', desc:'食指舉起並從手腕處向下彎曲一次，表示罰球命中得一分。'},
+  {cat:'score', icon:'✌️', name:'得分兩分', desc:'單手朝進攻方向伸出比出「2」，表示該球算兩分。'},
+  {cat:'score', icon:'🤟', name:'三分出手預告', desc:'球員在三分線外出手瞬間，裁判舉手比出三根手指，預告這球若進算三分。'},
+  {cat:'score', icon:'🙌', name:'三分得分確認', desc:'球進後雙手同時舉起做出三分手勢，確認這球算三分。'},
+  {cat:'score', icon:'❌', name:'得分取消 / 不算', desc:'雙手在身前交叉一次，表示這球得分不算（例如犯規在先且非連續動作）。'},
+  {cat:'score', icon:'🔄', name:'24 秒重新計時', desc:'一手舉起食指朝上並轉一圈，示意進攻時間（24秒／14秒）重新起算。'},
 
   // 犯規
-  {cat:'foul', name:'個人犯規', desc:'一手握拳舉起，另一手指出犯規球員的背號方向。'},
-  {cat:'foul', name:'打手犯規', desc:'一手握拳舉起，另一手手刀輕拍舉起手的手腕，表示防守時打到進攻球員的手。'},
-  {cat:'foul', name:'阻擋犯規', desc:'雙手插腰，表示防守球員未取得合法防守位置而造成阻擋。'},
-  {cat:'foul', name:'推人犯規', desc:'雙手向前推出的動作，表示球員用身體推擠對手。'},
-  {cat:'foul', name:'拉人 / 抱人犯規', desc:'一手握拳舉起不超過頭部，另一手抓住舉起手的手腕，表示限制對手移動的犯規。'},
-  {cat:'foul', name:'非法用手', desc:'一手在身前做出小幅度拍打動作，表示防守球員手部動作影響進攻球員。'},
-  {cat:'foul', name:'技術犯規', desc:'雙手在胸前比出「T」字形，表示對球員或教練的不當行為（無身體接觸）判罰技術犯規。'},
-  {cat:'foul', name:'違反體育精神犯規', desc:'一手抓住另一手的手腕並高舉，用於判罰非正常防守意圖、過度接觸的犯規。'},
-  {cat:'foul', name:'取消資格犯規', desc:'雙手握拳交叉高舉過頭，表示該球員因嚴重違規被取消比賽資格、直接罰出場。'},
-  {cat:'foul', name:'雙方犯規', desc:'雙手握拳向兩側平舉伸出，表示兩隊球員同時犯規，雙方犯規不罰球。'},
+  {cat:'foul', icon:'👊', name:'個人犯規', desc:'一手握拳舉起，另一手指出犯規球員的背號方向。'},
+  {cat:'foul', icon:'✋', name:'打手犯規', desc:'一手握拳舉起，另一手手刀輕拍舉起手的手腕，表示防守時打到進攻球員的手。'},
+  {cat:'foul', icon:'🚧', name:'阻擋犯規', desc:'雙手插腰，表示防守球員未取得合法防守位置而造成阻擋。'},
+  {cat:'foul', icon:'🙅', name:'推人犯規', desc:'雙手向前推出的動作，表示球員用身體推擠對手。'},
+  {cat:'foul', icon:'🤝', name:'拉人 / 抱人犯規', desc:'一手握拳舉起不超過頭部，另一手抓住舉起手的手腕，表示限制對手移動的犯規。'},
+  {cat:'foul', icon:'🖐️', name:'非法用手', desc:'一手在身前做出小幅度拍打動作，表示防守球員手部動作影響進攻球員。'},
+  {cat:'foul', icon:'⚠️', name:'技術犯規', desc:'雙手在胸前比出「T」字形，表示對球員或教練的不當行為（無身體接觸）判罰技術犯規。'},
+  {cat:'foul', icon:'🔥', name:'違反體育精神犯規', desc:'一手抓住另一手的手腕並高舉，用於判罰非正常防守意圖、過度接觸的犯規。'},
+  {cat:'foul', icon:'🟥', name:'取消資格犯規', desc:'雙手握拳交叉高舉過頭，表示該球員因嚴重違規被取消比賽資格、直接罰出場。'},
+  {cat:'foul', icon:'🤼', name:'雙方犯規', desc:'雙手握拳向兩側平舉伸出，表示兩隊球員同時犯規，雙方犯規不罰球。'},
 
   // 違例
-  {cat:'violation', name:'走步違例', desc:'雙手在胸前做輪轉動作，表示球員持球移動步伐不合法。'},
-  {cat:'violation', name:'兩次運球違例', desc:'雙手平伸、一高一低並上下擺動，表示球員停球後又重新運球。'},
-  {cat:'violation', name:'翻球違例（持球）', desc:'一手手掌由朝上翻轉朝下，重複一次，表示運球時手掌墊在球下方的非法動作。'},
-  {cat:'violation', name:'三秒違例', desc:'三根手指指向限制區，表示進攻球員在禁區內停留超過三秒。'},
-  {cat:'violation', name:'五秒違例', desc:'伸出五指、手臂向上舉起，表示球員被緊迫防守卻超過五秒未傳、投或運球。'},
-  {cat:'violation', name:'八秒違例', desc:'雙手舉起十指張開（或明確計數手勢），表示控球隊未在八秒內將球推進前場。'},
-  {cat:'violation', name:'球回後場違例', desc:'手臂朝後場方向揮動，表示前場控球隊將球非法帶回後場。'},
-  {cat:'violation', name:'腳踢球違例', desc:'手指向自己的腳，表示球員故意用腳觸球造成違例。'},
-  {cat:'violation', name:'出界方向指示', desc:'手臂朝球出界的方向伸直指出，並說明由哪一隊擲球入界。'},
+  {cat:'violation', icon:'🚶', name:'走步違例', desc:'雙手在胸前做輪轉動作，表示球員持球移動步伐不合法。'},
+  {cat:'violation', icon:'⛹️', name:'兩次運球違例', desc:'雙手平伸、一高一低並上下擺動，表示球員停球後又重新運球。'},
+  {cat:'violation', icon:'🔃', name:'翻球違例（持球）', desc:'一手手掌由朝上翻轉朝下，重複一次，表示運球時手掌墊在球下方的非法動作。'},
+  {cat:'violation', icon:'3️⃣', name:'三秒違例', desc:'三根手指指向限制區，表示進攻球員在禁區內停留超過三秒。'},
+  {cat:'violation', icon:'5️⃣', name:'五秒違例', desc:'伸出五指、手臂向上舉起，表示球員被緊迫防守卻超過五秒未傳、投或運球。'},
+  {cat:'violation', icon:'8️⃣', name:'八秒違例', desc:'雙手舉起十指張開（或明確計數手勢），表示控球隊未在八秒內將球推進前場。'},
+  {cat:'violation', icon:'⬅️', name:'球回後場違例', desc:'手臂朝後場方向揮動，表示前場控球隊將球非法帶回後場。'},
+  {cat:'violation', icon:'🦶', name:'腳踢球違例', desc:'手指向自己的腳，表示球員故意用腳觸球造成違例。'},
+  {cat:'violation', icon:'↗️', name:'出界方向指示', desc:'手臂朝球出界的方向伸直指出，並說明由哪一隊擲球入界。'},
 
   // 比賽管理
-  {cat:'admin', name:'換人', desc:'雙手在胸前交叉，示意比賽暫停進行球員替換。'},
-  {cat:'admin', name:'暫停', desc:'雙手比出「T」字形，表示某隊請求或核准暫停。'},
-  {cat:'admin', name:'交替擁有方向', desc:'手臂指向記錄台交替擁有箭頭所指的方向，表示下一次爭球由哪一隊發球。'},
-  {cat:'admin', name:'繼續比賽 / 無違規', desc:'豎起大拇指或雙手打開向下壓，表示裁判看到動作但判定不影響比賽，繼續進行。'}
+  {cat:'admin', icon:'🔁', name:'換人', desc:'雙手在胸前交叉，示意比賽暫停進行球員替換。'},
+  {cat:'admin', icon:'⏹️', name:'暫停', desc:'雙手比出「T」字形，表示某隊請求或核准暫停。'},
+  {cat:'admin', icon:'🔀', name:'交替擁有方向', desc:'手臂指向記錄台交替擁有箭頭所指的方向，表示下一次爭球由哪一隊發球。'},
+  {cat:'admin', icon:'👍', name:'繼續比賽 / 無違規', desc:'豎起大拇指或雙手打開向下壓，表示裁判看到動作但判定不影響比賽，繼續進行。'}
 ];
 
 let currentSignalCat = 'score';
@@ -777,6 +802,7 @@ function renderSignals(){
   const list = SIGNALS.filter(s=>s.cat===currentSignalCat);
   grid.innerHTML = list.map(sig => `
     <div class="signal-card">
+      <div class="signal-emoji">${sig.icon}</div>
       <h4>${sig.name}</h4>
       <p>${sig.desc}</p>
     </div>
