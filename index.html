@@ -285,6 +285,12 @@
   }
   .mindmap-container:empty{display:none;}
   .mindmap-container svg{max-width:100%;}
+  .graph-legend{
+    display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;padding-top:12px;
+    border-top:1px solid var(--hair);font-size:11.5px;color:var(--text-dim);
+  }
+  .graph-legend .lg-item{display:flex;align-items:center;gap:6px;}
+  .graph-legend .lg-dot{width:10px;height:10px;border-radius:2px;display:inline-block;}
   .chat-window{height:300px;overflow-y:auto;background:var(--void);border:1px solid var(--hair);padding:18px;display:flex;flex-direction:column;gap:12px;}
   .msg{max-width:78%;padding:11px 14px;font-size:14px;line-height:1.6;}
   .msg.user{align-self:flex-end;background:var(--orange);color:#1a0d06;font-weight:500;}
@@ -577,19 +583,27 @@
     </div>
 
     <div class="mindmap-block">
-      <h4>結構心智圖（依對話順序，立即產生）</h4>
-      <p class="mm-desc">把上面累積的對話記錄，依照發生順序畫成一張流程圖，純粹是機械式排版，不涉及語意分析，可以隨時點來看整體脈絡。</p>
-      <button class="ghost" onclick="generateMindMap()">產出結構心智圖</button>
-      <button class="ghost" onclick="downloadDiagram('mindmapContainer','籃球戰術結構心智圖')" style="margin-left:8px;">下載圖片</button>
+      <h4>知識族譜｜自動偵測版（立即產生，不需 ChatGPT）</h4>
+      <p class="mm-desc">
+        系統會掃描你上面的對話紀錄，比對內建的籃球戰術概念詞庫，把出現過的<b>概念抽成節點</b>，
+        並把「在同一段話裡一起出現」的概念連起來，畫成一張知識族譜。節點會標出被提及的次數，
+        線越粗代表這兩個概念越常被你一起談到，可以看出你的思考集中在哪些知識節點上。
+      </p>
+      <p class="mm-desc" style="color:var(--text-dim);">
+        運作方式是<b>關鍵詞比對</b>，不是真的讀懂語意，所以只能抓到詞庫裡有的概念；
+        想要更貼近你實際想法的族譜，請用下面的 AI 分析版。
+      </p>
+      <button class="ghost" onclick="generateMindMap()">產出知識族譜</button>
+      <button class="ghost" onclick="downloadDiagram('mindmapContainer','籃球戰術知識族譜')" style="margin-left:8px;">下載圖片</button>
       <div class="mindmap-container" id="mindmapContainer"></div>
     </div>
 
     <div class="mindmap-block">
-      <h4>AI 概念圖分析（進階，需要 ChatGPT 協助）</h4>
+      <h4>知識族譜｜AI 語意分析版（進階，需要 ChatGPT 協助）</h4>
       <p class="mm-desc">
-        因為平台本身沒有內建可以分析語意的 AI，這一步一樣採用「組提示詞 → 到 ChatGPT 分析 → 把結果貼回來繪圖」的方式：
-        系統會把你目前所有的對話記錄整理成一份提示詞，請 ChatGPT 幫你找出反覆出現的核心概念與思考脈絡，
-        並直接輸出繪圖用的 Mermaid 語法；你把那段語法貼回下面，就能在這裡渲染成一張概念圖。
+        因為平台本身沒有內建可以分析語意的 AI，這一步採用「組提示詞 → 到 ChatGPT 分析 → 把結果貼回來繪圖」的方式。
+        提示詞會請 ChatGPT 把你的對話<b>濃縮成概念節點</b>、<b>在每條連線上標註關係</b>（例如「被…破解」「需要先具備」），
+        並依進攻／防守／後設認知／情境條件四類上色，產出的會是一張有結構的知識族譜，而不只是分支圖。
       </p>
       <p class="mm-desc" style="color:var(--orange);">
         常見狀況：ChatGPT 有時候會自動把 Mermaid 語法直接畫成圖表顯示給你看，而不是給你純文字。
@@ -604,8 +618,8 @@
 
       <div class="chat-input-row" style="margin-top:16px;">
         <textarea id="conceptMermaidInput" placeholder="把 ChatGPT 回覆的 Mermaid 語法貼在這裡……"></textarea>
-        <button class="primary" onclick="renderConceptMap()">渲染概念圖</button>
-        <button class="ghost" onclick="downloadDiagram('conceptMapContainer','籃球戰術概念圖')">下載圖片</button>
+        <button class="primary" onclick="renderConceptMap()">渲染知識族譜</button>
+        <button class="ghost" onclick="downloadDiagram('conceptMapContainer','籃球戰術知識族譜_AI分析')">下載圖片</button>
       </div>
       <div class="mindmap-container" id="conceptMapContainer"></div>
     </div>
@@ -1372,7 +1386,7 @@ function logExchange(){
   document.getElementById('pasteBack').value = '';
 }
 
-// ---------- 心智圖（依對話記錄機械式排版，不涉及額外 AI 摘要）----------
+// ---------- 知識族譜（關鍵詞偵測 + 共現關聯，不涉及語意理解）----------
 function truncateForNode(s, n){
   const clean = s.replace(/["“”]/g, "'").replace(/\n/g, ' ').trim();
   return clean.length > n ? clean.slice(0, n) + '…' : clean;
@@ -1380,23 +1394,137 @@ function truncateForNode(s, n){
 function escapeMermaid(s){
   return s.replace(/"/g, "'");
 }
+
+// 籃球戰術概念詞庫：偵測對話中出現哪些概念，並依類別上色
+const CONCEPT_LEXICON = [
+  // 進攻概念
+  {key:'擋拆',   cat:'offense', terms:['擋拆','掩護','pick and roll','pick-and-roll','設檔','做檔']},
+  {key:'切入',   cat:'offense', terms:['切入','突破','過人','上籃']},
+  {key:'傳球選擇', cat:'offense', terms:['傳球','導球','分球','助攻','傳導']},
+  {key:'跑位',   cat:'offense', terms:['跑位','走位','無球','空手','移位']},
+  {key:'空間拉開', cat:'offense', terms:['空間','拉開','拉出來','spacing','外線牽制']},
+  {key:'投籃出手', cat:'offense', terms:['投籃','出手','三分','跳投','打板']},
+  {key:'快攻',   cat:'offense', terms:['快攻','轉換','推進','早攻']},
+  {key:'低位單打', cat:'offense', terms:['低位','單打','背框','卡位進攻']},
+
+  // 防守概念
+  {key:'盯人防守', cat:'defense', terms:['盯人','人盯人','一對一防守','貼防']},
+  {key:'區域聯防', cat:'defense', terms:['區域','聯防','zone','2-3','3-2','1-3-1']},
+  {key:'包夾',   cat:'defense', terms:['包夾','夾擊','двойной','double team','兩個人守']},
+  {key:'換防',   cat:'defense', terms:['換防','換人守','switch','輪換防守']},
+  {key:'協防補位', cat:'defense', terms:['協防','補防','補位','幫忙守','輪轉']},
+  {key:'籃板卡位', cat:'defense', terms:['籃板','卡位','搶板','box out']},
+  {key:'防守腳步', cat:'defense', terms:['防守腳步','滑步','橫移','跟上']},
+
+  // 認知／後設認知
+  {key:'辨識線索', cat:'meta',   terms:['觀察','辨識','注意到','看到','線索','判讀','讀防守']},
+  {key:'預測結果', cat:'meta',   terms:['預測','預判','猜','可能會','預期','推測']},
+  {key:'策略選擇', cat:'meta',   terms:['選擇','決定','策略','方案','打法','戰術選']},
+  {key:'說明理由', cat:'meta',   terms:['因為','理由','原因','為什麼','所以我']},
+  {key:'反思修正', cat:'meta',   terms:['反思','檢討','修正','調整','下次','改進','回看']},
+  {key:'不確定感', cat:'meta',   terms:['不知道','不確定','卡住','沒想法','空白','猶豫','遲疑']},
+
+  // 情境條件
+  {key:'時間壓力', cat:'context', terms:['剩下','秒','讀秒','最後一分鐘','時間不多','24秒']},
+  {key:'體能狀態', cat:'context', terms:['體力','累','喘','疲勞','受不了']},
+  {key:'比分落後', cat:'context', terms:['落後','輸','追分','差幾分']},
+  {key:'隊友配合', cat:'context', terms:['隊友','夥伴','同伴','配合','默契']},
+  {key:'對手特性', cat:'context', terms:['對手','對方','敵隊','他們很','對面']},
+  {key:'犯規判罰', cat:'context', terms:['犯規','裁判','吹','判罰','罰球']}
+];
+
+const CAT_STYLE = {
+  offense: {cls:'cOff',  label:'進攻'},
+  defense: {cls:'cDef',  label:'防守'},
+  meta:    {cls:'cMeta', label:'後設認知'},
+  context: {cls:'cCtx',  label:'情境條件'}
+};
+
+function detectConcepts(text){
+  const lower = text.toLowerCase();
+  const found = [];
+  CONCEPT_LEXICON.forEach(c=>{
+    if(c.terms.some(t => lower.includes(t.toLowerCase()))){
+      found.push(c);
+    }
+  });
+  return found;
+}
+
+function buildKnowledgeGraph(){
+  // 1. 掃描每一則訊息，找出裡面出現的概念
+  const nodeCount = {};   // key -> 出現次數
+  const nodeCat = {};     // key -> 類別
+  const edgeCount = {};   // "A|B" -> 共同出現次數
+
+  reflectionLog.forEach(item=>{
+    const concepts = detectConcepts(item.text);
+    const keys = [...new Set(concepts.map(c=>c.key))];
+    keys.forEach(k=>{
+      nodeCount[k] = (nodeCount[k] || 0) + 1;
+      const def = CONCEPT_LEXICON.find(c=>c.key===k);
+      if(def) nodeCat[k] = def.cat;
+    });
+    // 同一則訊息裡一起出現的概念 → 建立關聯
+    for(let i=0;i<keys.length;i++){
+      for(let j=i+1;j<keys.length;j++){
+        const pair = [keys[i], keys[j]].sort().join('|');
+        edgeCount[pair] = (edgeCount[pair] || 0) + 1;
+      }
+    }
+  });
+
+  return {nodeCount, nodeCat, edgeCount};
+}
+
+function conceptNodeId(key){
+  const idx = CONCEPT_LEXICON.findIndex(c=>c.key===key);
+  return 'N' + (idx >= 0 ? idx : Math.abs(key.length));
+}
+
 async function generateMindMap(){
   const container = document.getElementById('mindmapContainer');
   if(reflectionLog.length === 0){
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">目前還沒有任何對話紀錄，先送出問題、貼回 ChatGPT 的回覆後，再產出心智圖。</p>';
+    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">目前還沒有任何對話紀錄，先送出問題、貼回 ChatGPT 的回覆後，再產出知識族譜。</p>';
     return;
   }
-  let graph = 'graph TD\n  ROOT["我的戰術思考"]\n';
-  reflectionLog.forEach((item, i)=>{
-    const nodeId = (item.role==='user' ? 'Q' : 'A') + i;
-    const label = escapeMermaid(truncateForNode(item.text, 26));
-    graph += `  ${nodeId}["${label}"]\n`;
-    if(i===0){
-      graph += `  ROOT --> ${nodeId}\n`;
-    } else {
-      const prevItem = reflectionLog[i-1];
-      const prevId = (prevItem.role==='user' ? 'Q' : 'A') + (i-1);
-      graph += `  ${prevId} --> ${nodeId}\n`;
+
+  const {nodeCount, nodeCat, edgeCount} = buildKnowledgeGraph();
+  const keys = Object.keys(nodeCount);
+
+  if(keys.length === 0){
+    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">在目前的對話裡沒有偵測到詞庫中的籃球戰術概念。可以先多累積幾輪對話，或改用下方的「AI 概念圖分析」，由 ChatGPT 直接讀懂你的內容。</p>';
+    return;
+  }
+
+  let graph = 'graph LR\n';
+
+  // 節點：標籤帶出現次數，讓學生看得出哪些概念反覆出現
+  keys.forEach(k=>{
+    const id = conceptNodeId(k);
+    const n = nodeCount[k];
+    graph += `  ${id}["${escapeMermaid(k)}<br/>提及 ${n} 次"]\n`;
+  });
+
+  // 連線：共現次數越多，線越粗（用不同箭頭表示）
+  Object.keys(edgeCount).forEach(pair=>{
+    const [a, b] = pair.split('|');
+    const w = edgeCount[pair];
+    const arrow = w >= 3 ? '===' : (w >= 2 ? '-->' : '-.->');
+    graph += `  ${conceptNodeId(a)} ${arrow}|同時出現 ${w} 次| ${conceptNodeId(b)}\n`;
+  });
+
+  // 依類別上色
+  graph += `
+  classDef cOff fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
+  classDef cDef fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
+  classDef cMeta fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
+  classDef cCtx fill:#1a2b1a,stroke:#7ea87f,stroke-width:2px,color:#d4ecd5;
+`;
+  Object.keys(CAT_STYLE).forEach(cat=>{
+    const members = keys.filter(k=>nodeCat[k]===cat).map(conceptNodeId);
+    if(members.length){
+      graph += `  class ${members.join(',')} ${CAT_STYLE[cat].cls};\n`;
     }
   });
 
@@ -1408,17 +1536,29 @@ async function generateMindMap(){
 
   try{
     if(typeof mermaid === 'undefined'){
-      container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">心智圖繪圖工具載入失敗，請確認網路連線後重新整理頁面再試一次。</p>';
+      container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">繪圖工具載入失敗，請確認網路連線後重新整理頁面再試一次。</p>';
       return;
     }
     await mermaid.run({nodes:[pre]});
+
+    // 圖下方補一個圖例，說明顏色與線條代表什麼
+    const legend = document.createElement('div');
+    legend.className = 'graph-legend';
+    legend.innerHTML = `
+      <span class="lg-item"><i class="lg-dot" style="background:#ff5a1f;"></i>進攻概念</span>
+      <span class="lg-item"><i class="lg-dot" style="background:#22d3ee;"></i>防守概念</span>
+      <span class="lg-item"><i class="lg-dot" style="background:#a78bfa;"></i>後設認知</span>
+      <span class="lg-item"><i class="lg-dot" style="background:#7ea87f;"></i>情境條件</span>
+      <span class="lg-item">線越粗＝這兩個概念越常一起被你提到</span>
+    `;
+    container.appendChild(legend);
   }catch(e){
     console.error(e);
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">心智圖產生時發生錯誤，請再試一次。</p>';
+    container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">知識族譜產生時發生錯誤，請再試一次。</p>';
   }
 }
 
-// ---------- AI 概念圖分析（交給 ChatGPT 做語意分析，本平台只負責渲染） ----------
+// ---------- AI 知識族譜分析（交給 ChatGPT 做語意分析，本平台只負責渲染） ----------
 function buildConceptMapPrompt(){
   const transcript = reflectionLog.map(item =>
     (item.role==='user' ? '【我問】' : '【ChatGPT答】') + item.text
@@ -1426,21 +1566,40 @@ function buildConceptMapPrompt(){
 
   return `你好，以下是我在籃球課戰術討論中，累積和你對話的完整紀錄。
 
-想請你幫我做兩件事：
-1. 讀完這些對話後，幫我找出裡面反覆出現、或彼此有關聯的核心戰術概念與思考脈絡（例如：我常卡住的判斷點、反覆出現的情境類型、我的思考方式有什麼共同點等）。
-2. 請用 Mermaid 的語法（用 graph TD 或 mindmap 都可以），把這些概念整理成一張概念圖，呈現概念之間的關聯。
+想請你幫我把這些對話整理成一張「知識族譜（knowledge graph）」。
 
-【格式要求，請務必遵守】
+具體要求：
+1. 先讀完所有對話，抽取出裡面出現的**核心概念節點**（例如：擋拆、換防、時間壓力、辨識線索、我常卡住的判斷點等），不要用我講過的整句話當節點，要濃縮成 2-6 個字的概念名稱。
+2. 找出概念之間的**關聯**，並且**在每條連線上標註關係**（例如「導致」「需要先具備」「是…的前提」「常同時出現」「被…破解」等），這樣才看得出知識之間的結構，而不只是分支。
+3. 把概念依性質分成四類，並用 Mermaid 的 classDef 上色：
+   - 進攻概念 → class cOff
+   - 防守概念 → class cDef
+   - 後設認知／思考歷程 → class cMeta
+   - 情境條件（時間、體能、比分、對手特性等）→ class cCtx
+
+【輸出格式要求，請務必遵守】
 請只回覆一個「純文字的程式碼區塊」（用三個反引號 \`\`\` 包住），裡面放 Mermaid 語法本身；
-不要另外把它畫成圖表或用任何繪圖工具渲染顯示，也不要加其他說明文字——因為我需要複製這段純文字，貼到我自己的分析工具裡渲染，
-如果你直接把它畫成圖，我就沒辦法複製使用了。如果你的介面自動把它渲染成圖，麻煩額外在下面用文字重複一次同樣內容的程式碼區塊給我。
+不要另外把它畫成圖表或用任何繪圖工具渲染顯示，也不要加其他說明文字——因為我需要複製這段純文字，貼到我自己的分析工具裡渲染。
+如果你的介面自動把它渲染成圖，麻煩額外在下面用文字重複一次同樣內容的程式碼區塊給我。
 
-格式範例（僅供參考，實際節點與連接請依對話內容調整）：
+請使用 graph LR（由左至右）的格式，並在最後附上這段固定的 classDef 設定：
+
 \`\`\`
-graph TD
-  A["核心主題"] --> B["概念一"]
-  A --> C["概念二"]
+graph LR
+  A["擋拆"] -->|被…破解| B["換防"]
+  B -->|需要| C["協防補位"]
+  C -.->|常同時出現| D["時間壓力"]
+
+  classDef cOff fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
+  classDef cDef fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
+  classDef cMeta fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
+  classDef cCtx fill:#1a2b1a,stroke:#7ea87f,stroke-width:2px,color:#d4ecd5;
+  class A cOff;
+  class B,C cDef;
+  class D cCtx;
 \`\`\`
+
+（上面只是格式範例，實際的節點、關係與分類請完全依照我的對話內容產生。）
 
 我的對話紀錄如下：
 ---
