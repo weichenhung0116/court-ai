@@ -829,7 +829,15 @@ renderSignals();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
 <script>
 if(typeof mermaid !== 'undefined'){
-  mermaid.initialize({startOnLoad:false, theme:'dark', securityLevel:'loose'});
+  mermaid.initialize({
+    startOnLoad:false,
+    theme:'dark',
+    securityLevel:'loose',
+    // 關閉 HTML 標籤模式：改用原生 SVG <text> 繪製文字。
+    // 這一點很關鍵——foreignObject（HTML 模式）無法被畫進 canvas，會導致下載 PNG 失敗。
+    htmlLabels:false,
+    flowchart:{ htmlLabels:false, useMaxWidth:false }
+  });
 }
 </script>
 <script>
@@ -1653,65 +1661,112 @@ async function renderConceptMap(){
     container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">這段語法無法正確渲染，請確認貼上的內容是完整的 Mermaid 語法（可能需要回 ChatGPT 請它修正格式後再試一次）。</p>';
   }
 }
-// ---------- 下載心智圖／概念圖為圖片 ----------
+// ---------- 下載知識族譜為 PNG 圖片 ----------
+
+// 把字串安全地轉成 base64（支援中文等非 ASCII 字元）
+function svgStringToDataUri(svgString){
+  const bytes = new TextEncoder().encode(svgString);
+  let binary = '';
+  bytes.forEach(b => { binary += String.fromCharCode(b); });
+  return 'data:image/svg+xml;base64,' + btoa(binary);
+}
+
+// 把 Mermaid 產生的 SVG 裡，透過 CSS 變數指定的顏色換成實際色碼。
+// 因為圖片被畫進 canvas 時已經脫離網頁，讀不到 CSS 變數，不處理會變成黑底黑字。
+function inlineCssVariables(svgEl){
+  const rootStyle = getComputedStyle(document.documentElement);
+  const varNames = ['--void','--panel','--panel-2','--hair','--hair-strong','--orange','--cyan','--text','--text-dim','--success','--danger'];
+  const map = {};
+  varNames.forEach(v=>{ map[v] = rootStyle.getPropertyValue(v).trim(); });
+
+  svgEl.querySelectorAll('*').forEach(el=>{
+    ['fill','stroke','color'].forEach(prop=>{
+      const val = el.getAttribute(prop);
+      if(val && val.includes('var(')){
+        const m = val.match(/var\((--[\w-]+)\)/);
+        if(m && map[m[1]]) el.setAttribute(prop, map[m[1]]);
+      }
+    });
+    const styleAttr = el.getAttribute('style');
+    if(styleAttr && styleAttr.includes('var(')){
+      let newStyle = styleAttr;
+      Object.keys(map).forEach(v=>{
+        newStyle = newStyle.split(`var(${v})`).join(map[v]);
+      });
+      el.setAttribute('style', newStyle);
+    }
+  });
+}
+
 async function downloadDiagram(containerId, filenameBase){
   const container = document.getElementById(containerId);
   const svg = container ? container.querySelector('svg') : null;
   if(!svg){
-    alert('目前還沒有產生圖表，請先按上面的按鈕產出圖表後再下載。');
+    alert('目前還沒有產生知識族譜，請先按上面的按鈕產出圖表後再下載。');
     return;
   }
 
+  // 量出圖的實際尺寸
+  const rect = svg.getBoundingClientRect();
+  let width = rect.width;
+  let height = rect.height;
+  if((!width || !height) && svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width){
+    width = svg.viewBox.baseVal.width;
+    height = svg.viewBox.baseVal.height;
+  }
+  width = Math.max(Math.round(width) || 900, 400);
+  height = Math.max(Math.round(height) || 600, 300);
+
+  // 複製一份 SVG 並補上必要屬性
   const svgClone = svg.cloneNode(true);
   svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  if(!svgClone.getAttribute('width') && svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width){
-    svgClone.setAttribute('width', svg.viewBox.baseVal.width);
-    svgClone.setAttribute('height', svg.viewBox.baseVal.height);
+  svgClone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+  svgClone.setAttribute('width', width);
+  svgClone.setAttribute('height', height);
+  if(!svgClone.getAttribute('viewBox')){
+    svgClone.setAttribute('viewBox', `0 0 ${width} ${height}`);
   }
-  const svgString = new XMLSerializer().serializeToString(svgClone);
-  const svgBlob = new Blob([svgString], {type:'image/svg+xml;charset=utf-8'});
-  const url = URL.createObjectURL(svgBlob);
+  svgClone.removeAttribute('style');
+  inlineCssVariables(svgClone);
 
-  const bbox = (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width)
-    ? svg.viewBox.baseVal
-    : {width: svg.clientWidth || 900, height: svg.clientHeight || 600};
-  const scale = 2;
-  const width = Math.max(bbox.width, 300) * scale;
-  const height = Math.max(bbox.height, 200) * scale;
+  const svgString = new XMLSerializer().serializeToString(svgClone);
 
   try{
     const img = new Image();
+    img.crossOrigin = 'anonymous';
+
     await new Promise((resolve, reject)=>{
       img.onload = resolve;
-      img.onerror = reject;
-      img.src = url;
+      img.onerror = () => reject(new Error('SVG 無法載入為圖片'));
+      img.src = svgStringToDataUri(svgString);
     });
 
+    const scale = 2; // 兩倍解析度，列印或放進報告比較清楚
     const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#05060a';
-    ctx.fillRect(0, 0, width, height);
-    ctx.drawImage(img, 0, 0, width, height);
 
-    canvas.toBlob(blob=>{
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filenameBase + '.png';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }, 'image/png');
-  }catch(e){
-    console.warn('PNG 轉換失敗，改為下載 SVG', e);
+    // 深色底，跟平台視覺一致（PNG 若不填底色會是透明，貼進白底文件會看不清楚）
+    ctx.fillStyle = '#05060a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if(!blob) throw new Error('canvas 轉檔失敗');
+
+    const blobUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = filenameBase + '.svg';
+    a.href = blobUrl;
+    a.download = filenameBase + '.png';
     document.body.appendChild(a);
     a.click();
     a.remove();
+    setTimeout(()=>URL.revokeObjectURL(blobUrl), 1000);
+
+  }catch(e){
+    console.error('PNG 轉檔失敗', e);
+    alert('圖片轉檔失敗，請重新產出一次知識族譜後再試。若仍然失敗，可以改用螢幕截圖的方式保存。');
   }
 }
 </script>
