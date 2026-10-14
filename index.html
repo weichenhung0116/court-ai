@@ -552,7 +552,7 @@
     <p class="section-desc">助教不會給你答案，而是用提問帶你自己想清楚。</p>
 
     <div class="flow mono">
-      <span>① 判斷時機</span><i>→</i><span>② 寫下情境</span><i>→</i><span>③ 到 ChatGPT 對話</span><i>→</i><span>④ 貼回紀錄</span><i>→</i><span>⑤ 畫出思考族譜</span>
+      <span>① 判斷時機</span><i>→</i><span>② 寫下情境</span><i>→</i><span>③ 到 ChatGPT 對話</span><i>→</i><span>④ 貼回紀錄</span><i>→</i><span>⑤ 畫出知識族譜</span>
     </div>
 
     <h4 class="step-title">① 現在是哪一種時機？</h4>
@@ -615,8 +615,8 @@
     </div>
 
     <div class="mindmap-block">
-      <h4>⑤ 我的思考族譜</h4>
-      <p class="mm-desc">把累積的對話交給 ChatGPT 整理，看見自己的思考路徑：用了哪些後設認知策略、在哪裡卡住、AI 的哪個提問讓你往前推進。</p>
+      <h4>⑤ 我的知識族譜</h4>
+      <p class="mm-desc">把累積的對話交給 ChatGPT 整理，看見自己談到哪些戰術概念、概念之間怎麼連結，以及你用了哪些後設認知策略。</p>
       <div class="handoff-actions">
         <button class="primary" onclick="buildAndCopyConceptPrompt()">複製分析提示詞</button>
         <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
@@ -639,7 +639,7 @@
         <label class="check"><input type="checkbox" id="submitWithLog" checked> 同時繳交對話紀錄（.txt）</label>
         <div class="handoff-actions">
           <button class="primary" id="graphSubmitBtn" onclick="submitKnowledgeGraph()">繳交到雲端硬碟</button>
-          <button class="ghost" onclick="downloadDiagram('conceptMapContainer','我的思考族譜')">下載圖片</button>
+          <button class="ghost" onclick="downloadDiagram('conceptMapContainer','我的知識族譜')">下載圖片</button>
         </div>
         <p class="hint" id="graphSubmitStatus">會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。</p>
       </div>
@@ -1662,57 +1662,54 @@ function triggerDownload(blob, filename){
 }
 restoreLog();
 
-// ---------- 思考族譜：交給 ChatGPT 做語意分析，本平台只負責繪圖 ----------
-// 重點是呈現「學生自己的思考路徑」與後設認知策略，而不是 AI 講了哪些戰術名詞。
+// ---------- 知識族譜：交給 ChatGPT 做語意分析，本平台只負責繪圖 ----------
+// 呈現學生談到的戰術概念、概念之間的關係，以及學生用了哪些後設認知策略。
 function buildConceptMapPrompt(){
   const transcript = reflectionLog.map(item => logEntryLabel(item) + item.text).join('\n\n');
 
   return `你好，以下是我在大學籃球課中，和 AI 戰術教練對話的完整紀錄（可能橫跨好幾場比賽）。
-標記說明：【我】是我自己說的話，【AI】是 AI 教練的回覆；前面可能有場次，以及「前瞻性」（事前規劃）或「反應性」（事後調整）的標記。
+標記說明：【我】是我自己說的話，【AI】是 AI 教練的回覆。
 
-請幫我畫一張「思考族譜」，呈現**我自己的思考路徑**和我用了哪些後設認知策略。
+想請你幫我把這些對話整理成一張「知識族譜（knowledge graph）」。
 
-規則：
-1. 節點只來自【我】說的話，不要把 AI 說的內容當成我的想法。
-2. 每個節點寫成「階段：內容」，內容濃縮成 12 個字以內，例如「預測：對方會換防」。
-3. 階段只能是以下七種之一，並用對應的 class 上色：
-   - 辨識線索 → cCue
-   - 預測結果 → cPredict
-   - 提出策略 → cPlan
-   - 說明理由 → cReason
-   - 實際驗證 → cCheck
-   - 反思修正 → cReflect
-   - 卡住／不確定 → cStuck
-4. 依照時間順序用箭頭連接，呈現我的思考是怎麼一步步走的。
-5. 如果是 AI 的某個提問讓我往前推進，就在那條箭頭上寫「AI追問：…」（10 字以內）；如果是我自己想到的，就不用標註。
-6. 如果有場次標記，每一場用一個 subgraph 包起來，標題寫場次。
-7. 所有節點文字都要用雙引號包住，例如 A1["預測：對方會換防"]。
+具體要求：
+1. 先讀完所有對話，抽取出**我自己說的話**裡出現的核心概念節點（例如：擋拆、換防、時間壓力等）。不要把 AI 說的內容當成我的想法；不要用整句話當節點，要濃縮成 2-6 個字的概念名稱。
+2. 找出概念之間的**關聯**，並且**在每條連線上標註關係**（例如「導致」「需要先具備」「是…的前提」「常同時出現」「被…破解」等），這樣才看得出知識之間的結構，而不只是分支。
+3. 我用過的後設認知策略也要畫成節點，名稱只能用這六個：辨識線索、預測結果、提出策略、說明理由、實際驗證、反思修正；如果我有卡住或不確定的地方，加一個「卡住」節點。請把這些節點連到它們作用的戰術概念上（例如「預測結果」-->|用在| 「換防」）。我沒用到的策略就不要畫。
+4. 把概念依性質分成四類，並用 Mermaid 的 classDef 上色：
+   - 進攻概念 → class cOff
+   - 防守概念 → class cDef
+   - 後設認知策略（含「卡住」）→ class cMeta
+   - 情境條件（時間、體能、比分、對手特性等）→ class cCtx
 
-【輸出格式，請務必遵守】
-先用一個「純文字程式碼區塊」（三個反引號）給我 Mermaid 語法，不要畫成圖。格式如下（只是範例，內容請依我的對話產生）：
+【輸出格式要求，請務必遵守】
+請先回覆一個「純文字的程式碼區塊」（用三個反引號 \`\`\` 包住），裡面放 Mermaid 語法本身；
+不要把它畫成圖表或用任何繪圖工具渲染顯示——因為我需要複製這段純文字，貼到我自己的分析工具裡渲染。
+所有節點文字都要用雙引號包住，例如 A["擋拆"]。
+
+請使用 graph LR（由左至右）的格式，並在最後附上這段固定的 classDef 設定：
 
 \`\`\`
-graph TD
-  subgraph G1["第1場 vs 化工系"]
-    A1["辨識線索：對方中鋒護框強"] --> A2["預測：切入會被封阻"]
-    A2 -->|AI追問：外線誰有空檔| A3["提出策略：先拉開再傳"]
-  end
-  A3 --> B1["卡住：被換防後愣住"]
+graph LR
+  A["擋拆"] -->|被…破解| B["換防"]
+  B -->|需要| C["協防補位"]
+  C -.->|常同時出現| D["時間壓力"]
+  M1["預測結果"] -->|用在| B
+  M2["卡住"] -.->|發生在| C
 
-  classDef cCue fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
-  classDef cPredict fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
-  classDef cPlan fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
-  classDef cReason fill:#3a330d,stroke:#facc15,stroke-width:2px,color:#fdf2c4;
-  classDef cCheck fill:#0f2e1c,stroke:#3ddc84,stroke-width:2px,color:#cdf5dd;
-  classDef cReflect fill:#3a0d2b,stroke:#f472b6,stroke-width:2px,color:#fbd3ea;
-  classDef cStuck fill:#2b0d10,stroke:#ff4d5e,stroke-width:2px,stroke-dasharray:5 3,color:#ffd1d6;
-  class A1 cCue;
-  class A2 cPredict;
-  class A3 cPlan;
-  class B1 cStuck;
+  classDef cOff fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
+  classDef cDef fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
+  classDef cMeta fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
+  classDef cCtx fill:#1a2b1a,stroke:#7ea87f,stroke-width:2px,color:#d4ecd5;
+  class A cOff;
+  class B,C cDef;
+  class D cCtx;
+  class M1,M2 cMeta;
 \`\`\`
 
-程式碼區塊之後，請再用 3 個問題（不要給評價或答案）引導我反思：我比較少用到哪些階段？我通常在哪裡卡住？下一場我可以多練習什麼？
+（上面只是格式範例，實際的節點、關係與分類請完全依照我的對話內容產生。）
+
+程式碼區塊之後，請再用 3 個問題（不要給評價或答案）引導我反思：我比較少用到哪些後設認知策略？我通常在哪裡卡住？下一場我可以多練習什麼？
 
 我的對話紀錄如下：
 ---
@@ -1744,8 +1741,7 @@ function extractMermaidCode(raw){
 }
 
 const GRAPH_LEGEND = [
-  ['#22d3ee','辨識線索'], ['#a78bfa','預測結果'], ['#ff5a1f','提出策略'], ['#facc15','說明理由'],
-  ['#3ddc84','實際驗證'], ['#f472b6','反思修正'], ['#ff4d5e','卡住／不確定']
+  ['#ff5a1f','進攻概念'], ['#22d3ee','防守概念'], ['#a78bfa','後設認知策略'], ['#7ea87f','情境條件']
 ];
 
 async function renderConceptMap(){
@@ -1798,7 +1794,7 @@ function safeFileName(s){ return (s || '').replace(/[\\/:*?"<>|]/g, '').trim(); 
 
 async function submitKnowledgeGraph(){
   if(!document.querySelector('#conceptMapContainer svg')){
-    setGraphStatus('請先完成上面的步驟，畫出你的思考族譜。', 'var(--danger)');
+    setGraphStatus('請先完成上面的步驟，畫出你的知識族譜。', 'var(--danger)');
     return;
   }
   // 授權視窗必須在按鈕點擊的當下開啟，否則會被瀏覽器擋成彈出視窗
@@ -1824,7 +1820,7 @@ async function submitKnowledgeGraph(){
     const shared = await shareFolderWithTeacher(folderId);
     const base = `${safeFileName(signedInName) || '學生'}_${fileStamp()}`;
 
-    await uploadFileToDrive(png, `思考族譜_${base}.png`, folderId, p=>{
+    await uploadFileToDrive(png, `知識族譜_${base}.png`, folderId, p=>{
       setGraphStatus(`上傳族譜中… ${Math.round(p*100)}%`);
     });
     if(document.getElementById('submitWithLog').checked && reflectionLog.length){
