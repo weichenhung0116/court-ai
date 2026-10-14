@@ -2,7 +2,10 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#05060a">
+<meta name="apple-mobile-web-app-title" content="COURT.AI">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>COURT.AI ｜ 籃球戰術後設認知鷹架</title>
 <style>
   :root{
@@ -329,11 +332,74 @@
 
   ::-webkit-scrollbar{width:8px;}
   ::-webkit-scrollbar-thumb{background:var(--hair-strong);}
+
+  /* ===== 手機與平板 ===== */
+  [hidden]{display:none !important;}
+  nav.tabs button .short{display:none;}
+  .swipe-hint{position:sticky;left:0;}
+  @media (max-width: 820px){
+    body{padding-bottom:calc(64px + env(safe-area-inset-bottom));}
+    header.top{padding:12px 16px;gap:10px;}
+    .brand{gap:10px;}
+    .brand svg{width:34px;height:34px;}
+    .brand h1{font-size:18px;}
+    .brand p{display:none;}
+    .header-right{gap:6px;width:100%;}
+    .user-badge,.role-badge{padding:6px 10px;font-size:11.5px;}
+    .info-banner{padding:10px 16px;}
+
+    /* 分頁改成固定在畫面底部的導覽列 */
+    nav.tabs{
+      position:fixed;left:0;right:0;bottom:0;z-index:50;
+      padding:0 0 env(safe-area-inset-bottom);gap:0;overflow:visible;
+      border-bottom:none;border-top:1px solid var(--hair-strong);
+      background:rgba(13,15,20,0.97);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    }
+    nav.tabs button{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+      min-height:58px;padding:8px 2px;font-size:12px;
+      border-bottom:none;border-top:2px solid transparent;
+    }
+    nav.tabs button .n{margin:0;font-size:10.5px;}
+    nav.tabs button .full{display:none;}
+    nav.tabs button .short{display:inline;}
+    nav.tabs button.active{border-top-color:var(--orange);box-shadow:none;background:rgba(255,90,31,0.08);}
+
+    main{padding:20px 16px 32px;}
+    .section-head{flex-wrap:wrap;}
+    .section-head h2{font-size:19px;}
+    .section-desc{margin:8px 0 18px;}
+
+    /* 16px 以上，iPhone 點輸入框時才不會自動放大畫面 */
+    input[type=text],input[type=url],input[type=password],select,textarea{font-size:16px;}
+    button.primary,button.ghost{min-height:44px;}
+    button.small{min-height:40px;}
+    .handoff-actions > button{flex:1 1 auto;}
+
+
+    .chat-input-row{flex-direction:column;}
+    .chat-input-row textarea{min-height:96px;}
+    .chat-window{height:55vh;padding:12px;}
+    .msg{max-width:90%;}
+    .game-tag-row{flex-direction:column;align-items:stretch;gap:6px;}
+    .game-tag-row input{max-width:none;}
+    .flow{font-size:11px;}
+
+    /* 知識族譜保持原尺寸，太寬時可以左右滑動，避免文字被縮到看不清楚 */
+    .mindmap-container{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .mindmap-container svg{max-width:none;}
+  }
+  /* 手機直向：卡片改成一欄、表單欄位上下排列；平板維持兩欄 */
+  @media (max-width: 600px){
+    .video-grid,.upload-slots,.position-grid{grid-template-columns:1fr;}
+    .add-video-form,.roster-form{flex-direction:column;align-items:stretch;}
+    .add-video-form .field,.roster-form .field{max-width:none !important;}
+  }
 </style>
 </head>
 <body>
 
-<div class="info-banner" id="infoBanner">
+<div class="info-banner" id="infoBanner" hidden>
   <div>
     <b>教師須知：</b> Google 登入與雲端硬碟上傳需要在程式碼最上方的 CONFIG 區塊設定 OAuth Client ID 與老師信箱，並把網站網域登記為授權來源。
     注意：這是純前端網頁，登入畫面只是「使用門檻」而不是真正的資安防護，請勿在頁面中放置機密資料；
@@ -372,11 +438,11 @@
 </header>
 
 <nav class="tabs">
-  <button data-tab="videos" class="active"><span class="n">01</span>戰術影片庫</button>
-  <button data-tab="roles"><span class="n">02</span>角色選擇</button>
-  <button data-tab="upload"><span class="n">03</span>我的比賽片段</button>
-  <button data-tab="chat"><span class="n">04</span>AI 後設認知助教</button>
-  <button data-tab="rules"><span class="n">05</span>籃球規則與裁判法</button>
+  <button data-tab="videos" class="active"><span class="n">01</span><span class="full">戰術影片庫</span><span class="short">影片庫</span></button>
+  <button data-tab="roles"><span class="n">02</span><span class="full">角色選擇</span><span class="short">角色</span></button>
+  <button data-tab="upload"><span class="n">03</span><span class="full">我的比賽片段</span><span class="short">比賽片段</span></button>
+  <button data-tab="chat"><span class="n">04</span><span class="full">AI 後設認知助教</span><span class="short">AI 助教</span></button>
+  <button data-tab="rules"><span class="n">05</span><span class="full">籃球規則與裁判法</span><span class="short">規則</span></button>
 </nav>
 
 <main>
@@ -905,6 +971,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
     btn.classList.add('active');
     document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
     document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0});
   });
 });
 
@@ -976,6 +1043,7 @@ function isTeacher(){
 }
 function applyTeacherMode(){
   document.getElementById('teacherVideoTools').hidden = !isTeacher();
+  document.getElementById('infoBanner').hidden = !isTeacher();
   renderVideos();
 }
 window.addEventListener('hashchange', applyTeacherMode);
@@ -1771,6 +1839,10 @@ async function renderConceptMap(){
     legend.className = 'graph-legend';
     legend.innerHTML = GRAPH_LEGEND.map(([c,l])=>`<span class="lg-item"><i class="lg-dot" style="background:${c};"></i>${l}</span>`).join('');
     container.appendChild(legend);
+    const svgEl = container.querySelector('svg');
+    if(svgEl && svgEl.getBoundingClientRect().width > container.clientWidth){
+      container.insertAdjacentHTML('afterbegin', '<p class="hint swipe-hint">↔ 圖比較寬，可以左右滑動查看</p>');
+    }
     submitBox.hidden = false;
     document.getElementById('graphSubmitStatus').textContent = '會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。';
     document.getElementById('graphSubmitStatus').style.color = '';
