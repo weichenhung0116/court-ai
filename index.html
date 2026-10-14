@@ -245,26 +245,33 @@
   .slot-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;}
 
   /* ===== chat ===== */
-  .chat-setup{
-    display:flex;gap:20px;flex-wrap:wrap;margin-bottom:18px;
-    background:var(--panel);border:1px solid var(--hair);padding:16px 18px;clip-path:var(--clip);
-  }
-  .mode-pick{display:flex;flex-direction:column;gap:8px;width:100%;}
-  .mode-pick .row{display:flex;gap:12px;flex-wrap:wrap;}
-  .mode-btn{
-    border:1px solid var(--hair-strong);background:var(--void);color:var(--text);
-    padding:10px 16px;font-size:13px;cursor:pointer;text-align:left;max-width:280px;flex:1;min-width:220px;
-  }
-  .mode-btn small{display:block;color:var(--text-dim);font-size:11.5px;margin-top:3px;line-height:1.4;}
-  .mode-btn.selected{border-color:var(--orange);background:rgba(255,90,31,0.10);color:var(--orange);}
-
-  .example-box{background:var(--panel);border:1px solid var(--hair);padding:14px 16px;margin-bottom:16px;}
-  .example-box .ex-head{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--cyan);margin-bottom:10px;}
-  .ex-list{display:flex;flex-direction:column;gap:8px;}
-  .ex-item{background:var(--void);border:1px solid var(--hair);padding:10px 13px;font-size:13px;color:var(--text-dim);cursor:pointer;line-height:1.5;}
-  .ex-item:hover{border-color:var(--cyan);color:var(--text);}
-  .ex-item b{color:var(--text);font-weight:600;}
-
+  .flow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:11.5px;color:var(--text-dim);margin-bottom:22px;}
+  .flow span{border:1px solid var(--hair-strong);padding:4px 9px;}
+  .flow i{font-style:normal;color:var(--orange);}
+  .step-title{font-size:13.5px;color:var(--orange);margin:26px 0 10px;}
+  .hint{font-size:12px;color:var(--text-dim);margin:0 0 10px;line-height:1.6;}
+  .hint b{color:var(--text);}
+  .mode-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+  .mode-card{background:var(--panel);border:1px solid var(--hair);padding:14px 16px;cursor:pointer;transition:border-color .15s;}
+  .mode-card:hover{border-color:var(--hair-strong);}
+  .mode-card.selected{border-color:var(--orange);background:rgba(255,90,31,0.08);}
+  .mode-title{font-weight:700;font-size:14.5px;display:flex;justify-content:space-between;align-items:center;}
+  .mode-title span{font-size:10.5px;color:var(--text-dim);}
+  .mode-card.selected .mode-title{color:var(--orange);}
+  .mode-when{font-size:12.5px;color:var(--text-dim);margin:6px 0 8px;}
+  .mode-when b{color:var(--text);}
+  .mode-cues{margin:0;padding-left:18px;font-size:13px;line-height:1.75;}
+  .mode-eg{font-size:12px;color:var(--text-dim);margin:8px 0 0;font-style:italic;}
+  .mode-row.need-pick .mode-card{border-color:var(--danger);}
+  .game-tag-row{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12px;color:var(--text-dim);}
+  .game-tag-row input{max-width:260px;}
+  .prompt-details{margin-top:10px;font-size:12px;color:var(--text-dim);}
+  .prompt-details summary{cursor:pointer;}
+  button.primary.alt{background:var(--cyan);}
+  button.primary.alt:hover{background:#5fe0f2;}
+  .submit-box{margin-top:16px;border-top:1px solid var(--hair);padding-top:14px;}
+  .submit-box .check{font-size:12.5px;color:var(--text-dim);display:flex;align-items:center;gap:6px;cursor:pointer;}
+  .submit-box .hint{margin-top:10px;}
   .prompt-out{
     background:var(--void);border:1px solid var(--hair-strong);padding:14px;
     font-size:12.5px;color:var(--text-dim);white-space:pre-wrap;line-height:1.6;
@@ -542,103 +549,102 @@
   <!-- ================= 4. AI CHAT ================= -->
   <section class="panel" id="panel-chat">
     <div class="section-head"><h2>AI 後設認知助教</h2></div>
-    <p class="section-desc">
-      這位助教不會直接告訴你「該怎麼打」。它會依照「辨識線索 → 預測結果 → 提出策略 → 說明理由 → 實際驗證 → 反思修正」的流程，用提問引導你自己想清楚。
-    </p>
+    <p class="section-desc">助教不會給你答案，而是用提問帶你自己想清楚。</p>
 
-    <div class="callout warn">
-      <b>使用方式說明：</b> 因為這個頁面可能被放到公開網址上，無法安全地內建需要金鑰保護的 AI 服務。這裡改用「組好提示詞 → 到 ChatGPT 貼上」的方式：你只要先登入自己的 ChatGPT 帳號，按下方按鈕就會開啟 ChatGPT 分頁，再把已經複製好的提示詞貼上即可對話。
+    <div class="flow mono">
+      <span>① 判斷時機</span><i>→</i><span>② 寫下情境</span><i>→</i><span>③ 到 ChatGPT 對話</span><i>→</i><span>④ 貼回紀錄</span><i>→</i><span>⑤ 畫出思考族譜</span>
     </div>
 
-    <div class="chat-setup">
-      <div class="mode-pick">
-        <label style="font-size:11.5px;color:var(--text-dim);">選擇後設認知模式</label>
-        <div class="row">
-          <div class="mode-btn selected" data-mode="proactive" onclick="setMode('proactive')">
-            前瞻性後設認知
-            <small>比賽前規劃：預測對手、預先設定戰術</small>
-          </div>
-          <div class="mode-btn" data-mode="reactive" onclick="setMode('reactive')">
-            反應性後設認知
-            <small>比賽中卡關：戰術被破、需要臨場調整</small>
-          </div>
-        </div>
+    <h4 class="step-title">① 現在是哪一種時機？</h4>
+    <div class="mode-row">
+      <div class="mode-card" data-mode="proactive" onclick="setMode('proactive')">
+        <div class="mode-title">前瞻性後設認知 <span class="mono">BEFORE</span></div>
+        <p class="mode-when">事情<b>還沒發生</b>：賽前、暫停時、回合開始前</p>
+        <ul class="mode-cues">
+          <li>我觀察到對手有什麼線索？</li>
+          <li>我預測接下來會發生什麼？</li>
+          <li>我打算怎麼做？為什麼？</li>
+        </ul>
+        <p class="mode-eg">例：對方中鋒很會護框，我想先預判……</p>
+      </div>
+      <div class="mode-card" data-mode="reactive" onclick="setMode('reactive')">
+        <div class="mode-title">反應性後設認知 <span class="mono">AFTER</span></div>
+        <p class="mode-when">事情<b>已經發生</b>：戰術被破、當下卡住、結果不如預期</p>
+        <ul class="mode-cues">
+          <li>剛剛實際發生了什麼？</li>
+          <li>和我原本預期的差在哪裡？</li>
+          <li>下次我要怎麼調整？</li>
+        </ul>
+        <p class="mode-eg">例：擋拆後對方直接換防，我愣住了……</p>
       </div>
     </div>
 
-    <div class="example-box">
-      <div class="ex-head mono">▸ 不知道怎麼問？點一句先試試看</div>
-      <div class="ex-list" id="exampleList"></div>
+    <h4 class="step-title">② 用自己的話寫下情境</h4>
+    <div class="chat-input-row" style="margin-top:0;">
+      <textarea id="chatInput" placeholder="你看到了什麼？你怎麼想？哪裡卡住？"></textarea>
     </div>
-
-    <div class="chat-input-row">
-      <textarea id="chatInput" placeholder="描述你遇到的戰術情境或問題……"></textarea>
+    <div class="game-tag-row">
+      <label for="gameTag">場次</label>
+      <input type="text" id="gameTag" placeholder="例：第2場 vs 化工系（選填）" onchange="saveGameTag()">
     </div>
     <div class="handoff-actions">
-      <button class="primary" onclick="buildAndCopyPrompt()">組合提示詞並複製</button>
-      <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT 分頁</button>
+      <button class="primary" onclick="buildAndCopyPrompt()">③ 複製提示詞</button>
+      <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
     </div>
-    <div class="prompt-out" id="promptOut">按「組合提示詞並複製」後，會在這裡顯示完整內容，並自動複製到剪貼簿。</div>
+    <details class="prompt-details">
+      <summary>查看提示詞內容</summary>
+      <div class="prompt-out" id="promptOut">尚未產生提示詞。</div>
+    </details>
 
     <div class="chat-log">
-      <h4>我的對話記錄（自行貼回，作為反思紀錄）</h4>
+      <h4 class="step-title">④ 把對話貼回來</h4>
+      <p class="hint">每一輪都貼回來：<b>你說的話</b>和 <b>AI 的回覆</b>分開加入，族譜才看得出你的思考路徑。</p>
       <div class="chat-window" id="chatWindow">
-        <div class="msg sys">把你在 ChatGPT 得到的回覆貼回下方，可以留下完整的戰術思考紀錄。</div>
+        <div class="msg sys">還沒有對話紀錄。</div>
       </div>
       <div class="chat-input-row">
-        <textarea id="pasteBack" placeholder="貼上 ChatGPT 的回覆……"></textarea>
-        <button class="primary" onclick="logExchange()">加入紀錄</button>
+        <textarea id="pasteBack" placeholder="貼上一段對話……"></textarea>
       </div>
       <div class="handoff-actions">
-        <button class="ghost" onclick="downloadLog()">下載對話紀錄（.txt）</button>
-        <button class="ghost" onclick="clearLog()">清除全部紀錄</button>
+        <button class="primary" onclick="logExchange('user')">＋ 我說的</button>
+        <button class="primary alt" onclick="logExchange('ai')">＋ AI 回覆</button>
+        <span style="flex:1;"></span>
+        <button class="ghost small" onclick="downloadLog()">下載紀錄</button>
+        <button class="ghost small" onclick="clearLog()">清除紀錄</button>
       </div>
-      <p style="font-size:11.5px;color:var(--text-dim);margin-top:8px;">對話紀錄會自動保存在這台裝置的瀏覽器中，重新整理頁面不會消失；換電腦或清除瀏覽器資料則會消失，重要紀錄請下載保存。</p>
     </div>
 
     <div class="mindmap-block">
-      <h4>知識族譜｜自動偵測版（立即產生，不需 ChatGPT）</h4>
-      <p class="mm-desc">
-        系統會掃描你上面的對話紀錄，比對內建的籃球戰術概念詞庫，把出現過的<b>概念抽成節點</b>，
-        並把「在同一段話裡一起出現」的概念連起來，畫成一張知識族譜。節點會標出被提及的次數，
-        線越粗代表這兩個概念越常被你一起談到，可以看出你的思考集中在哪些知識節點上。
-      </p>
-      <p class="mm-desc" style="color:var(--text-dim);">
-        運作方式是<b>關鍵詞比對</b>，不是真的讀懂語意，所以只能抓到詞庫裡有的概念；
-        想要更貼近你實際想法的族譜，請用下面的 AI 分析版。
-      </p>
-      <button class="ghost" onclick="generateMindMap()">產出知識族譜</button>
-      <button class="ghost" onclick="downloadDiagram('mindmapContainer','籃球戰術知識族譜')" style="margin-left:8px;">下載圖片</button>
-      <div class="mindmap-container" id="mindmapContainer"></div>
-    </div>
-
-    <div class="mindmap-block">
-      <h4>知識族譜｜AI 語意分析版（進階，需要 ChatGPT 協助）</h4>
-      <p class="mm-desc">
-        因為平台本身沒有內建可以分析語意的 AI，這一步採用「組提示詞 → 到 ChatGPT 分析 → 把結果貼回來繪圖」的方式。
-        提示詞會請 ChatGPT 把你的對話<b>濃縮成概念節點</b>、<b>在每條連線上標註關係</b>（例如「被…破解」「需要先具備」），
-        並依進攻／防守／後設認知／情境條件四類上色，產出的會是一張有結構的知識族譜，而不只是分支圖。
-      </p>
-      <p class="mm-desc" style="color:var(--orange);">
-        常見狀況：ChatGPT 有時候會自動把 Mermaid 語法直接畫成圖表顯示給你看，而不是給你純文字。
-        這種情況下，請到那則回覆的程式碼區塊上方找「Copy code」按鈕複製純文字；如果找不到，
-        直接跟 ChatGPT 說「請用純文字的程式碼區塊給我剛剛的 Mermaid 語法，不要畫成圖」即可。
-      </p>
+      <h4>⑤ 我的思考族譜</h4>
+      <p class="mm-desc">把累積的對話交給 ChatGPT 整理，看見自己的思考路徑：用了哪些後設認知策略、在哪裡卡住、AI 的哪個提問讓你往前推進。</p>
       <div class="handoff-actions">
-        <button class="primary" onclick="buildAndCopyConceptPrompt()">分析對話紀錄並複製提示詞</button>
-        <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT 分頁</button>
+        <button class="primary" onclick="buildAndCopyConceptPrompt()">複製分析提示詞</button>
+        <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
       </div>
-      <div class="prompt-out" id="conceptPromptOut">按「分析對話紀錄並複製提示詞」後，會在這裡顯示完整內容，並自動複製到剪貼簿。</div>
-
+      <details class="prompt-details">
+        <summary>查看分析提示詞內容</summary>
+        <div class="prompt-out" id="conceptPromptOut">尚未產生提示詞。</div>
+      </details>
       <div class="chat-input-row" style="margin-top:16px;">
-        <textarea id="conceptMermaidInput" placeholder="把 ChatGPT 回覆的 Mermaid 語法貼在這裡……"></textarea>
-        <button class="primary" onclick="renderConceptMap()">渲染知識族譜</button>
-        <button class="ghost" onclick="downloadDiagram('conceptMapContainer','籃球戰術知識族譜_AI分析')">下載圖片</button>
+        <textarea id="conceptMermaidInput" placeholder="把 ChatGPT 回覆的程式碼貼在這裡……"></textarea>
+        <button class="primary" onclick="renderConceptMap()">繪製族譜</button>
       </div>
+      <details class="prompt-details">
+        <summary>ChatGPT 直接畫成圖、沒有給文字？</summary>
+        <p class="hint" style="margin:8px 0 0;">在那則回覆的程式碼區塊上方按「Copy code」；找不到的話，跟 ChatGPT 說「請用純文字的程式碼區塊再給我一次」。</p>
+      </details>
       <div class="mindmap-container" id="conceptMapContainer"></div>
+
+      <div class="submit-box" id="graphSubmitBox" hidden>
+        <label class="check"><input type="checkbox" id="submitWithLog" checked> 同時繳交對話紀錄（.txt）</label>
+        <div class="handoff-actions">
+          <button class="primary" id="graphSubmitBtn" onclick="submitKnowledgeGraph()">繳交到雲端硬碟</button>
+          <button class="ghost" onclick="downloadDiagram('conceptMapContainer','我的思考族譜')">下載圖片</button>
+        </div>
+        <p class="hint" id="graphSubmitStatus">會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。</p>
+      </div>
     </div>
   </section>
-
 
   <!-- ================= 5. RULES ================= -->
   <section class="panel" id="panel-rules">
@@ -838,6 +844,8 @@ if(typeof mermaid !== 'undefined'){
   mermaid.initialize({
     startOnLoad:false,
     theme:'dark',
+    // 場次分組（subgraph）的底色，直接寫進 SVG，下載成 PNG 時也會保留
+    themeVariables:{ clusterBkg:'#12151c', clusterBorder:'#3a3f4b', titleColor:'#eef1f6', edgeLabelBackground:'#0d0f14' },
     // strict：學生會貼上 ChatGPT 產生的語法，使用 strict 可阻擋其中夾帶的 HTML／JavaScript。
     securityLevel:'strict',
     // 關閉 HTML 標籤模式：改用原生 SVG <text> 繪製文字。
@@ -903,6 +911,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
 // ================= Google Sign-in gate =================
 // 注意：這是純前端網頁，登入只是「使用門檻」，無法做到真正的權限控管。
 let signedInEmail = null;
+let signedInName = '';
 
 // Google 回傳的 ID token 是 base64url 編碼，且姓名可能含中文，需用 UTF-8 正確解碼。
 function decodeJwtPayload(jwt){
@@ -916,6 +925,7 @@ function handleCredentialResponse(resp){
   try{
     const payload = decodeJwtPayload(resp.credential);
     signedInEmail = (payload.email || '').toLowerCase();
+    signedInName = payload.name || payload.email || '';
     updateUserBadge(payload.name || payload.email);
     document.getElementById('gateOverlay').classList.add('hidden');
     applyTeacherMode();
@@ -972,6 +982,7 @@ window.addEventListener('hashchange', applyTeacherMode);
 
 // ================= Google Drive connection =================
 let driveTokenClient = null;
+let driveReadyCallback = null; // 授權完成後要接著做的事（例如繳交族譜）
 let googleTokenExpiresAt = 0;
 
 class DriveAuthError extends Error {}
@@ -987,35 +998,44 @@ function driveTokenValid(){
   return !!googleAccessToken && Date.now() < googleTokenExpiresAt - 60*1000;
 }
 
-function connectDrive(){
+function connectDrive(onReady){
   if(!oauthClientId){
     setDriveStatus('尚未設定 OAuth 用戶端 ID（請聯絡老師檢查程式碼中的 CONFIG 設定）', 'err');
-    return;
+    return false;
   }
   if(typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2){
     setDriveStatus('Google 授權服務無法載入，請確認網路連線後重新整理頁面。', 'err');
-    return;
+    return false;
   }
+  driveReadyCallback = typeof onReady === 'function' ? onReady : null;
   if(!driveTokenClient){
     driveTokenClient = google.accounts.oauth2.initTokenClient({
       client_id: oauthClientId,
       scope: 'https://www.googleapis.com/auth/drive.file',
       callback: (resp)=>{
         if(resp.error){
+          driveReadyCallback = null;
           setDriveStatus('授權失敗：' + resp.error, 'err');
           return;
         }
         googleAccessToken = resp.access_token;
         googleTokenExpiresAt = Date.now() + (Number(resp.expires_in) || 3600) * 1000;
         setDriveStatus('已連接 Google 雲端硬碟 ✓（授權約 1 小時內有效）', 'on');
+        if(driveReadyCallback){
+          const cb = driveReadyCallback;
+          driveReadyCallback = null;
+          cb();
+        }
       },
       error_callback: (err)=>{
+        driveReadyCallback = null;
         setDriveStatus('授權視窗被關閉或遭到封鎖，請允許彈出視窗後再試一次。', 'err');
         console.warn(err);
       }
     });
   }
   driveTokenClient.requestAccessToken();
+  return true;
 }
 
 // 所有 Drive API 呼叫都經過這裡：統一檢查 HTTP 狀態，401 代表授權過期。
@@ -1482,54 +1502,29 @@ async function loadRole(){
 loadRole();
 
 // ================= 4. AI hand-off to ChatGPT =================
-let chatMode = 'proactive';
+// 刻意不提供現成的提問範例：學生要自己判斷時機（前瞻／反應）並用自己的話描述情境。
+let chatMode = null;   // 尚未選擇；學生必須先判斷是哪一種時機
 let reflectionLog = [];
+const MODE_NAME = {proactive:'前瞻性', reactive:'反應性'};
 
-const EXAMPLES = {
-  proactive: [
-    {label:'預測對手', text:'我們下一場對手的中鋒防守很強，但外線比較弱，我該怎麼設計進攻？'},
-    {label:'賽前規劃', text:'如果我是控球後衛，比賽一開始我該觀察對手防守的哪些線索？'},
-    {label:'預先配置', text:'我猜對方會用區域聯防，我們五個人賽前應該先講好哪些跑位？'},
-    {label:'認識對手習慣', text:'對方後衛很喜歡切入，我防守他之前應該先觀察哪些習慣動作？'},
-    {label:'體能分配', text:'比賽有四節，我該怎麼預先規劃自己在不同節數的體力分配與進攻積極度？'},
-    {label:'先發戰術選擇', text:'如果對方先發五人身材都比我們高大，我們開賽的第一組進攻該怎麼選？'},
-    {label:'預想犯規策略', text:'對方有一位球員很會製造犯規，我該怎麼預先想好防守他的方式？'},
-    {label:'決定輪替時機', text:'如果我是隊長，我該怎麼跟教練討論暫停與換人的時機？'},
-    {label:'讀秒戰術規劃', text:'比賽剩最後一分鐘我們落後3分，我們應該先討論哪些可能的進攻選擇？'},
-    {label:'預判補防位置', text:'我知道自己等一下要協防禁區，我該怎麼預先站位比較能兼顧兩邊？'}
-  ],
-  reactive: [
-    {label:'戰術被破', text:'我們原本要打擋拆，但對方直接換防了，我當下該怎麼判斷下一步？'},
-    {label:'臨場調整', text:'傳球路線被防守者卡死，我卡在原地不知道要傳給誰，怎麼辦？'},
-    {label:'結果不如預期', text:'我切入後被包夾，球傳丟了，我事後回看應該注意什麼？'},
-    {label:'突發包夾', text:'我持球到中場突然被兩個人包夾，當下腦筋一片空白，我該怎麼反應？'},
-    {label:'隊友走位失誤', text:'隊友沒有跑到約定的位置，我手上有球卻找不到人可以傳，怎麼辦？'},
-    {label:'裁判誤判後', text:'裁判剛剛吹了一個我覺得不合理的犯規，我情緒有點上來，怎麼讓自己快速冷靜回到比賽？'},
-    {label:'體力透支', text:'到第三節我明顯體力下降，動作變慢，我該怎麼臨場調整自己的打法？'},
-    {label:'對方臨時換陣型', text:'對方突然從盯人防守換成區域聯防，我們沒有事先準備，當下怎麼辦？'},
-    {label:'連續失誤後', text:'我連續兩次傳球失誤，隊友看起來有點不信任我，我該怎麼調整心態繼續打？'},
-    {label:'關鍵時刻卡住', text:'比賽剩10秒，球在我手上，防守者貼很緊，我腦中一片空白不知道該怎麼選擇，怎麼辦？'}
-  ]
-};
-function renderExamples(){
-  const list = EXAMPLES[chatMode];
-  document.getElementById('exampleList').innerHTML = list.map(ex=>`
-    <div class="ex-item" onclick="useExample(this)" data-text="${escapeHtml(ex.text)}">
-      <b>${escapeHtml(ex.label)}：</b>${escapeHtml(ex.text)}
-    </div>
-  `).join('');
-}
-function useExample(el){
-  document.getElementById('chatInput').value = el.dataset.text;
-  document.getElementById('chatInput').focus();
-}
-renderExamples();
 function setMode(mode){
   chatMode = mode;
-  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('selected'));
-  document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('selected');
-  renderExamples();
+  document.querySelectorAll('.mode-card').forEach(b=>b.classList.toggle('selected', b.dataset.mode===mode));
+  document.querySelector('.mode-row').classList.remove('need-pick');
 }
+
+// 場次標籤：讓系列比賽的對話可以分場整理
+async function saveGameTag(){
+  try{ await window.storage.set('chat:gameTag', document.getElementById('gameTag').value.trim(), false); }catch(e){}
+}
+async function loadGameTag(){
+  try{
+    const res = await window.storage.get('chat:gameTag', false);
+    if(res) document.getElementById('gameTag').value = res.value;
+  }catch(e){}
+}
+function currentGameTag(){ return document.getElementById('gameTag').value.trim(); }
+loadGameTag();
 
 // 依學生在「角色選擇」分頁儲存的位置與團隊角色，調整 AI 助教提問的角度。
 function buildRoleContext(){
@@ -1565,47 +1560,57 @@ ${roleLine ? '8. ' + roleLine + '\n' : ''}
 }
 
 async function buildAndCopyPrompt(){
+  if(!chatMode){
+    document.querySelector('.mode-row').classList.add('need-pick');
+    alert('請先判斷：現在是「前瞻性」（事情還沒發生）還是「反應性」（事情已經發生）？');
+    return;
+  }
   const text = document.getElementById('chatInput').value.trim();
-  if(!text){ alert('請先輸入你的戰術問題。'); return; }
+  if(!text){ alert('請先用自己的話寫下你的情境。'); return; }
   const full = buildSystemPrompt() + text;
   document.getElementById('promptOut').textContent = full;
   try{
     await navigator.clipboard.writeText(full);
-    appendMsg('sys', '提示詞已複製，請到 ChatGPT 貼上（Ctrl+V / Cmd+V）。');
+    appendMsg('sys', '提示詞已複製，請到 ChatGPT 貼上。');
   }catch(e){
-    appendMsg('sys', '自動複製失敗，請手動選取上方文字並複製。');
+    appendMsg('sys', '自動複製失敗，請展開「查看提示詞內容」手動複製。');
   }
   if(!currentRole){
-    appendMsg('sys', '提醒：你還沒在「角色選擇」分頁儲存角色，所以這份提示詞沒有包含你的位置與角色。');
+    appendMsg('sys', '提醒：你還沒在「角色選擇」分頁儲存角色。');
   }
   appendMsg('user', text);
   addToLog('user', text);
+  document.getElementById('chatInput').value = '';
 }
 function openChatGPT(){
   window.open('https://chatgpt.com/', '_blank');
 }
 function appendMsg(role, text){
   const win = document.getElementById('chatWindow');
+  const empty = win.querySelector('.msg.sys.empty');
+  if(empty) empty.remove();
   const div = document.createElement('div');
   div.className = 'msg ' + role;
   div.textContent = text;
   win.appendChild(div);
   win.scrollTop = win.scrollHeight;
 }
-function logExchange(){
+function logExchange(role){
   const text = document.getElementById('pasteBack').value.trim();
   if(!text) return;
-  appendMsg('ai', text);
-  addToLog('ai', text);
+  appendMsg(role, text);
+  addToLog(role, text);
   document.getElementById('pasteBack').value = '';
 }
 
 // ---------- 對話紀錄保存（存在這台裝置的瀏覽器，重新整理不會消失） ----------
 const LOG_KEY = 'chat:reflectionLog';
-const CHAT_INTRO = '把你在 ChatGPT 得到的回覆貼回下方，可以留下完整的戰術思考紀錄。';
 
+function resetChatWindow(){
+  document.getElementById('chatWindow').innerHTML = '<div class="msg sys empty">還沒有對話紀錄。</div>';
+}
 function addToLog(role, text){
-  reflectionLog.push({role, text, mode: chatMode, at: new Date().toISOString()});
+  reflectionLog.push({role, text, mode: chatMode, game: currentGameTag(), at: new Date().toISOString()});
   saveLog();
 }
 async function saveLog(){
@@ -1613,14 +1618,12 @@ async function saveLog(){
   catch(e){ console.warn('對話紀錄儲存失敗（可能是瀏覽器空間不足）', e); }
 }
 async function restoreLog(){
+  resetChatWindow();
   try{
     const res = await window.storage.get(LOG_KEY, false);
     if(!res) return;
     reflectionLog = JSON.parse(res.value) || [];
     reflectionLog.forEach(item=>appendMsg(item.role, item.text));
-    if(reflectionLog.length){
-      appendMsg('sys', `已載入先前保存的 ${reflectionLog.length} 則對話紀錄。`);
-    }
   }catch(e){ reflectionLog = []; }
 }
 async function clearLog(){
@@ -1628,24 +1631,30 @@ async function clearLog(){
   if(!confirm('確定要清除全部對話紀錄嗎？清除後無法復原，建議先下載保存。')) return;
   reflectionLog = [];
   try{ await window.storage.delete(LOG_KEY); }catch(e){}
-  document.getElementById('chatWindow').innerHTML = '';
-  appendMsg('sys', CHAT_INTRO);
+  resetChatWindow();
+}
+function logEntryLabel(item){
+  const who = item.role==='user' ? '我' : 'AI';
+  const parts = [item.game, item.mode ? MODE_NAME[item.mode] : ''].filter(Boolean);
+  return parts.length ? `【${parts.join('｜')}｜${who}】` : `【${who}】`;
+}
+function buildLogText(){
+  const roleText = currentRole ? `${currentRole.teamRole}／${currentRole.position}` : '未設定';
+  const body = reflectionLog.map(item=>{
+    const when = item.at ? new Date(item.at).toLocaleString('zh-TW') : '';
+    return `${logEntryLabel(item)} ${when}\n${item.text}`;
+  }).join('\n\n----------\n\n');
+  return `COURT.AI 戰術思考對話紀錄\n學生：${signedInName || '未登入'}\n角色：${roleText}\n匯出時間：${new Date().toLocaleString('zh-TW')}\n\n${body}`;
 }
 function downloadLog(){
   if(!reflectionLog.length){ alert('目前還沒有對話紀錄。'); return; }
-  const modeName = {proactive:'前瞻性', reactive:'反應性'};
-  const roleText = currentRole ? `${currentRole.teamRole}／${currentRole.position}` : '未設定';
-  const body = reflectionLog.map(item=>{
-    const who = item.role==='user' ? '【我問】' : '【ChatGPT答】';
-    const when = item.at ? new Date(item.at).toLocaleString('zh-TW') : '';
-    const mode = item.mode ? `（${modeName[item.mode] || item.mode}後設認知）` : '';
-    return `${who} ${when} ${mode}\n${item.text}`;
-  }).join('\n\n----------\n\n');
-  const header = `COURT.AI 戰術思考對話紀錄\n角色：${roleText}\n匯出時間：${new Date().toLocaleString('zh-TW')}\n\n`;
-  const blob = new Blob([header + body], {type:'text/plain;charset=utf-8'});
+  const blob = new Blob([buildLogText()], {type:'text/plain;charset=utf-8'});
+  triggerDownload(blob, '籃球戰術對話紀錄.txt');
+}
+function triggerDownload(blob, filename){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = '籃球戰術對話紀錄.txt';
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1653,220 +1662,57 @@ function downloadLog(){
 }
 restoreLog();
 
-// ---------- 知識族譜（關鍵詞偵測 + 共現關聯，不涉及語意理解）----------
-function truncateForNode(s, n){
-  const clean = s.replace(/["“”]/g, "'").replace(/\n/g, ' ').trim();
-  return clean.length > n ? clean.slice(0, n) + '…' : clean;
-}
-function escapeMermaid(s){
-  return s.replace(/"/g, "'");
-}
-
-// 籃球戰術概念詞庫：偵測對話中出現哪些概念，並依類別上色
-const CONCEPT_LEXICON = [
-  // 進攻概念
-  {key:'擋拆',   cat:'offense', terms:['擋拆','掩護','pick and roll','pick-and-roll','設檔','做檔']},
-  {key:'切入',   cat:'offense', terms:['切入','突破','過人','上籃']},
-  {key:'傳球選擇', cat:'offense', terms:['傳球','導球','分球','助攻','傳導']},
-  {key:'跑位',   cat:'offense', terms:['跑位','走位','無球','空手','移位']},
-  {key:'空間拉開', cat:'offense', terms:['空間','拉開','拉出來','spacing','外線牽制']},
-  {key:'投籃出手', cat:'offense', terms:['投籃','出手','三分','跳投','打板']},
-  {key:'快攻',   cat:'offense', terms:['快攻','轉換','推進','早攻']},
-  {key:'低位單打', cat:'offense', terms:['低位','單打','背框','卡位進攻']},
-
-  // 防守概念
-  {key:'盯人防守', cat:'defense', terms:['盯人','人盯人','一對一防守','貼防']},
-  {key:'區域聯防', cat:'defense', terms:['區域','聯防','zone','2-3','3-2','1-3-1']},
-  {key:'包夾',   cat:'defense', terms:['包夾','夾擊','двойной','double team','兩個人守']},
-  {key:'換防',   cat:'defense', terms:['換防','換人守','switch','輪換防守']},
-  {key:'協防補位', cat:'defense', terms:['協防','補防','補位','幫忙守','輪轉']},
-  {key:'籃板卡位', cat:'defense', terms:['籃板','卡位','搶板','box out']},
-  {key:'防守腳步', cat:'defense', terms:['防守腳步','滑步','橫移','跟上']},
-
-  // 認知／後設認知
-  {key:'辨識線索', cat:'meta',   terms:['觀察','辨識','注意到','看到','線索','判讀','讀防守']},
-  {key:'預測結果', cat:'meta',   terms:['預測','預判','猜','可能會','預期','推測']},
-  {key:'策略選擇', cat:'meta',   terms:['選擇','決定','策略','方案','打法','戰術選']},
-  {key:'說明理由', cat:'meta',   terms:['因為','理由','原因','為什麼','所以我']},
-  {key:'反思修正', cat:'meta',   terms:['反思','檢討','修正','調整','下次','改進','回看']},
-  {key:'不確定感', cat:'meta',   terms:['不知道','不確定','卡住','沒想法','空白','猶豫','遲疑']},
-
-  // 情境條件
-  {key:'時間壓力', cat:'context', terms:['剩下','秒','讀秒','最後一分鐘','時間不多','24秒']},
-  {key:'體能狀態', cat:'context', terms:['體力','累','喘','疲勞','受不了']},
-  {key:'比分落後', cat:'context', terms:['落後','輸','追分','差幾分']},
-  {key:'隊友配合', cat:'context', terms:['隊友','夥伴','同伴','配合','默契']},
-  {key:'對手特性', cat:'context', terms:['對手','對方','敵隊','他們很','對面']},
-  {key:'犯規判罰', cat:'context', terms:['犯規','裁判','吹','判罰','罰球']}
-];
-
-const CAT_STYLE = {
-  offense: {cls:'cOff',  label:'進攻'},
-  defense: {cls:'cDef',  label:'防守'},
-  meta:    {cls:'cMeta', label:'後設認知'},
-  context: {cls:'cCtx',  label:'情境條件'}
-};
-
-function detectConcepts(text){
-  const lower = text.toLowerCase();
-  const found = [];
-  CONCEPT_LEXICON.forEach(c=>{
-    if(c.terms.some(t => lower.includes(t.toLowerCase()))){
-      found.push(c);
-    }
-  });
-  return found;
-}
-
-function buildKnowledgeGraph(){
-  // 1. 掃描每一則訊息，找出裡面出現的概念
-  const nodeCount = {};   // key -> 出現次數
-  const nodeCat = {};     // key -> 類別
-  const edgeCount = {};   // "A|B" -> 共同出現次數
-
-  reflectionLog.forEach(item=>{
-    const concepts = detectConcepts(item.text);
-    const keys = [...new Set(concepts.map(c=>c.key))];
-    keys.forEach(k=>{
-      nodeCount[k] = (nodeCount[k] || 0) + 1;
-      const def = CONCEPT_LEXICON.find(c=>c.key===k);
-      if(def) nodeCat[k] = def.cat;
-    });
-    // 同一則訊息裡一起出現的概念 → 建立關聯
-    for(let i=0;i<keys.length;i++){
-      for(let j=i+1;j<keys.length;j++){
-        const pair = [keys[i], keys[j]].sort().join('|');
-        edgeCount[pair] = (edgeCount[pair] || 0) + 1;
-      }
-    }
-  });
-
-  return {nodeCount, nodeCat, edgeCount};
-}
-
-function conceptNodeId(key){
-  const idx = CONCEPT_LEXICON.findIndex(c=>c.key===key);
-  return 'N' + (idx >= 0 ? idx : Math.abs(key.length));
-}
-
-async function generateMindMap(){
-  const container = document.getElementById('mindmapContainer');
-  if(reflectionLog.length === 0){
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">目前還沒有任何對話紀錄，先送出問題、貼回 ChatGPT 的回覆後，再產出知識族譜。</p>';
-    return;
-  }
-
-  const {nodeCount, nodeCat, edgeCount} = buildKnowledgeGraph();
-  const keys = Object.keys(nodeCount);
-
-  if(keys.length === 0){
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">在目前的對話裡沒有偵測到詞庫中的籃球戰術概念。可以先多累積幾輪對話，或改用下方的「AI 概念圖分析」，由 ChatGPT 直接讀懂你的內容。</p>';
-    return;
-  }
-
-  let graph = 'graph LR\n';
-
-  // 節點：標籤帶出現次數，讓學生看得出哪些概念反覆出現
-  keys.forEach(k=>{
-    const id = conceptNodeId(k);
-    const n = nodeCount[k];
-    graph += `  ${id}["${escapeMermaid(k)}<br/>提及 ${n} 次"]\n`;
-  });
-
-  // 連線：共現次數越多，線越粗（用不同箭頭表示）
-  Object.keys(edgeCount).forEach(pair=>{
-    const [a, b] = pair.split('|');
-    const w = edgeCount[pair];
-    const arrow = w >= 3 ? '===' : (w >= 2 ? '-->' : '-.->');
-    graph += `  ${conceptNodeId(a)} ${arrow}|同時出現 ${w} 次| ${conceptNodeId(b)}\n`;
-  });
-
-  // 依類別上色
-  graph += `
-  classDef cOff fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
-  classDef cDef fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
-  classDef cMeta fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
-  classDef cCtx fill:#1a2b1a,stroke:#7ea87f,stroke-width:2px,color:#d4ecd5;
-`;
-  Object.keys(CAT_STYLE).forEach(cat=>{
-    const members = keys.filter(k=>nodeCat[k]===cat).map(conceptNodeId);
-    if(members.length){
-      graph += `  class ${members.join(',')} ${CAT_STYLE[cat].cls};\n`;
-    }
-  });
-
-  container.innerHTML = '';
-  const pre = document.createElement('pre');
-  pre.className = 'mermaid';
-  pre.textContent = graph;
-  container.appendChild(pre);
-
-  try{
-    if(typeof mermaid === 'undefined'){
-      container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">繪圖工具載入失敗，請確認網路連線後重新整理頁面再試一次。</p>';
-      return;
-    }
-    await mermaid.run({nodes:[pre]});
-
-    // 圖下方補一個圖例，說明顏色與線條代表什麼
-    const legend = document.createElement('div');
-    legend.className = 'graph-legend';
-    legend.innerHTML = `
-      <span class="lg-item"><i class="lg-dot" style="background:#ff5a1f;"></i>進攻概念</span>
-      <span class="lg-item"><i class="lg-dot" style="background:#22d3ee;"></i>防守概念</span>
-      <span class="lg-item"><i class="lg-dot" style="background:#a78bfa;"></i>後設認知</span>
-      <span class="lg-item"><i class="lg-dot" style="background:#7ea87f;"></i>情境條件</span>
-      <span class="lg-item">線越粗＝這兩個概念越常一起被你提到</span>
-    `;
-    container.appendChild(legend);
-  }catch(e){
-    console.error(e);
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">知識族譜產生時發生錯誤，請再試一次。</p>';
-  }
-}
-
-// ---------- AI 知識族譜分析（交給 ChatGPT 做語意分析，本平台只負責渲染） ----------
+// ---------- 思考族譜：交給 ChatGPT 做語意分析，本平台只負責繪圖 ----------
+// 重點是呈現「學生自己的思考路徑」與後設認知策略，而不是 AI 講了哪些戰術名詞。
 function buildConceptMapPrompt(){
-  const transcript = reflectionLog.map(item =>
-    (item.role==='user' ? '【我問】' : '【ChatGPT答】') + item.text
-  ).join('\n\n');
+  const transcript = reflectionLog.map(item => logEntryLabel(item) + item.text).join('\n\n');
 
-  return `你好，以下是我在籃球課戰術討論中，累積和你對話的完整紀錄。
+  return `你好，以下是我在大學籃球課中，和 AI 戰術教練對話的完整紀錄（可能橫跨好幾場比賽）。
+標記說明：【我】是我自己說的話，【AI】是 AI 教練的回覆；前面可能有場次，以及「前瞻性」（事前規劃）或「反應性」（事後調整）的標記。
 
-想請你幫我把這些對話整理成一張「知識族譜（knowledge graph）」。
+請幫我畫一張「思考族譜」，呈現**我自己的思考路徑**和我用了哪些後設認知策略。
 
-具體要求：
-1. 先讀完所有對話，抽取出裡面出現的**核心概念節點**（例如：擋拆、換防、時間壓力、辨識線索、我常卡住的判斷點等），不要用我講過的整句話當節點，要濃縮成 2-6 個字的概念名稱。
-2. 找出概念之間的**關聯**，並且**在每條連線上標註關係**（例如「導致」「需要先具備」「是…的前提」「常同時出現」「被…破解」等），這樣才看得出知識之間的結構，而不只是分支。
-3. 把概念依性質分成四類，並用 Mermaid 的 classDef 上色：
-   - 進攻概念 → class cOff
-   - 防守概念 → class cDef
-   - 後設認知／思考歷程 → class cMeta
-   - 情境條件（時間、體能、比分、對手特性等）→ class cCtx
+規則：
+1. 節點只來自【我】說的話，不要把 AI 說的內容當成我的想法。
+2. 每個節點寫成「階段：內容」，內容濃縮成 12 個字以內，例如「預測：對方會換防」。
+3. 階段只能是以下七種之一，並用對應的 class 上色：
+   - 辨識線索 → cCue
+   - 預測結果 → cPredict
+   - 提出策略 → cPlan
+   - 說明理由 → cReason
+   - 實際驗證 → cCheck
+   - 反思修正 → cReflect
+   - 卡住／不確定 → cStuck
+4. 依照時間順序用箭頭連接，呈現我的思考是怎麼一步步走的。
+5. 如果是 AI 的某個提問讓我往前推進，就在那條箭頭上寫「AI追問：…」（10 字以內）；如果是我自己想到的，就不用標註。
+6. 如果有場次標記，每一場用一個 subgraph 包起來，標題寫場次。
+7. 所有節點文字都要用雙引號包住，例如 A1["預測：對方會換防"]。
 
-【輸出格式要求，請務必遵守】
-請只回覆一個「純文字的程式碼區塊」（用三個反引號 \`\`\` 包住），裡面放 Mermaid 語法本身；
-不要另外把它畫成圖表或用任何繪圖工具渲染顯示，也不要加其他說明文字——因為我需要複製這段純文字，貼到我自己的分析工具裡渲染。
-如果你的介面自動把它渲染成圖，麻煩額外在下面用文字重複一次同樣內容的程式碼區塊給我。
-
-請使用 graph LR（由左至右）的格式，並在最後附上這段固定的 classDef 設定：
+【輸出格式，請務必遵守】
+先用一個「純文字程式碼區塊」（三個反引號）給我 Mermaid 語法，不要畫成圖。格式如下（只是範例，內容請依我的對話產生）：
 
 \`\`\`
-graph LR
-  A["擋拆"] -->|被…破解| B["換防"]
-  B -->|需要| C["協防補位"]
-  C -.->|常同時出現| D["時間壓力"]
+graph TD
+  subgraph G1["第1場 vs 化工系"]
+    A1["辨識線索：對方中鋒護框強"] --> A2["預測：切入會被封阻"]
+    A2 -->|AI追問：外線誰有空檔| A3["提出策略：先拉開再傳"]
+  end
+  A3 --> B1["卡住：被換防後愣住"]
 
-  classDef cOff fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
-  classDef cDef fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
-  classDef cMeta fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
-  classDef cCtx fill:#1a2b1a,stroke:#7ea87f,stroke-width:2px,color:#d4ecd5;
-  class A cOff;
-  class B,C cDef;
-  class D cCtx;
+  classDef cCue fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
+  classDef cPredict fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
+  classDef cPlan fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
+  classDef cReason fill:#3a330d,stroke:#facc15,stroke-width:2px,color:#fdf2c4;
+  classDef cCheck fill:#0f2e1c,stroke:#3ddc84,stroke-width:2px,color:#cdf5dd;
+  classDef cReflect fill:#3a0d2b,stroke:#f472b6,stroke-width:2px,color:#fbd3ea;
+  classDef cStuck fill:#2b0d10,stroke:#ff4d5e,stroke-width:2px,stroke-dasharray:5 3,color:#ffd1d6;
+  class A1 cCue;
+  class A2 cPredict;
+  class A3 cPlan;
+  class B1 cStuck;
 \`\`\`
 
-（上面只是格式範例，實際的節點、關係與分類請完全依照我的對話內容產生。）
+程式碼區塊之後，請再用 3 個問題（不要給評價或答案）引導我反思：我比較少用到哪些階段？我通常在哪裡卡住？下一場我可以多練習什麼？
 
 我的對話紀錄如下：
 ---
@@ -1875,16 +1721,19 @@ ${transcript}
 }
 
 async function buildAndCopyConceptPrompt(){
-  if(reflectionLog.length === 0){
-    document.getElementById('conceptPromptOut').textContent = '目前還沒有任何對話紀錄，先送出問題、把 ChatGPT 的回覆貼回上方的對話紀錄，再回來產出概念圖。';
+  const out = document.getElementById('conceptPromptOut');
+  if(!reflectionLog.some(item=>item.role==='user')){
+    alert('目前還沒有「我說的」對話紀錄。請先在上方把你和 AI 的對話貼回來。');
     return;
   }
   const full = buildConceptMapPrompt();
-  document.getElementById('conceptPromptOut').textContent = full;
+  out.textContent = full;
   try{
     await navigator.clipboard.writeText(full);
+    alert('分析提示詞已複製，請到 ChatGPT 貼上。');
   }catch(e){
-    // 複製失敗時，文字仍會顯示在畫面上，可手動選取複製
+    out.closest('details').open = true;
+    alert('自動複製失敗，請手動複製下方展開的提示詞。');
   }
 }
 
@@ -1894,11 +1743,18 @@ function extractMermaidCode(raw){
   return raw.trim();
 }
 
+const GRAPH_LEGEND = [
+  ['#22d3ee','辨識線索'], ['#a78bfa','預測結果'], ['#ff5a1f','提出策略'], ['#facc15','說明理由'],
+  ['#3ddc84','實際驗證'], ['#f472b6','反思修正'], ['#ff4d5e','卡住／不確定']
+];
+
 async function renderConceptMap(){
   const raw = document.getElementById('conceptMermaidInput').value.trim();
   const container = document.getElementById('conceptMapContainer');
+  const submitBox = document.getElementById('graphSubmitBox');
+  submitBox.hidden = true;
   if(!raw){
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">請先貼上 ChatGPT 回覆的 Mermaid 語法。</p>';
+    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">請先貼上 ChatGPT 回覆的程式碼。</p>';
     return;
   }
   const code = extractMermaidCode(raw);
@@ -1915,12 +1771,79 @@ async function renderConceptMap(){
       return;
     }
     await mermaid.run({nodes:[pre]});
+    const legend = document.createElement('div');
+    legend.className = 'graph-legend';
+    legend.innerHTML = GRAPH_LEGEND.map(([c,l])=>`<span class="lg-item"><i class="lg-dot" style="background:${c};"></i>${l}</span>`).join('');
+    container.appendChild(legend);
+    submitBox.hidden = false;
+    document.getElementById('graphSubmitStatus').textContent = '會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。';
+    document.getElementById('graphSubmitStatus').style.color = '';
   }catch(e){
     console.error(e);
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">這段語法無法正確渲染，請確認貼上的內容是完整的 Mermaid 語法（可能需要回 ChatGPT 請它修正格式後再試一次）。</p>';
+    container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">這段語法無法繪製，請確認貼上的是完整的程式碼（可以請 ChatGPT 修正格式後再試一次）。</p>';
   }
 }
-// ---------- 下載知識族譜為 PNG 圖片 ----------
+
+// ---------- 繳交思考族譜到雲端硬碟（與比賽影片同一個小隊資料夾） ----------
+function setGraphStatus(text, color){
+  const el = document.getElementById('graphSubmitStatus');
+  el.textContent = text;
+  el.style.color = color || '';
+}
+function fileStamp(){
+  const d = new Date(), p = n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+}
+function safeFileName(s){ return (s || '').replace(/[\\/:*?"<>|]/g, '').trim(); }
+
+async function submitKnowledgeGraph(){
+  if(!document.querySelector('#conceptMapContainer svg')){
+    setGraphStatus('請先完成上面的步驟，畫出你的思考族譜。', 'var(--danger)');
+    return;
+  }
+  // 授權視窗必須在按鈕點擊的當下開啟，否則會被瀏覽器擋成彈出視窗
+  if(!driveTokenValid()){
+    setGraphStatus('請在跳出的視窗授權 Google 雲端硬碟，授權完成後會自動繳交……');
+    if(!connectDrive(()=>submitKnowledgeGraph())){
+      setGraphStatus('Google 授權服務無法載入，請重新整理頁面後再試。', 'var(--danger)');
+    }
+    return;
+  }
+  const roster = await loadRoster();
+  if(!roster.length){
+    setGraphStatus('請先到「03 我的比賽片段」填寫小隊成員名單，族譜會放進同一個小隊資料夾。', 'var(--danger)');
+    return;
+  }
+  const btn = document.getElementById('graphSubmitBtn');
+  btn.disabled = true;
+  try{
+    setGraphStatus('正在轉成圖片……');
+    const png = await diagramToPngBlob('conceptMapContainer');
+    const folderName = getFolderName(roster);
+    const folderId = await getTeamFolder(folderName);
+    const shared = await shareFolderWithTeacher(folderId);
+    const base = `${safeFileName(signedInName) || '學生'}_${fileStamp()}`;
+
+    await uploadFileToDrive(png, `思考族譜_${base}.png`, folderId, p=>{
+      setGraphStatus(`上傳族譜中… ${Math.round(p*100)}%`);
+    });
+    if(document.getElementById('submitWithLog').checked && reflectionLog.length){
+      const txt = new Blob([buildLogText()], {type:'text/plain'});
+      await uploadFileToDrive(txt, `對話紀錄_${base}.txt`, folderId, p=>{
+        setGraphStatus(`上傳對話紀錄中… ${Math.round(p*100)}%`);
+      });
+    }
+    const shareNote = !teacherEmail ? '' : shared ? '，並已分享給老師' : '（自動分享給老師失敗，請自行把資料夾分享給老師）';
+    setGraphStatus(`已繳交到「${folderName}」資料夾 ✓${shareNote}`, 'var(--success)');
+  }catch(err){
+    console.error(err);
+    setGraphStatus(err.message || '繳交失敗，請再試一次。', 'var(--danger)');
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+// ---------- 族譜轉成 PNG 圖片（下載與繳交共用） ----------
 
 // 把字串安全地轉成 base64（支援中文等非 ASCII 字元）
 function svgStringToDataUri(svgString){
@@ -1957,13 +1880,10 @@ function inlineCssVariables(svgEl){
   });
 }
 
-async function downloadDiagram(containerId, filenameBase){
+async function diagramToPngBlob(containerId){
   const container = document.getElementById(containerId);
   const svg = container ? container.querySelector('svg') : null;
-  if(!svg){
-    alert('目前還沒有產生知識族譜，請先按上面的按鈕產出圖表後再下載。');
-    return;
-  }
+  if(!svg) throw new Error('目前還沒有產生族譜，請先畫出族譜。');
 
   // 量出圖的實際尺寸
   const rect = svg.getBoundingClientRect();
@@ -1989,43 +1909,36 @@ async function downloadDiagram(containerId, filenameBase){
   inlineCssVariables(svgClone);
 
   const svgString = new XMLSerializer().serializeToString(svgClone);
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  await new Promise((resolve, reject)=>{
+    img.onload = resolve;
+    img.onerror = () => reject(new Error('族譜轉成圖片失敗，請重新繪製一次再試。'));
+    img.src = svgStringToDataUri(svgString);
+  });
 
+  const scale = 2; // 兩倍解析度，列印或放進報告比較清楚
+  const canvas = document.createElement('canvas');
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  const ctx = canvas.getContext('2d');
+  // 深色底，跟平台視覺一致（PNG 若不填底色會是透明，貼進白底文件會看不清楚）
+  ctx.fillStyle = '#05060a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  if(!blob) throw new Error('族譜轉成圖片失敗，請重新繪製一次再試。');
+  return blob;
+}
+
+async function downloadDiagram(containerId, filenameBase){
   try{
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-
-    await new Promise((resolve, reject)=>{
-      img.onload = resolve;
-      img.onerror = () => reject(new Error('SVG 無法載入為圖片'));
-      img.src = svgStringToDataUri(svgString);
-    });
-
-    const scale = 2; // 兩倍解析度，列印或放進報告比較清楚
-    const canvas = document.createElement('canvas');
-    canvas.width = width * scale;
-    canvas.height = height * scale;
-    const ctx = canvas.getContext('2d');
-
-    // 深色底，跟平台視覺一致（PNG 若不填底色會是透明，貼進白底文件會看不清楚）
-    ctx.fillStyle = '#05060a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    if(!blob) throw new Error('canvas 轉檔失敗');
-
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filenameBase + '.png';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>URL.revokeObjectURL(blobUrl), 1000);
-
+    const blob = await diagramToPngBlob(containerId);
+    triggerDownload(blob, filenameBase + '.png');
   }catch(e){
     console.error('PNG 轉檔失敗', e);
-    alert('圖片轉檔失敗，請重新產出一次知識族譜後再試。若仍然失敗，可以改用螢幕截圖的方式保存。');
+    alert(e.message + ' 若仍然失敗，可以改用螢幕截圖的方式保存。');
   }
 }
 </script>
