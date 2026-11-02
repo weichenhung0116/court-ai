@@ -308,6 +308,41 @@
   .msg.sys{align-self:center;color:var(--text-dim);font-size:12px;font-style:italic;}
   .chat-input-row{display:flex;gap:10px;margin-top:14px;}
   .chat-input-row textarea{flex:1;min-height:56px;}
+  .import-steps{margin:0 0 6px;padding-left:20px;font-size:13px;line-height:1.75;color:var(--text);}
+  .import-steps li{margin-bottom:4px;}
+  .import-steps b{color:var(--cyan);}
+
+  /* ===== 後設認知評估 ===== */
+  .rubric-box{margin-top:16px;background:var(--void);border:1px solid var(--hair-strong);padding:16px;}
+  .rb-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;border-bottom:1px solid var(--hair);padding-bottom:12px;margin-bottom:14px;}
+  .rb-head h5{margin:0;font-size:14px;color:var(--text);}
+  .rb-total{font-size:26px;font-weight:800;color:var(--orange);}
+  .rb-total small{font-size:13px;color:var(--text-dim);font-weight:600;}
+  .rb-delta{font-size:12px;color:var(--text-dim);}
+  .rb-delta.up{color:var(--success);}
+  .rb-delta.down{color:var(--danger);}
+  .rb-dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:16px;}
+  .rb-dim{background:var(--panel);border:1px solid var(--hair);padding:10px 12px;}
+  .rb-dim .name{font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;}
+  .rb-dim .name span{color:var(--text-dim);font-weight:500;}
+  .rb-bar{height:6px;background:var(--hair);margin-top:8px;}
+  .rb-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--orange));}
+  .rb-group{margin-top:14px;}
+  .rb-group h6{margin:0 0 6px;font-size:12px;color:var(--cyan);letter-spacing:0.02em;}
+  .rb-item{border-top:1px solid var(--hair);padding:9px 0;display:grid;grid-template-columns:118px 1fr;gap:4px 12px;font-size:12.5px;line-height:1.6;}
+  .rb-item .ind{font-weight:700;}
+  .rb-item .ind small{display:block;font-weight:400;color:var(--text-dim);font-size:11px;}
+  .rb-lv{display:inline-block;font-size:11px;padding:1px 8px;margin-right:6px;border:1px solid var(--hair-strong);color:var(--text-dim);}
+  .rb-lv.l1{border-color:#7a6a3a;color:#e8c96a;}
+  .rb-lv.l2{border-color:var(--cyan-dim);color:var(--cyan);}
+  .rb-lv.l3{border-color:var(--orange);color:var(--orange);background:rgba(255,90,31,0.1);}
+  .rb-ev{color:var(--text-dim);font-style:italic;}
+  .rb-fb{color:var(--text);}
+  .rb-sum{margin-top:16px;border-top:1px solid var(--hair);padding-top:12px;font-size:13px;line-height:1.7;}
+  .rb-sum b{color:var(--orange);}
+  .rb-guide{font-size:12px;line-height:1.7;color:var(--text-dim);margin-top:8px;}
+  .rb-guide b{color:var(--text);}
+  @media (max-width: 600px){ .rb-item{grid-template-columns:1fr;} }
 
 
   /* ===== rules section ===== */
@@ -618,7 +653,7 @@
     <p class="section-desc">助教不會給你答案，而是用提問帶你自己想清楚。</p>
 
     <div class="flow mono">
-      <span>① 判斷時機</span><i>→</i><span>② 寫下情境</span><i>→</i><span>③ 到 ChatGPT 對話</span><i>→</i><span>④ 貼回紀錄</span><i>→</i><span>⑤ 畫出知識族譜</span>
+      <span>① 判斷時機</span><i>→</i><span>② 寫下情境</span><i>→</i><span>③ 到 ChatGPT 對話</span><i>→</i><span>④ 收尾＋一次貼回</span><i>→</i><span>⑤ 族譜與後設認知評估</span>
     </div>
 
     <h4 class="step-title">① 現在是哪一種時機？</h4>
@@ -662,44 +697,67 @@
       <div class="prompt-out" id="promptOut">尚未產生提示詞。</div>
     </details>
 
+    <p class="hint" style="margin-top:10px;">在 ChatGPT 和教練來回對話就好，<b>過程中不用貼回來</b>；聊完再做第 ④ 步。</p>
+
     <div class="chat-log">
-      <h4 class="step-title">④ 把對話貼回來</h4>
-      <p class="hint">每一輪都貼回來：<b>你說的話</b>和 <b>AI 的回覆</b>分開加入，族譜才看得出你的思考路徑。</p>
+      <h4 class="step-title">④ 聊完了：收尾，然後一次貼回</h4>
+      <ol class="import-steps">
+        <li>按「複製收尾指令」，貼到<b>同一個</b> ChatGPT 對話送出。不用再貼對話內容，ChatGPT 記得剛剛聊了什麼。</li>
+        <li>ChatGPT 回覆後，在 ChatGPT 頁面按 <b>⌘A</b>（Windows：<b>Ctrl+A</b>）全選 → 複製。<br>
+          <span class="hint">手機不好全選的話，按最後那則回覆下方的「複製」按鈕也可以（只會得到族譜和評估，不含對話全文）。</span></li>
+        <li>貼到下面的框框，按「匯入並分析」。</li>
+      </ol>
+      <div class="handoff-actions">
+        <button class="primary" onclick="buildAndCopyWrapUpPrompt()">複製收尾指令</button>
+        <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
+      </div>
+      <details class="prompt-details">
+        <summary>查看收尾指令內容</summary>
+        <div class="prompt-out" id="conceptPromptOut">尚未產生指令。</div>
+      </details>
+      <div class="chat-input-row">
+        <textarea id="importBox" placeholder="把整個 ChatGPT 對話（或最後那則回覆）貼在這裡……"></textarea>
+      </div>
+      <div class="handoff-actions">
+        <button class="primary" onclick="importChatGPT()">匯入並分析</button>
+      </div>
+      <p class="hint" id="importStatus" style="margin-top:8px;"></p>
+
+      <h4 class="step-title" style="font-size:12.5px;color:var(--text-dim);">對話紀錄（存在這台裝置）</h4>
       <div class="chat-window" id="chatWindow">
         <div class="msg sys">還沒有對話紀錄。</div>
       </div>
-      <div class="chat-input-row">
-        <textarea id="pasteBack" placeholder="貼上一段對話……"></textarea>
-      </div>
       <div class="handoff-actions">
-        <button class="primary" onclick="logExchange('user')">＋ 我說的</button>
-        <button class="primary alt" onclick="logExchange('ai')">＋ AI 回覆</button>
         <span style="flex:1;"></span>
         <button class="ghost small" onclick="downloadLog()">下載紀錄</button>
         <button class="ghost small" onclick="clearLog()">清除紀錄</button>
       </div>
+      <details class="prompt-details">
+        <summary>想把好幾個 ChatGPT 對話（好幾場比賽）合併成一張族譜？</summary>
+        <p class="hint" style="margin:8px 0;">每個對話都先用上面的方式匯入。要合併時，按下面的按鈕複製「合併分析指令」（已經包含這台裝置上的全部對話紀錄），貼到一個<b>新的</b> ChatGPT 對話，再把回覆貼回上面的框框按「匯入並分析」。</p>
+        <button class="ghost small" onclick="buildAndCopyConceptPrompt()">複製合併分析指令</button>
+      </details>
+      <details class="prompt-details">
+        <summary>備用：手動逐段加入對話</summary>
+        <div class="chat-input-row">
+          <textarea id="pasteBack" placeholder="貼上一段對話……"></textarea>
+        </div>
+        <div class="handoff-actions">
+          <button class="primary small" onclick="logExchange('user')">＋ 我說的</button>
+          <button class="primary alt small" onclick="logExchange('ai')">＋ AI 回覆</button>
+        </div>
+      </details>
     </div>
 
     <div class="mindmap-block">
-      <h4>⑤ 我的知識族譜</h4>
-      <p class="mm-desc">把累積的對話交給 ChatGPT 整理，看見自己談到哪些戰術概念、概念之間怎麼連結，以及你用了哪些後設認知策略。</p>
-      <div class="handoff-actions">
-        <button class="primary" onclick="buildAndCopyConceptPrompt()">複製分析提示詞</button>
-        <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
-      </div>
-      <details class="prompt-details">
-        <summary>查看分析提示詞內容</summary>
-        <div class="prompt-out" id="conceptPromptOut">尚未產生提示詞。</div>
-      </details>
-      <div class="chat-input-row" style="margin-top:16px;">
-        <textarea id="conceptMermaidInput" placeholder="把 ChatGPT 回覆的程式碼貼在這裡……"></textarea>
-        <button class="primary" onclick="renderConceptMap()">繪製族譜</button>
-      </div>
-      <details class="prompt-details">
-        <summary>ChatGPT 直接畫成圖、沒有給文字？</summary>
-        <p class="hint" style="margin:8px 0 0;">在那則回覆的程式碼區塊上方按「Copy code」；找不到的話，跟 ChatGPT 說「請用純文字的程式碼區塊再給我一次」。</p>
-      </details>
+      <h4>⑤ 我的知識族譜與後設認知評估</h4>
+      <p class="mm-desc">看見自己談到哪些戰術概念、概念之間怎麼連結，並依「知識族譜後設認知評估規準」檢視你的後設認知表現。</p>
       <div class="mindmap-container" id="conceptMapContainer"></div>
+      <div class="rubric-box" id="rubricContainer" hidden></div>
+      <details class="prompt-details">
+        <summary>評估規準說明</summary>
+        <div id="rubricGuide"></div>
+      </details>
 
       <div class="submit-box" id="graphSubmitBox" hidden>
         <label class="check"><input type="checkbox" id="submitWithLog" checked> 同時繳交對話紀錄（.txt）</label>
@@ -707,7 +765,7 @@
           <button class="primary" id="graphSubmitBtn" onclick="submitKnowledgeGraph()">繳交到雲端硬碟</button>
           <button class="ghost" onclick="downloadDiagram('conceptMapContainer','我的知識族譜')">下載圖片</button>
         </div>
-        <p class="hint" id="graphSubmitStatus">會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。</p>
+        <p class="hint" id="graphSubmitStatus">族譜和後設認知評估會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。</p>
       </div>
     </div>
   </section>
@@ -1639,7 +1697,7 @@ async function buildAndCopyPrompt(){
   document.getElementById('promptOut').textContent = full;
   try{
     await navigator.clipboard.writeText(full);
-    appendMsg('sys', '提示詞已複製，請到 ChatGPT 貼上。');
+    appendMsg('sys', '提示詞已複製，請到 ChatGPT 貼上。對話過程不用貼回來，聊完再到第 ④ 步一次匯入。');
   }catch(e){
     appendMsg('sys', '自動複製失敗，請展開「查看提示詞內容」手動複製。');
   }
@@ -1730,41 +1788,75 @@ function triggerDownload(blob, filename){
 }
 restoreLog();
 
-// ---------- 知識族譜：交給 ChatGPT 做語意分析，本平台只負責繪圖 ----------
-// 呈現學生談到的戰術概念、概念之間的關係，以及學生用了哪些後設認知策略。
-function buildConceptMapPrompt(){
-  const transcript = reflectionLog.map(item => logEntryLabel(item) + item.text).join('\n\n');
+// ---------- 知識族譜＋後設認知評估：交給 ChatGPT 做語意分析，本平台負責繪圖、計分與呈現 ----------
+// 呈現學生談到的戰術概念、概念之間的關係，並依「知識族譜後設認知評估規準」評估後設認知表現。
 
-  return `你好，以下是我在大學籃球課中，和 AI 戰術教練對話的完整紀錄（可能橫跨好幾場比賽）。
-標記說明：【我】是我自己說的話，【AI】是 AI 教練的回覆。
+// 知識族譜後設認知評估規準（4 個面向、12 個指標）
+const MC_RUBRIC = [
+  {dim:'後設認知知識', en:'metacognitive knowledge', items:[
+    {name:'陳述性知識', en:'declarative knowledge', desc:'對自身學習內容的理解'},
+    {name:'程序性知識', en:'procedural knowledge', desc:'對學習過程與策略的掌握'},
+    {name:'條件性知識', en:'conditional knowledge', desc:'在不同情境下運用知識的能力'}
+  ]},
+  {dim:'後設認知調節', en:'metacognitive regulation', items:[
+    {name:'計劃', en:'planning', desc:'在體育活動前設定學習目標與策略', alias:['計畫']},
+    {name:'監控', en:'monitoring', desc:'在學習過程中進行即時自我調節'},
+    {name:'評估', en:'evaluating', desc:'反思與檢核自身學習效果'},
+    {name:'意象', en:'imagery', desc:'運用心理表徵強化學習'},
+    {name:'反思', en:'reflection', desc:'回顧與改進學習策略'}
+  ]},
+  {dim:'後設認知經驗', en:'metacognitive experience', items:[
+    {name:'情緒', en:'emotion', desc:'學習過程中的情感反應與如何調整'},
+    {name:'覺察', en:'awareness', desc:'對學習狀態的主觀意識與察覺'}
+  ]},
+  {dim:'後設認知能力', en:'metacognitive ability', items:[
+    {name:'靈活性', en:'flexibility', desc:'根據不同運動情境適時調整學習策略'},
+    {name:'適應力', en:'adaptability', desc:'在挑戰或變化中維持學習表現'}
+  ]}
+];
+const MC_ITEMS = MC_RUBRIC.flatMap(d => d.items.map(it => ({...it, dim:d.dim})));
+const MC_MAX = MC_ITEMS.length * 3;
+const MC_LEVELS = [
+  ['未出現', '對話中沒有看到這個指標的表現'],
+  ['初步', '有提到，但說得籠統，沒有連結到具體的場上情境'],
+  ['發展', '說得具體，並連結到實際的場上情境'],
+  ['精熟', '具體、說明理由，並能比較不同做法或說出情境改變時要怎麼調整']
+];
 
-想請你幫我把這些對話整理成一張「知識族譜（knowledge graph）」。
+function rubricPromptText(){
+  const lines = MC_RUBRIC.map(d =>
+    `【${d.dim}】\n` + d.items.map(it => `- ${it.name}：${it.desc}`).join('\n')
+  ).join('\n');
+  const lv = MC_LEVELS.map(([n,d],i) => `${i} ${n}：${d}`).join('\n');
+  return `${lines}\n\n等級（每個指標 0–3）：\n${lv}`;
+}
 
-具體要求：
-1. 先讀完所有對話，抽取出**我自己說的話**裡出現的核心概念節點（例如：擋拆、換防、時間壓力等）。不要把 AI 說的內容當成我的想法；不要用整句話當節點，要濃縮成 2-6 個字的概念名稱。
-2. 找出概念之間的**關聯**，並且**在每條連線上標註關係**（例如「導致」「需要先具備」「是…的前提」「常同時出現」「被…破解」等），這樣才看得出知識之間的結構，而不只是分支。
-3. 我用過的後設認知策略也要畫成節點，名稱只能用這六個：辨識線索、預測結果、提出策略、說明理由、實際驗證、反思修正；如果我有卡住或不確定的地方，加一個「卡住」節點。請把這些節點連到它們作用的戰術概念上（例如「預測結果」-->|用在| 「換防」）。我沒用到的策略就不要畫。
-4. 把概念依性質分成四類，並用 Mermaid 的 classDef 上色：
-   - 進攻概念 → class cOff
-   - 防守概念 → class cDef
-   - 後設認知策略（含「卡住」）→ class cMeta
-   - 情境條件（時間、體能、比分、對手特性等）→ class cCtx
+function analysisInstructions(){
+  return `一、知識族譜
+1. 從我自己說的話裡抽取核心概念節點（例如：擋拆、換防、時間壓力等），濃縮成 2-6 個字的概念名稱；不要把 AI 說的內容當成我的想法，也不要用整句話當節點。
+2. 找出概念之間的關聯，並在每條連線上標註關係（例如「導致」「需要先具備」「是…的前提」「常同時出現」「被…破解」等）。
+3. 我用過的後設認知策略也畫成節點，名稱只能用這六個：辨識線索、預測結果、提出策略、說明理由、實際驗證、反思修正；我有卡住或不確定的地方，加一個「卡住」節點。把這些節點連到它們作用的戰術概念上（例如「預測結果」-->|用在| 「換防」）。沒用到的策略不要畫。
+4. 用 graph LR，所有節點文字都用雙引號包住，並用下面固定的 classDef 分四類上色：進攻概念 cOff、防守概念 cDef、後設認知策略（含「卡住」）cMeta、情境條件（時間、體能、比分、對手特性等）cCtx。
 
-【輸出格式要求，請務必遵守】
-請先回覆一個「純文字的程式碼區塊」（用三個反引號 \`\`\` 包住），裡面放 Mermaid 語法本身；
-不要把它畫成圖表或用任何繪圖工具渲染顯示——因為我需要複製這段純文字，貼到我自己的分析工具裡渲染。
-所有節點文字都要用雙引號包住，例如 A["擋拆"]。
+二、後設認知評估
+依照下面的「知識族譜後設認知評估規準」，為 12 個指標各給一個等級：
+${rubricPromptText()}
 
-請使用 graph LR（由左至右）的格式，並在最後附上這段固定的 classDef 設定：
+評分原則：
+- 只看我自己說過的話，有證據才給分，寧可保守。
+- 證據要直接引用我的原話（20 字以內）；沒有證據就寫「無」，等級給 0。
+- 回饋用教練的口吻寫一句話，具體指出下一步可以怎麼做，但不要直接告訴我該打什麼戰術。
 
-\`\`\`
+【輸出格式，請務必遵守】
+整個回覆只要一個純文字程式碼區塊（用三個反引號包住），不要畫成圖表、不要用任何繪圖工具，因為我要把文字貼到我自己的分析工具。程式碼區塊內容依序如下，標記行（===GRAPH=== 等）要原樣保留：
+
+===GRAPH===
 graph LR
   A["擋拆"] -->|被…破解| B["換防"]
   B -->|需要| C["協防補位"]
   C -.->|常同時出現| D["時間壓力"]
   M1["預測結果"] -->|用在| B
   M2["卡住"] -.->|發生在| C
-
   classDef cOff fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
   classDef cDef fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
   classDef cMeta fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
@@ -1773,11 +1865,33 @@ graph LR
   class B,C cDef;
   class D cCtx;
   class M1,M2 cMeta;
-\`\`\`
+===RUBRIC===
+${MC_ITEMS.map(it => `${it.name} | 等級數字 | 證據 | 回饋`).join('\n')}
+總結 | 一兩句話描述我整體的後設認知表現
+下一步 | 下一場最值得練習的一件事
+===END===
 
-（上面只是格式範例，實際的節點、關係與分類請完全依照我的對話內容產生。）
+（族譜部分只是格式範例，實際的節點、關係與分類請完全依照我的對話內容產生；RUBRIC 每一行用「 | 」分隔四個欄位，12 個指標都要有。）`;
+}
 
-程式碼區塊之後，請再用 3 個問題（不要給評價或答案）引導我反思：我比較少用到哪些後設認知策略？我通常在哪裡卡住？下一場我可以多練習什麼？
+// 收尾指令：貼到同一個 ChatGPT 對話，ChatGPT 已經記得對話內容，所以不用附上紀錄
+const WRAPUP_TAG = '【COURT.AI 收尾分析】';
+const MERGE_TAG = '【COURT.AI 合併分析】';
+function buildWrapUpPrompt(){
+  return `${WRAPUP_TAG}
+謝謝你剛剛陪我想！我們的對話到這裡告一段落，請根據「這個對話裡我（使用者）自己說過的話」幫我做收尾分析。
+注意：我第一則訊息前段的教練設定說明不是我的想法；你（AI）說的話也不算是我的想法。
+
+${analysisInstructions()}`;
+}
+// 合併分析：跨好幾個 ChatGPT 對話時，把這台裝置上的完整紀錄一起附上
+function buildConceptMapPrompt(){
+  const transcript = reflectionLog.map(item => logEntryLabel(item) + item.text).join('\n\n');
+  return `${MERGE_TAG}
+你好，以下是我在大學籃球課中，和 AI 戰術教練對話的完整紀錄（可能橫跨好幾場比賽）。
+標記說明：【我】是我自己說的話，【AI】是 AI 教練的回覆。請根據我自己說的話幫我做分析。
+
+${analysisInstructions()}
 
 我的對話紀錄如下：
 ---
@@ -1785,20 +1899,152 @@ ${transcript}
 ---`;
 }
 
-async function buildAndCopyConceptPrompt(){
+async function copyPromptToClipboard(full, okMsg){
   const out = document.getElementById('conceptPromptOut');
-  if(!reflectionLog.some(item=>item.role==='user')){
-    alert('目前還沒有「我說的」對話紀錄。請先在上方把你和 AI 的對話貼回來。');
-    return;
-  }
-  const full = buildConceptMapPrompt();
   out.textContent = full;
   try{
     await navigator.clipboard.writeText(full);
-    alert('分析提示詞已複製，請到 ChatGPT 貼上。');
+    setImportStatus(okMsg);
   }catch(e){
     out.closest('details').open = true;
-    alert('自動複製失敗，請手動複製下方展開的提示詞。');
+    setImportStatus('自動複製失敗，請手動複製下方展開的指令。', 'var(--danger)');
+  }
+}
+function buildAndCopyWrapUpPrompt(){
+  copyPromptToClipboard(buildWrapUpPrompt(), '收尾指令已複製 ✓ 請貼到「同一個」ChatGPT 對話送出，回覆後全選複製整頁，再貼回下面的框框。');
+}
+async function buildAndCopyConceptPrompt(){
+  if(!reflectionLog.some(item=>item.role==='user')){
+    alert('目前還沒有「我說的」對話紀錄。請先把對話匯入。');
+    return;
+  }
+  const details = document.getElementById('conceptPromptOut').closest('details');
+  await copyPromptToClipboard(buildConceptMapPrompt(), '合併分析指令已複製 ✓ 請貼到「新的」ChatGPT 對話，再把回覆貼回下面的框框。');
+  details.scrollIntoView({block:'nearest'});
+}
+
+function setImportStatus(text, color){
+  const el = document.getElementById('importStatus');
+  el.textContent = text;
+  el.style.color = color || '';
+}
+
+// ---------- 解析從 ChatGPT 貼回來的內容 ----------
+// 全選複製 ChatGPT 頁面時，每則訊息前會有「You said:／ChatGPT said:」（中文介面為「你說：／ChatGPT 說：」）這類標記。
+const TURN_LABEL_RE = /^[ \t]*(?:#+\s*)?(You said|你說|您說|User|使用者|ChatGPT said|ChatGPT\s*說|ChatGPT|Assistant)\s*[:：]\s*/i;
+const NOISE_LINE_RE = /^\s*(Copy code|複製程式碼|複製代碼|Copy|複製|Edit|編輯|mermaid|plaintext|text|Thought for .*|已思考.*|ChatGPT can make mistakes.*|ChatGPT 可能會出錯.*|ChatGPT 也可能會犯錯.*)\s*$/i;
+
+function splitTurns(raw){
+  const turns = [];
+  let cur = null;
+  raw.split('\n').forEach(line=>{
+    const m = line.match(TURN_LABEL_RE);
+    if(m){
+      if(cur) turns.push(cur);
+      const isUser = /^(You said|你說|您說|User|使用者)$/i.test(m[1].trim());
+      cur = {role: isUser ? 'user' : 'ai', lines: []};
+      const rest = line.slice(m[0].length);
+      if(rest.trim()) cur.lines.push(rest);
+    }else if(cur){
+      cur.lines.push(line);
+    }
+  });
+  if(cur) turns.push(cur);
+  return turns.map(t => ({
+    role: t.role,
+    text: t.lines.filter(l => !NOISE_LINE_RE.test(l)).join('\n').replace(/\n{3,}/g, '\n\n').trim()
+  })).filter(t => t.text);
+}
+
+// 取出 ===GRAPH=== … ===RUBRIC=== … ===END=== 區塊；收尾指令本身也含格式範例，所以從最後一個往前找第一個有效的
+function extractAnalysis(raw){
+  const re = /={2,}\s*GRAPH\s*={2,}([\s\S]*?)={2,}\s*RUBRIC\s*={2,}([\s\S]*?)(?:={2,}\s*END\s*={2,}|$)/gi;
+  const found = [...raw.matchAll(re)].reverse();
+  for(const m of found){
+    const rubric = parseRubric(m[2]);
+    if(rubric.scored >= 6){
+      return {graph: cleanMermaid(m[1]), rubric};
+    }
+  }
+  return null;
+}
+function cleanMermaid(s){
+  const code = s.replace(/```(?:mermaid)?/gi, '').split('\n').filter(l => !NOISE_LINE_RE.test(l)).join('\n').trim();
+  return code;
+}
+function parseRubric(text){
+  const levels = {}, evidence = {}, feedback = {};
+  let summary = '', next = '', scored = 0;
+  text.split('\n').forEach(line=>{
+    const parts = line.replace(/^[\s\-*•]+/, '').split(/\s*[|｜]\s*/);
+    if(parts.length < 2) return;
+    const key = parts[0].replace(/[*`]/g, '').trim();
+    if(/^總結/.test(key)){ summary = parts.slice(1).join('｜').trim(); return; }
+    if(/^下一步/.test(key)){ next = parts.slice(1).join('｜').trim(); return; }
+    const item = MC_ITEMS.find(it => key.includes(it.name) || (it.alias||[]).some(a => key.includes(a)));
+    if(!item || item.name in levels) return;
+    const lv = parseInt((parts[1]||'').replace(/[^0-3]/g, '').charAt(0), 10);
+    if(isNaN(lv)) return;
+    levels[item.name] = lv;
+    const ev = (parts.length >= 4 ? parts.slice(2, -1).join('｜') : parts[2] || '').trim();
+    evidence[item.name] = /^(無|none|n\/a|-)?$/i.test(ev) ? '' : ev.replace(/^[「"“]|[」"”]$/g, '');
+    feedback[item.name] = parts.length >= 4 ? parts[parts.length-1].trim() : '';
+    scored++;
+  });
+  return {levels, evidence, feedback, summary, next, scored};
+}
+
+async function importChatGPT(){
+  const box = document.getElementById('importBox');
+  const raw = box.value.replace(/\r\n?/g, '\n').trim();
+  if(!raw){ setImportStatus('請先把 ChatGPT 的內容貼到框框裡。', 'var(--danger)'); return; }
+
+  const analysis = extractAnalysis(raw);
+  const turns = splitTurns(raw);
+
+  // 把對話存進紀錄：略過教練設定（第 ② 步已經記過學生的情境）、收尾指令、分析結果本身，以及已經匯入過的訊息
+  let added = 0;
+  turns.forEach(t=>{
+    if(t.role==='user' && (t.text.includes('我的情況是：') || t.text.includes(WRAPUP_TAG) || t.text.includes(MERGE_TAG))) return;
+    if(t.role==='ai' && /={2,}\s*GRAPH\s*={2,}/i.test(t.text)) return;
+    if(reflectionLog.some(item => item.role===t.role && item.text===t.text)) return;
+    appendMsg(t.role, t.text);
+    addToLog(t.role, t.text);
+    added++;
+  });
+
+  if(analysis){
+    const ok = await renderConceptMap(analysis.graph);
+    const result = {at: new Date().toISOString(), game: currentGameTag(), mode: chatMode, graph: analysis.graph, ...analysis.rubric};
+    const prev = await loadEvalHistory();
+    renderRubric(result, prev[prev.length-1]);
+    await saveEvaluation(result, prev);
+    if(ok) document.getElementById('graphSubmitBox').hidden = false;
+    box.value = '';
+    const logNote = added ? `已加入 ${added} 則對話紀錄，` : (turns.length ? '對話紀錄之前已匯入過，' : '這次只貼了回覆、沒有對話全文，');
+    setImportStatus(`${logNote}族譜與後設認知評估已產生 ✓ 請往下看第 ⑤ 步。`, 'var(--success)');
+    document.querySelector('.mindmap-block').scrollIntoView({behavior:'smooth', block:'start'});
+    return;
+  }
+
+  // 舊格式：只有 Mermaid 程式碼、沒有評估
+  if(!turns.length && /^\s*(?:```(?:mermaid)?\s*)?(graph|flowchart)\s/i.test(raw)){
+    const ok = await renderConceptMap(extractMermaidCode(raw));
+    if(ok){
+      document.getElementById('graphSubmitBox').hidden = false;
+      box.value = '';
+      setImportStatus('族譜已畫出，但沒有找到後設認知評估。請改用「複製收尾指令」，讓 ChatGPT 一起產生評估。', 'var(--orange)');
+    }
+    return;
+  }
+
+  if(added){
+    box.value = '';
+    setImportStatus(`已加入 ${added} 則對話紀錄，但還沒有找到族譜與評估。請先把「收尾指令」貼到 ChatGPT，等它回覆後再全選複製貼回來。`, 'var(--orange)');
+  }else if(turns.length){
+    setImportStatus('這些對話之前已經匯入過了；也還沒有找到族譜與評估。請先把「收尾指令」貼到 ChatGPT。', 'var(--orange)');
+  }else{
+    setImportStatus('看不出這段內容的格式。請在 ChatGPT 頁面按 ⌘A／Ctrl+A 全選後複製，或按最後那則回覆下方的「複製」按鈕，再貼一次。', 'var(--danger)');
   }
 }
 
@@ -1812,16 +2058,9 @@ const GRAPH_LEGEND = [
   ['#ff5a1f','進攻概念'], ['#22d3ee','防守概念'], ['#a78bfa','後設認知策略'], ['#7ea87f','情境條件']
 ];
 
-async function renderConceptMap(){
-  const raw = document.getElementById('conceptMermaidInput').value.trim();
+async function renderConceptMap(code){
   const container = document.getElementById('conceptMapContainer');
-  const submitBox = document.getElementById('graphSubmitBox');
-  submitBox.hidden = true;
-  if(!raw){
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--text-dim);">請先貼上 ChatGPT 回覆的程式碼。</p>';
-    return;
-  }
-  const code = extractMermaidCode(raw);
+  document.getElementById('graphSubmitBox').hidden = true;
 
   container.innerHTML = '';
   const pre = document.createElement('pre');
@@ -1832,7 +2071,7 @@ async function renderConceptMap(){
   try{
     if(typeof mermaid === 'undefined'){
       container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">繪圖工具載入失敗，請確認網路連線後重新整理頁面再試一次。</p>';
-      return;
+      return false;
     }
     await mermaid.run({nodes:[pre]});
     const legend = document.createElement('div');
@@ -1843,14 +2082,125 @@ async function renderConceptMap(){
     if(svgEl && svgEl.getBoundingClientRect().width > container.clientWidth){
       container.insertAdjacentHTML('afterbegin', '<p class="hint swipe-hint">↔ 圖比較寬，可以左右滑動查看</p>');
     }
-    submitBox.hidden = false;
-    document.getElementById('graphSubmitStatus').textContent = '會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。';
+    document.getElementById('graphSubmitStatus').textContent = '族譜和後設認知評估會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。';
     document.getElementById('graphSubmitStatus').style.color = '';
+    return true;
   }catch(e){
     console.error(e);
-    container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">這段語法無法繪製，請確認貼上的是完整的程式碼（可以請 ChatGPT 修正格式後再試一次）。</p>';
+    container.innerHTML = '<p style="font-size:12.5px;color:var(--danger);">族譜語法無法繪製（評估結果仍在下方）。可以跟 ChatGPT 說「族譜的 Mermaid 語法有錯，請修正後用同樣格式再給我一次」，再重新貼回來。</p>';
+    return false;
   }
 }
+
+// ---------- 後設認知評估：呈現與保存 ----------
+const EVAL_HISTORY_KEY = 'eval:history';
+const EVAL_LATEST_KEY = 'eval:latest';
+let latestEvaluation = null;
+
+function evalTotal(levels){ return MC_ITEMS.reduce((s,it) => s + (levels[it.name] || 0), 0); }
+function dimScore(levels, d){ return d.items.reduce((s,it) => s + (levels[it.name] || 0), 0); }
+
+async function loadEvalHistory(){
+  try{
+    const res = await window.storage.get(EVAL_HISTORY_KEY, false);
+    return res ? (JSON.parse(res.value) || []) : [];
+  }catch(e){ return []; }
+}
+async function saveEvaluation(result, history){
+  latestEvaluation = result;
+  history.push({at: result.at, game: result.game, levels: result.levels, total: evalTotal(result.levels)});
+  try{
+    await window.storage.set(EVAL_HISTORY_KEY, JSON.stringify(history.slice(-30)), false);
+    await window.storage.set(EVAL_LATEST_KEY, JSON.stringify(result), false);
+  }catch(e){ console.warn('評估結果儲存失敗', e); }
+}
+
+function renderRubric(r, prev){
+  const box = document.getElementById('rubricContainer');
+  const total = evalTotal(r.levels);
+  let delta = '';
+  if(prev){
+    const diff = total - prev.total;
+    const when = new Date(prev.at).toLocaleDateString('zh-TW');
+    delta = diff > 0 ? `<span class="rb-delta up">比上次（${when}）進步 ${diff} 分</span>`
+          : diff < 0 ? `<span class="rb-delta down">比上次（${when}）少 ${-diff} 分</span>`
+          : `<span class="rb-delta">和上次（${when}）一樣</span>`;
+  }
+  const dims = MC_RUBRIC.map(d=>{
+    const s = dimScore(r.levels, d), max = d.items.length * 3;
+    return `<div class="rb-dim"><div class="name">${d.dim}<span>${s} / ${max}</span></div><div class="rb-bar"><i style="width:${Math.round(s/max*100)}%"></i></div></div>`;
+  }).join('');
+  const groups = MC_RUBRIC.map(d => `<div class="rb-group"><h6>${d.dim} <span class="mono" style="color:var(--text-dim);font-weight:400;">${d.en}</span></h6>` +
+    d.items.map(it=>{
+      const lv = r.levels[it.name] ?? 0;
+      const ev = r.evidence[it.name];
+      const fb = r.feedback[it.name];
+      return `<div class="rb-item"><div class="ind">${it.name}<small>${it.desc}</small></div><div>` +
+        `<span class="rb-lv l${lv}">${lv}｜${MC_LEVELS[lv][0]}</span>` +
+        (ev ? `<span class="rb-ev">「${escapeHtml(ev)}」</span>` : '') +
+        (fb ? `<div class="rb-fb">${escapeHtml(fb)}</div>` : '') +
+      `</div></div>`;
+    }).join('') + `</div>`).join('');
+  const sum = (r.summary || r.next) ? `<div class="rb-sum">` +
+    (r.summary ? `<div><b>總結：</b>${escapeHtml(r.summary)}</div>` : '') +
+    (r.next ? `<div><b>下一步：</b>${escapeHtml(r.next)}</div>` : '') + `</div>` : '';
+  const meta = [r.game, new Date(r.at).toLocaleString('zh-TW')].filter(Boolean).map(escapeHtml).join('｜');
+  box.innerHTML = `<div class="rb-head"><h5>後設認知評估</h5><span class="rb-total">${total}<small> / ${MC_MAX}</small></span>${delta}<span class="rb-delta" style="margin-left:auto;">${meta}</span></div>` +
+    `<div class="rb-dims">${dims}</div>${groups}${sum}`;
+  box.hidden = false;
+}
+
+function buildEvaluationText(r){
+  const lines = [
+    'COURT.AI 知識族譜後設認知評估',
+    `學生：${signedInName || '未登入'}`,
+    `場次：${r.game || '未填'}`,
+    `評估時間：${new Date(r.at).toLocaleString('zh-TW')}`,
+    `總分：${evalTotal(r.levels)} / ${MC_MAX}`,
+    ''
+  ];
+  MC_RUBRIC.forEach(d=>{
+    lines.push(`【${d.dim}】${dimScore(r.levels, d)} / ${d.items.length*3}`);
+    d.items.forEach(it=>{
+      const lv = r.levels[it.name] ?? 0;
+      lines.push(`- ${it.name}：${lv}（${MC_LEVELS[lv][0]}）`);
+      if(r.evidence[it.name]) lines.push(`  證據：「${r.evidence[it.name]}」`);
+      if(r.feedback[it.name]) lines.push(`  回饋：${r.feedback[it.name]}`);
+    });
+    lines.push('');
+  });
+  if(r.summary) lines.push(`總結：${r.summary}`);
+  if(r.next) lines.push(`下一步：${r.next}`);
+  return lines.join('\n');
+}
+
+function renderRubricGuide(){
+  document.getElementById('rubricGuide').innerHTML = `<div class="rb-guide">` +
+    MC_RUBRIC.map(d => `<b>${d.dim}</b>：` + d.items.map(it => `${it.name}（${it.desc}）`).join('、')).join('<br>') +
+    `<br><br><b>等級</b>：` + MC_LEVELS.map(([n,desc],i) => `${i} ${n}－${desc}`).join('；') +
+    `<br>評估由 ChatGPT 依你自己說過的話判斷，只是幫你看見自己的思考，不是成績；對結果有疑問可以和老師討論。</div>`;
+}
+
+// 重新整理頁面後，還原上一次的族譜與評估
+async function restoreLatestEvaluation(){
+  renderRubricGuide();
+  try{
+    const res = await window.storage.get(EVAL_LATEST_KEY, false);
+    if(!res) return;
+    const r = JSON.parse(res.value);
+    if(!r || !r.levels) return;
+    latestEvaluation = r;
+    const history = await loadEvalHistory();
+    const prev = history.filter(h => h.at !== r.at).pop();
+    renderRubric(r, prev);
+    if(!r.graph) return;
+    // 分頁隱藏時 Mermaid 量不到文字寬度，等切到 AI 助教分頁再畫
+    const draw = async ()=>{ if(await renderConceptMap(r.graph)) document.getElementById('graphSubmitBox').hidden = false; };
+    if(document.getElementById('panel-chat').classList.contains('active')) draw();
+    else document.querySelector('nav.tabs button[data-tab="chat"]').addEventListener('click', draw, {once:true});
+  }catch(e){}
+}
+restoreLatestEvaluation();
 
 // ---------- 繳交思考族譜到雲端硬碟（與比賽影片同一個小隊資料夾） ----------
 function setGraphStatus(text, color){
@@ -1866,7 +2216,7 @@ function safeFileName(s){ return (s || '').replace(/[\\/:*?"<>|]/g, '').trim(); 
 
 async function submitKnowledgeGraph(){
   if(!document.querySelector('#conceptMapContainer svg')){
-    setGraphStatus('請先完成上面的步驟，畫出你的知識族譜。', 'var(--danger)');
+    setGraphStatus('請先完成第 ④ 步，產生你的知識族譜與評估。', 'var(--danger)');
     return;
   }
   // 授權視窗必須在按鈕點擊的當下開啟，否則會被瀏覽器擋成彈出視窗
@@ -1895,6 +2245,12 @@ async function submitKnowledgeGraph(){
     await uploadFileToDrive(png, `知識族譜_${base}.png`, folderId, p=>{
       setGraphStatus(`上傳族譜中… ${Math.round(p*100)}%`);
     });
+    if(latestEvaluation){
+      const evalTxt = new Blob([buildEvaluationText(latestEvaluation)], {type:'text/plain'});
+      await uploadFileToDrive(evalTxt, `後設認知評估_${base}.txt`, folderId, p=>{
+        setGraphStatus(`上傳後設認知評估中… ${Math.round(p*100)}%`);
+      });
+    }
     if(document.getElementById('submitWithLog').checked && reflectionLog.length){
       const txt = new Blob([buildLogText()], {type:'text/plain'});
       await uploadFileToDrive(txt, `對話紀錄_${base}.txt`, folderId, p=>{
