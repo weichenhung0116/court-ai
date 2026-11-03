@@ -3,26 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#05060a">
+<meta name="theme-color" content="#ff7a1a">
 <meta name="apple-mobile-web-app-title" content="COURT.AI">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>COURT.AI ｜ 籃球戰術後設認知鷹架</title>
 <style>
   :root{
-    --void:#05060a;
-    --panel:#0d0f14;
-    --panel-2:#12151c;
-    --panel-3:#181c25;
-    --hair:rgba(255,255,255,0.09);
-    --hair-strong:rgba(255,255,255,0.18);
-    --orange:#ff5a1f;
-    --orange-dim:#a83e16;
-    --cyan:#22d3ee;
-    --cyan-dim:#0e8fa8;
-    --text:#eef1f6;
-    --text-dim:#8b93a3;
-    --success:#3ddc84;
-    --danger:#ff4d5e;
+    --void:#fff7ec;
+    --panel:#ffffff;
+    --panel-2:#ffffff;
+    --panel-3:#fff1e0;
+    --hair:rgba(28,37,54,0.10);
+    --hair-strong:rgba(28,37,54,0.20);
+    --orange:#ff6a1a;
+    --orange-dim:#ffb38a;
+    --cyan:#0891b2;
+    --cyan-dim:#7fd3e6;
+    --yellow:#ffc933;
+    --pink:#ff5c8a;
+    --text:#1c2536;
+    --text-dim:#5d677a;
+    --success:#16a34a;
+    --danger:#e5384a;
+    --input-bg:#ffffff;
+    --board:#1b2235;
     --clip: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
     --clip-sm: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
   }
@@ -30,8 +34,9 @@
   html,body{margin:0;padding:0;}
   body{
     background:
-      radial-gradient(circle at 15% -10%, rgba(255,90,31,0.10), transparent 45%),
-      radial-gradient(circle at 100% 0%, rgba(34,211,238,0.08), transparent 40%),
+      radial-gradient(circle at 0% 0%, rgba(255,201,51,0.28), transparent 40%),
+      radial-gradient(circle at 100% 10%, rgba(8,145,178,0.12), transparent 38%),
+      radial-gradient(circle at 50% 100%, rgba(255,92,138,0.10), transparent 45%),
       var(--void);
     color:var(--text);
     font-family: ui-sans-serif, "Segoe UI", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
@@ -59,7 +64,7 @@
     padding:3px 10px;font-size:11px;cursor:pointer;flex-shrink:0;
   }
   #gateOverlay{
-    position:fixed;inset:0;background:rgba(5,6,10,0.96);
+    position:fixed;inset:0;background:rgba(255,247,236,0.97);
     display:flex;align-items:center;justify-content:center;z-index:999;
     flex-direction:column;gap:16px;text-align:center;padding:20px;
   }
@@ -77,22 +82,23 @@
     gap:16px;
     padding:22px 28px;
     border-bottom:1px solid var(--hair);
-    background:linear-gradient(180deg, rgba(255,90,31,0.06), transparent);
+    background:linear-gradient(115deg, #ff6a1a 0%, #ff9a1f 55%, #ffc933 100%);color:#fff;
   }
   .brand{display:flex;align-items:center;gap:14px;}
-  .brand svg{width:46px;height:46px;filter:drop-shadow(0 0 10px rgba(255,90,31,0.55));}
+  .brand svg{width:46px;height:46px;filter:drop-shadow(0 2px 4px rgba(120,40,0,0.25));}
+  .brand svg *{stroke:#fff;}
   .brand h1{margin:0;font-size:22px;font-weight:800;letter-spacing:0.02em;line-height:1.15;}
-  .brand h1 span{color:var(--orange);}
-  .brand p{margin:2px 0 0;color:var(--text-dim);font-size:12.5px;letter-spacing:0.02em;}
+  .brand h1 span{color:#1c2536;}
+  .brand p{margin:2px 0 0;color:rgba(255,255,255,0.92);font-size:12.5px;letter-spacing:0.02em;}
   .header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
   .role-badge{
-    font-size:12.5px;color:var(--text-dim);border:1px solid var(--hair-strong);
-    padding:9px 16px;clip-path:var(--clip-sm);background:var(--panel);
+    font-size:12.5px;color:var(--text);border:none;border-radius:999px;
+    padding:9px 16px;background:rgba(255,255,255,0.92);
   }
-  .role-badge b{color:var(--cyan);font-weight:700;}
+  .role-badge b{color:var(--orange);font-weight:800;}
   .user-badge{
-    font-size:12px;color:var(--text-dim);border:1px solid var(--hair-strong);
-    padding:9px 14px;clip-path:var(--clip-sm);background:var(--panel);
+    font-size:12px;color:var(--text);border:none;border-radius:999px;
+    padding:9px 14px;background:rgba(255,255,255,0.92);
     display:flex;align-items:center;gap:8px;
   }
   .user-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--text-dim);}
@@ -111,7 +117,7 @@
   nav.tabs button .n{color:var(--orange);font-weight:800;margin-right:6px;}
   nav.tabs button.active{
     color:var(--text);border-bottom-color:var(--orange);
-    box-shadow: 0 12px 18px -14px rgba(255,90,31,0.9);
+    box-shadow: 0 10px 16px -14px rgba(255,106,26,0.9);
   }
   nav.tabs button:hover{color:var(--text);}
 
@@ -141,7 +147,7 @@
     background:var(--panel);border:1px solid var(--hair-strong);color:var(--text-dim);
     padding:8px 16px;font-size:13px;cursor:pointer;clip-path:var(--clip-sm);
   }
-  .cat-tabs button.active{background:var(--orange);color:#1a0d06;border-color:var(--orange);font-weight:700;}
+  .cat-tabs button.active{background:var(--orange);color:#fff;border-color:var(--orange);font-weight:700;}
   .video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
   .video-card{background:var(--panel-2);border:1px solid var(--hair);padding:12px;clip-path:var(--clip);transition:border-color .15s;}
   .video-card:hover{border-color:var(--hair-strong);}
@@ -165,16 +171,16 @@
   .field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:170px;}
   .field label{font-size:11.5px;color:var(--text-dim);}
   input[type=text],input[type=url],input[type=password],select,textarea{
-    background:var(--void);border:1px solid var(--hair-strong);color:var(--text);
+    background:var(--input-bg);border-radius:10px;border:1px solid var(--hair-strong);color:var(--text);
     padding:9px 11px;font-size:13.5px;width:100%;
   }
   input:focus,select:focus,textarea:focus{outline:1px solid var(--cyan);}
   textarea{resize:vertical;font-family:inherit;}
   button.primary{
-    background:var(--orange);color:#1a0d06;border:none;padding:10px 20px;
+    background:var(--orange);color:#fff;border:none;padding:10px 20px;
     font-weight:700;font-size:13.5px;cursor:pointer;clip-path:var(--clip-sm);
   }
-  button.primary:hover{background:#ff7440;}
+  button.primary:hover{background:#ff8340;}
   button.primary:disabled{background:var(--hair-strong);color:var(--text-dim);cursor:not-allowed;}
   button.ghost{
     background:transparent;border:1px solid var(--hair-strong);color:var(--text);
@@ -189,7 +195,7 @@
   .role-group h3{font-size:14px;margin:0 0 14px;color:var(--orange);letter-spacing:0.02em;}
   .chip-set{display:flex;flex-wrap:wrap;gap:9px;}
   .chip{border:1px solid var(--hair-strong);background:var(--panel);color:var(--text);padding:9px 15px;font-size:13.5px;cursor:pointer;clip-path:var(--clip-sm);}
-  .chip.selected{border-color:var(--cyan);background:rgba(34,211,238,0.12);color:var(--cyan);font-weight:700;}
+  .chip.selected{border-color:var(--cyan);background:rgba(8,145,178,0.12);color:var(--cyan);font-weight:700;}
   .save-row{margin-top:24px;display:flex;gap:12px;align-items:center;}
   .save-row .status{font-size:13px;color:var(--success);}
 
@@ -257,7 +263,7 @@
   .mode-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
   .mode-card{background:var(--panel);border:1px solid var(--hair);padding:14px 16px;cursor:pointer;transition:border-color .15s;}
   .mode-card:hover{border-color:var(--hair-strong);}
-  .mode-card.selected{border-color:var(--orange);background:rgba(255,90,31,0.08);}
+  .mode-card.selected{border-color:var(--orange);background:rgba(255,106,26,0.08);}
   .mode-title{font-weight:700;font-size:14.5px;display:flex;justify-content:space-between;align-items:center;}
   .mode-title span{font-size:10.5px;color:var(--text-dim);}
   .mode-card.selected .mode-title{color:var(--orange);}
@@ -270,8 +276,8 @@
   .game-tag-row input{max-width:260px;}
   .prompt-details{margin-top:10px;font-size:12px;color:var(--text-dim);}
   .prompt-details summary{cursor:pointer;}
-  button.primary.alt{background:var(--cyan);}
-  button.primary.alt:hover{background:#5fe0f2;}
+  button.primary.alt{background:var(--cyan);color:#fff;}
+  button.primary.alt:hover{background:#0aa5c9;}
   .submit-box{margin-top:16px;border-top:1px solid var(--hair);padding-top:14px;}
   .submit-box .check{font-size:12.5px;color:var(--text-dim);display:flex;align-items:center;gap:6px;cursor:pointer;}
   .submit-box .hint{margin-top:10px;}
@@ -290,20 +296,21 @@
   .mindmap-block h4{margin:0 0 8px;font-size:13.5px;color:var(--cyan);}
   .mindmap-block .mm-desc{font-size:12.5px;color:var(--text-dim);line-height:1.6;margin:0 0 12px;}
   .mindmap-container{
-    margin-top:14px;background:var(--void);border:1px solid var(--hair-strong);
+    margin-top:14px;background:var(--board);color:#dfe5f0;border-radius:12px;border:1px solid var(--hair-strong);
     min-height:60px;padding:14px;overflow-x:auto;
   }
   .mindmap-container:empty{display:none;}
   .mindmap-container svg{max-width:100%;}
   .graph-legend{
     display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;padding-top:12px;
-    border-top:1px solid var(--hair);font-size:11.5px;color:var(--text-dim);
+    border-top:1px solid rgba(255,255,255,0.15);font-size:11.5px;color:#c9d1de;
   }
+  .mindmap-container .hint{color:#c9d1de;}
   .graph-legend .lg-item{display:flex;align-items:center;gap:6px;}
   .graph-legend .lg-dot{width:10px;height:10px;border-radius:2px;display:inline-block;}
   .chat-window{height:300px;overflow-y:auto;background:var(--void);border:1px solid var(--hair);padding:18px;display:flex;flex-direction:column;gap:12px;}
   .msg{max-width:78%;padding:11px 14px;font-size:14px;line-height:1.6;}
-  .msg.user{align-self:flex-end;background:var(--orange);color:#1a0d06;font-weight:500;}
+  .msg.user{align-self:flex-end;background:var(--orange);color:#fff;font-weight:500;}
   .msg.ai{align-self:flex-start;background:var(--panel-2);border:1px solid var(--hair);}
   .msg.sys{align-self:center;color:var(--text-dim);font-size:12px;font-style:italic;}
   .chat-input-row{display:flex;gap:10px;margin-top:14px;}
@@ -333,9 +340,9 @@
   .rb-item .ind{font-weight:700;}
   .rb-item .ind small{display:block;font-weight:400;color:var(--text-dim);font-size:11px;}
   .rb-lv{display:inline-block;font-size:11px;padding:1px 8px;margin-right:6px;border:1px solid var(--hair-strong);color:var(--text-dim);}
-  .rb-lv.l1{border-color:#7a6a3a;color:#e8c96a;}
+  .rb-lv.l1{border-color:#e0b84a;color:#9a6c00;background:#fff8e0;}
   .rb-lv.l2{border-color:var(--cyan-dim);color:var(--cyan);}
-  .rb-lv.l3{border-color:var(--orange);color:var(--orange);background:rgba(255,90,31,0.1);}
+  .rb-lv.l3{border-color:var(--orange);color:var(--orange);background:rgba(255,106,26,0.1);}
   .rb-ev{color:var(--text-dim);font-style:italic;}
   .rb-fb{color:var(--text);}
   .rb-sum{margin-top:16px;border-top:1px solid var(--hair);padding-top:12px;font-size:13px;line-height:1.7;}
@@ -345,6 +352,146 @@
   @media (max-width: 600px){ .rb-item{grid-template-columns:1fr;} }
 
 
+  /* ===== 共用：卡片圓角、陰影，讓淺色主題更有層次 ===== */
+  .video-card,.upload-slot,.drive-box,.mindmap-block,.rule-card,.signal-card,.add-video-form{
+    clip-path:none;border-radius:16px;box-shadow:0 2px 10px rgba(28,37,54,0.06);
+  }
+  .section-head h2{display:flex;align-items:center;gap:10px;}
+  .section-head h2::before{content:"";width:6px;height:22px;border-radius:3px;background:linear-gradient(180deg,var(--orange),var(--yellow));}
+  .cat-tabs button,.chip,button.primary{clip-path:none;border-radius:999px;}
+  button.ghost{border-radius:999px;background:#fff;}
+  .callout{border-radius:12px;}
+  .empty-state{border-radius:12px;background:#fff;}
+
+  /* ===== 01 賽程 ===== */
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .seg button{
+    background:#fff;border:2px solid var(--hair);border-radius:16px;padding:14px 10px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text);font-size:15px;
+    box-shadow:0 2px 8px rgba(28,37,54,0.05);
+  }
+  .seg button small{font-size:12px;color:var(--text-dim);}
+  .seg button.active{border-color:var(--orange);background:linear-gradient(135deg,#ff6a1a,#ff9a1f);color:#fff;}
+  .seg button.active small{color:rgba(255,255,255,0.9);}
+  .group-picker .chip{min-width:72px;text-align:center;font-weight:700;}
+  .team-card{
+    margin-top:14px;background:linear-gradient(135deg,#fff 0%,#fff3e3 100%);border:2px solid #ffd2b0;
+    border-radius:18px;padding:14px 16px;
+  }
+  .team-card-head{display:flex;align-items:center;gap:10px;}
+  .team-card-head h3{margin:0;font-size:20px;}
+  .team-card-head small{color:var(--text-dim);}
+  .team-tag{background:var(--cyan);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;}
+  .team-meta{font-size:12.5px;color:var(--text-dim);margin:10px 0 0;}
+  .date-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .date-tabs button{
+    position:relative;background:#fff;border:2px solid var(--hair);border-radius:14px;padding:9px 4px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text);
+  }
+  .date-tabs button b{font-size:16px;}
+  .date-tabs button small{font-size:11px;color:var(--text-dim);}
+  .date-tabs button.active{border-color:var(--cyan);background:var(--cyan);color:#fff;}
+  .date-tabs button.active small{color:rgba(255,255,255,0.9);}
+  .dot-mine{position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:var(--orange);border:2px solid #fff;}
+  .day-plan{margin-top:10px;}
+  .plan-row{display:flex;gap:12px;font-size:13px;padding:6px 0;border-top:1px solid var(--hair);}
+  .plan-row b{min-width:96px;color:var(--cyan);font-variant-numeric:tabular-nums;}
+  .match-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:12px;}
+  .match-card{background:#fff;border-radius:14px;padding:11px 14px;border-left:6px solid var(--cyan-dim);box-shadow:0 2px 8px rgba(28,37,54,0.05);}
+  .match-card.mine{border-left-color:var(--orange);background:#fff4ea;box-shadow:0 4px 14px rgba(255,106,26,0.18);}
+  .match-meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:12px;color:var(--text-dim);align-items:center;}
+  .match-meta .time{font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;}
+  .match-meta .tag{background:var(--panel-3);padding:1px 8px;border-radius:999px;}
+  .mine-badge{background:var(--orange);color:#fff;font-weight:700;padding:1px 8px;border-radius:999px;}
+  .match-teams{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:17px;}
+  .match-teams i{font-style:normal;font-size:12px;color:var(--text-dim);}
+  .match-teams b.me{color:var(--orange);}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border-radius:14px;border:1px solid var(--hair);margin-top:4px;}
+  .rot-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .rot-table th,.rot-table td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--hair);white-space:nowrap;}
+  .rot-table thead th{background:var(--panel-3);font-size:12px;color:var(--text-dim);}
+  .rot-table thead tr:first-child th{color:var(--text);font-size:13px;}
+  .rot-table td.rec{color:var(--cyan);font-weight:700;}
+  .fact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;}
+  .fact{background:#fff;border-radius:12px;padding:10px 12px;border:1px solid var(--hair);display:flex;flex-direction:column;gap:3px;}
+  .fact b{font-size:11.5px;color:var(--cyan);}
+  .fact span{font-size:13.5px;line-height:1.5;}
+  .bracket{margin-top:12px;display:flex;flex-direction:column;gap:6px;}
+  .bracket-row{display:flex;align-items:center;gap:8px;font-size:13px;background:#fff;border-radius:12px;padding:9px 12px;border:1px solid var(--hair);}
+  .bracket-row span{color:var(--text-dim);}
+  .bracket-row i{font-style:normal;color:var(--orange);font-weight:800;}
+  .bracket-row.first{background:var(--panel-3);}
+  details.fold{margin-top:12px;background:#fff;border:1px solid var(--hair);border-radius:14px;padding:0 14px;}
+  details.fold > summary{cursor:pointer;font-weight:700;font-size:13.5px;padding:13px 0;list-style:none;}
+  details.fold > summary::-webkit-details-marker{display:none;}
+  details.fold > summary::after{content:"＋";float:right;color:var(--orange);}
+  details.fold[open] > summary::after{content:"－";}
+  details.fold[open]{padding-bottom:12px;}
+  details.fold.slim > summary{padding:9px 0;font-size:12.5px;}
+  .fold-status{font-weight:500;color:var(--success);font-size:12px;}
+  .roster-row{display:flex;gap:12px;font-size:13px;padding:8px 0;border-top:1px solid var(--hair);line-height:1.6;}
+  .roster-row b{min-width:56px;color:var(--orange);flex-shrink:0;}
+  .note-list{margin:0;padding-left:18px;font-size:13px;line-height:1.8;}
+  .reward-hi{font-size:13.5px;font-weight:700;color:var(--orange);line-height:1.7;margin:0 0 6px;}
+
+  /* ===== 02 影片：先顯示縮圖，點了才載入播放器（手機比較順） ===== */
+  .yt-thumb{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000 center/cover no-repeat;}
+  .yt-thumb::after{
+    content:"";position:absolute;left:50%;top:50%;width:62px;height:44px;transform:translate(-50%,-50%);
+    border-radius:12px;background:rgba(255,106,26,0.95) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8 5v14l11-7z' fill='white'/%3E%3C/svg%3E") center/26px no-repeat;
+  }
+  .video-card .frame{border-radius:10px;overflow:hidden;}
+
+  /* ===== 03 拍攝 ===== */
+  .tip-card{background:#fff;border-radius:16px;padding:12px 16px;border:2px dashed #ffc58f;font-size:13px;line-height:1.7;margin-bottom:14px;}
+  .tip-card b{color:var(--orange);}
+  .tip-card ol{margin:6px 0 0;padding-left:20px;}
+  .team-strip{background:var(--panel-3);border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.7;margin-bottom:14px;}
+  .team-strip b{color:var(--orange);}
+  .team-strip small{color:var(--text-dim);}
+  .upload-box{border-radius:12px;}
+
+  /* ===== 04 紀錄 ===== */
+  .stat-setup{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:14px;}
+  .scoreboard{
+    display:flex;align-items:center;justify-content:center;gap:18px;margin-top:16px;padding:12px;
+    background:var(--board);color:#fff;border-radius:16px;
+  }
+  .scoreboard div{display:flex;flex-direction:column;align-items:center;}
+  .scoreboard span{font-size:12px;opacity:0.8;}
+  .scoreboard b{font-size:34px;font-variant-numeric:tabular-nums;line-height:1.1;}
+  .scoreboard div:first-child b{color:var(--yellow);}
+  .scoreboard i{font-style:normal;font-size:26px;opacity:0.6;}
+  .opp-score-btns{display:flex;align-items:center;gap:8px;margin:10px 0 4px;flex-wrap:wrap;font-size:12.5px;color:var(--text-dim);}
+  .opp-score-btns button{min-width:48px;min-height:40px;border-radius:999px;border:1px solid var(--hair-strong);background:#fff;font-weight:700;cursor:pointer;color:var(--text);}
+  .stat-players{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:12px;}
+  .stat-player{background:#fff;border-radius:16px;padding:12px;border:1px solid var(--hair);box-shadow:0 2px 10px rgba(28,37,54,0.06);}
+  .sp-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+  .sp-head b{font-size:16px;}
+  .sp-head span{font-size:26px;font-weight:800;color:var(--orange);font-variant-numeric:tabular-nums;}
+  .sp-head small{font-size:12px;color:var(--text-dim);font-weight:500;}
+  .sp-score{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;}
+  .sp-score button{
+    min-height:52px;border:none;border-radius:14px;font-size:18px;font-weight:800;color:#fff;cursor:pointer;
+    background:linear-gradient(135deg,#ff6a1a,#ff9a1f);touch-action:manipulation;
+  }
+  .sp-score button:active,.sp-grid button:active{transform:scale(0.95);}
+  .sp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .sp-grid button{
+    min-height:56px;border-radius:14px;border:1px solid var(--hair-strong);background:#f7fbfd;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:var(--text);touch-action:manipulation;
+  }
+  .sp-grid button span{font-size:12px;color:var(--text-dim);}
+  .sp-grid button b{font-size:19px;font-variant-numeric:tabular-nums;}
+  .stat-table td b{color:var(--orange);}
+
+  @media (max-width: 600px){
+    .stat-setup{grid-template-columns:1fr;}
+    .match-list,.stat-players{grid-template-columns:1fr;}
+    .fact-grid{grid-template-columns:1fr 1fr;}
+    .date-tabs button b{font-size:15px;}
+  }
+
   /* ===== rules section ===== */
   .rule-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
   .rule-card{background:var(--panel-2);border:1px solid var(--hair);padding:18px;clip-path:var(--clip);display:flex;flex-direction:column;gap:10px;}
@@ -352,10 +499,10 @@
   .rule-card h4{margin:0;font-size:15px;}
   .rule-card p{margin:0;font-size:12.5px;color:var(--text-dim);line-height:1.6;flex:1;}
   .rule-card a{
-    align-self:flex-start;color:#1a0d06;background:var(--cyan);text-decoration:none;
+    align-self:flex-start;color:#fff;background:var(--cyan);text-decoration:none;
     font-size:12.5px;font-weight:700;padding:8px 14px;clip-path:var(--clip-sm);
   }
-  .rule-card a:hover{background:#5be3fa;}
+  .rule-card a:hover{background:#0aa5c9;}
 
   .signal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px;}
   .signal-card{
@@ -388,17 +535,17 @@
       position:fixed;left:0;right:0;bottom:0;z-index:50;
       padding:0 0 env(safe-area-inset-bottom);gap:0;overflow:visible;
       border-bottom:none;border-top:1px solid var(--hair-strong);
-      background:rgba(13,15,20,0.97);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+      background:rgba(255,255,255,0.97);box-shadow:0 -4px 16px rgba(28,37,54,0.08);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     }
     nav.tabs button{
       flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-      min-height:58px;padding:8px 2px;font-size:12px;
+      min-height:58px;padding:8px 0;font-size:11.5px;min-width:0;
       border-bottom:none;border-top:2px solid transparent;
     }
     nav.tabs button .n{margin:0;font-size:10.5px;}
     nav.tabs button .full{display:none;}
     nav.tabs button .short{display:inline;}
-    nav.tabs button.active{border-top-color:var(--orange);box-shadow:none;background:rgba(255,90,31,0.08);}
+    nav.tabs button.active{border-top-color:var(--orange);box-shadow:none;background:rgba(255,106,26,0.10);color:var(--orange);}
 
     main{padding:20px 16px 32px;}
     .section-head{flex-wrap:wrap;}
@@ -446,7 +593,7 @@
 
 <div id="gateOverlay" class="hidden">
   <h2>請先使用 Google 帳號登入</h2>
-  <p>這是老師設定的存取限制，登入後才能使用戰術影片庫、上傳比賽片段與 AI 助教。</p>
+  <p>這是老師設定的存取限制，登入後才能查看賽程、戰術影片、上傳小組影片、填寫紀錄表與使用 AI 助教。</p>
   <div id="gsiButtonHolder"></div>
   <p id="gateMsg" style="font-size:12px;"></p>
 </div>
@@ -468,29 +615,61 @@
   </div>
   <div class="header-right">
     <div class="user-badge" id="userBadge"><span class="dot"></span><span>未登入 Google 帳號</span></div>
-    <div class="role-badge" id="roleBadge">尚未設定角色 → 請至「角色選擇」分頁設定</div>
+    <div class="role-badge" id="roleBadge">尚未選擇組別 → 請到「01 賽程」選擇</div>
   </div>
 </header>
 
 <nav class="tabs">
-  <button data-tab="videos" class="active"><span class="n">01</span><span class="full">戰術影片庫</span><span class="short">影片庫</span></button>
-  <button data-tab="roles"><span class="n">02</span><span class="full">角色選擇</span><span class="short">角色</span></button>
-  <button data-tab="upload"><span class="n">03</span><span class="full">我的比賽片段</span><span class="short">比賽片段</span></button>
-  <button data-tab="chat"><span class="n">04</span><span class="full">AI 後設認知助教</span><span class="short">AI 助教</span></button>
-  <button data-tab="rules"><span class="n">05</span><span class="full">籃球規則與裁判法</span><span class="short">規則</span></button>
+  <button data-tab="schedule" class="active"><span class="n">01</span><span class="full">賽制與賽程</span><span class="short">賽程</span></button>
+  <button data-tab="videos"><span class="n">02</span><span class="full">戰術影片</span><span class="short">影片</span></button>
+  <button data-tab="film"><span class="n">03</span><span class="full">小組影片拍攝</span><span class="short">拍攝</span></button>
+  <button data-tab="stats"><span class="n">04</span><span class="full">表現紀錄表</span><span class="short">紀錄</span></button>
+  <button data-tab="chat"><span class="n">05</span><span class="full">AI 後設認知助教</span><span class="short">AI 助教</span></button>
+  <button data-tab="rules"><span class="n">06</span><span class="full">籃球規則與裁判法</span><span class="short">規則</span></button>
 </nav>
 
 <main>
 
-  <!-- ================= 1. VIDEO LIBRARY ================= -->
-  <section class="panel active" id="panel-videos">
-    <div class="section-head"><h2>戰術影片庫</h2><span class="note mono">OFFENSE · DEFENSE · COMBO</span></div>
-    <p class="section-desc">由老師挑選的戰術示範影片，全班看到的都是同一份清單。</p>
+  <!-- ================= 1. SCHEDULE ================= -->
+  <section class="panel active" id="panel-schedule">
+    <div class="section-head"><h2>3 對 3 賽制與賽程</h2><span class="note mono">3 ON 3 · 4 WEEKS</span></div>
+    <p class="section-desc">每組 5～6 人，場上 3 對 3。先選你的班別和組別，就會看到你們的賽程、輪替表和隊友名單。</p>
+
+    <h4 class="step-title">① 我的班別</h4>
+    <div class="seg" id="classPicker"></div>
+
+    <div id="scheduleBody" hidden>
+      <h4 class="step-title">② 我的組別</h4>
+      <div class="chip-set group-picker" id="groupPicker"></div>
+      <div id="myTeamCard"></div>
+
+      <h4 class="step-title">賽程表</h4>
+      <div class="date-tabs" id="dateTabs"></div>
+      <div class="day-plan" id="dayPlan"></div>
+      <div class="match-list" id="matchList"></div>
+
+      <h4 class="step-title">每 4 分鐘輪替與紀錄分工</h4>
+      <div id="rotationBox"></div>
+
+      <h4 class="step-title">賽制重點</h4>
+      <div class="fact-grid" id="factGrid"></div>
+      <div class="bracket" id="bracketFlow"></div>
+
+      <details class="fold"><summary>各組名單</summary><div id="rosterAll"></div></details>
+      <details class="fold"><summary>積分、排名與注意事項</summary><ul class="note-list" id="rankRules"></ul></details>
+      <details class="fold"><summary>期末 3 對 3 比賽獎勵辦法</summary><div id="rewardBox"></div></details>
+    </div>
+  </section>
+
+  <!-- ================= 2. VIDEO LIBRARY ================= -->
+  <section class="panel" id="panel-videos">
+    <div class="section-head"><h2>戰術影片</h2><span class="note mono">3x3 · TEAM TAIPEI</span></div>
+    <p class="section-desc">3 對 3 戰術教學，以及 2025～2026 年中華台北男、女籃在 FIBA 賽事的比賽影片。看比賽時，試著找出他們用了哪些 3 對 3 也能打的配合。</p>
 
     <div class="cat-tabs" id="catTabs">
-      <button data-cat="offense" class="active">進攻戰術</button>
-      <button data-cat="defense">防守戰術</button>
-      <button data-cat="combo">小組配合</button>
+      <button data-cat="tactic3" class="active">3 對 3 戰術</button>
+      <button data-cat="tpeMen">中華男籃</button>
+      <button data-cat="tpeWomen">中華女籃</button>
     </div>
 
     <div class="video-grid" id="videoGrid"></div>
@@ -507,14 +686,14 @@
       </div>
       <div class="field">
         <label>影片標題</label>
-        <input type="text" id="vidTitle" placeholder="例如：擋拆戰術示範">
+        <input type="text" id="vidTitle" placeholder="例如：手遞手配合示範">
       </div>
       <div class="field" style="max-width:150px;">
         <label>加入分類</label>
         <select id="vidCat">
-          <option value="offense">進攻戰術</option>
-          <option value="defense">防守戰術</option>
-          <option value="combo">小組配合</option>
+          <option value="tactic3">3 對 3 戰術</option>
+          <option value="tpeMen">中華男籃</option>
+          <option value="tpeWomen">中華女籃</option>
         </select>
       </div>
       <button class="primary" onclick="addVideo()">＋ 新增到草稿</button>
@@ -528,129 +707,134 @@
     </div>
   </section>
 
-  <!-- ================= 2. ROLE SELECTION ================= -->
-  <section class="panel" id="panel-roles">
-    <div class="section-head"><h2>角色選擇</h2></div>
-    <p class="section-desc">選擇你在球場上的位置與在課堂研究中的角色，AI 助教會依此調整戰術提問的角度。</p>
+  <!-- ================= 3. TEAM FILMING ================= -->
+  <section class="panel" id="panel-film">
+    <div class="section-head"><h2>小組影片拍攝區</h2><span class="note mono">LIMIT ≤ 24s</span></div>
+    <p class="section-desc">每組拍出 3 段 3 對 3 戰術影片。每段限制 <b>24 秒內</b>（就像一次進攻時間），一段只打一個戰術，從發動拍到出手。</p>
 
-    <div class="role-cols">
-      <div class="role-group">
-        <h3>球場位置</h3>
-        <div class="chip-set" id="positionChips">
-          <div class="chip" data-val="控球後衛（1號位）">控球後衛（1號位）</div>
-          <div class="chip" data-val="得分後衛（2號位）">得分後衛（2號位）</div>
-          <div class="chip" data-val="小前鋒（3號位）">小前鋒（3號位）</div>
-          <div class="chip" data-val="大前鋒（4號位）">大前鋒（4號位）</div>
-          <div class="chip" data-val="中鋒（5號位）">中鋒（5號位）</div>
-        </div>
-      </div>
-      <div class="role-group">
-        <h3>團隊角色</h3>
-        <div class="chip-set" id="teamChips">
-          <div class="chip" data-val="教練">教練</div>
-          <div class="chip" data-val="球員">球員</div>
-          <div class="chip" data-val="球場記錄員">球場記錄員</div>
-        </div>
-      </div>
+    <div class="tip-card">
+      <b>拍攝小提醒</b>
+      <ol>
+        <li>手機<b>橫拿</b>，從側邊或後方拍，畫面要看得到 3 名進攻球員和籃框。</li>
+        <li>開拍前先喊出戰術名稱，例如「擋拆！」。</li>
+        <li>24 秒內完成「發動 → 配合 → 出手」，太長請先在手機上剪短。</li>
+      </ol>
     </div>
 
-    <div class="section-head" style="margin-top:40px;"><h2 style="font-size:18px;">球場位置功能與代表球星</h2></div>
-    <p class="section-desc">
-      每個位置的職責在現代籃球中都在演變，這裡列出的是最基礎、最常被引用的功能定位，搭配一位現役 NBA 球星作為範例。
-      五位都已經換成真人照片；LeBron James 是你自己提供的 2024 奧運會照片（維基共享資源），其餘四位來源同樣是維基共享資源的公開授權照片。
-    </p>
-    <div class="position-grid">
-      <div class="position-card">
-        <img class="player-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Stephen_Curry_dribbling_2016.jpg/330px-Stephen_Curry_dribbling_2016.jpg" alt="Stephen Curry" loading="lazy">
-        <h4>控球後衛（1號位）</h4>
-        <p>球隊的場上指揮官，負責運球推進、閱讀防守、分配球權、掌控進攻節奏，通常也是助攻與失誤控制的關鍵角色。</p>
-        <span class="player-tag">代表球星：Stephen Curry（Golden State Warriors）</span>
-      </div>
-      <div class="position-card">
-        <img class="player-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Anthony_Edwards_Kentavious_Caldwell-Pope_%2851734745028%29_%28cropped%29_%28cropped%29.jpg/330px-Anthony_Edwards_Kentavious_Caldwell-Pope_%2851734745028%29_%28cropped%29_%28cropped%29.jpg" alt="Anthony Edwards" loading="lazy">
-        <h4>得分後衛（2號位）</h4>
-        <p>主要得分手之一，需具備外線投射與持球單打能力，並在無球跑動中找到出手空間；防守端常負責盯防對方主力得分後衛。</p>
-        <span class="player-tag">代表球星：Anthony Edwards（Minnesota Timberwolves）</span>
-      </div>
-      <div class="position-card">
-        <img class="player-photo" src="images/lebron-james.jpg" alt="LeBron James" loading="lazy">
-        <h4>小前鋒（3號位）</h4>
-        <p>場上最全面的位置，兼具外線投射、切入得分與協防換防能力，攻守兩端都需要高度的運動能力與位置彈性。</p>
-        <span class="player-tag">代表球星：LeBron James</span>
-      </div>
-      <div class="position-card">
-        <img class="player-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kevin_Durant_%28Wizards_v._Warriors%2C_1-24-2019%29_%28cropped%29.jpg/330px-Kevin_Durant_%28Wizards_v._Warriors%2C_1-24-2019%29_%28cropped%29.jpg" alt="Kevin Durant" loading="lazy">
-        <h4>大前鋒（4號位）</h4>
-        <p>傳統上負責禁區卡位、籃板保護與內線得分；現代籃球中也有愈來愈多大前鋒具備外線投射能力（俗稱 Stretch 4），能拉開空間。</p>
-        <span class="player-tag">代表球星：Kevin Durant（Houston Rockets）</span>
-      </div>
-      <div class="position-card">
-        <img class="player-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Victor_Wembanyama_ASVEL.jpg/330px-Victor_Wembanyama_ASVEL.jpg" alt="Victor Wembanyama" loading="lazy">
-        <h4>中鋒（5號位）</h4>
-        <p>球隊禁區的核心，負責卡位、籃板保護、阻攻與低位單打，防守端往往是最後一道防線。</p>
-        <span class="player-tag">代表球星：Victor Wembanyama（San Antonio Spurs）</span>
-      </div>
-    </div>
-
-    <div class="save-row">
-      <button class="primary" onclick="saveRole()">儲存角色設定</button>
-      <span class="status" id="roleSaveStatus"></span>
-    </div>
-  </section>
-
-  <!-- ================= 3. UPLOAD ================= -->
-  <section class="panel" id="panel-upload">
-    <div class="section-head"><h2>我的比賽片段</h2></div>
-    <p class="section-desc">輸入小隊成員與球場位置，並上傳 3 段比賽片段作為作業繳交。每段限制 24 秒以內，聚焦單一進攻回合的戰術決策。</p>
-
-    <div class="roster-box">
-      <h3>小隊成員名單</h3>
-      <p style="font-size:12px;color:var(--text-dim);margin:0;">名單會用來命名雲端硬碟資料夾（以頓號、區隔）。第一次上傳後，之後修改名單只會「重新命名」同一個資料夾，不會另外產生新資料夾。</p>
-      <div class="roster-form">
-        <div class="field" style="max-width:180px;">
-          <label>姓名</label>
-          <input type="text" id="memberName" placeholder="例如：王小明">
-        </div>
-        <div class="field" style="max-width:180px;">
-          <label>球場位置</label>
-          <select id="memberPos">
-            <option>控球後衛（1號位）</option>
-            <option>得分後衛（2號位）</option>
-            <option>小前鋒（3號位）</option>
-            <option>大前鋒（4號位）</option>
-            <option>中鋒（5號位）</option>
-          </select>
-        </div>
-        <button class="primary small" onclick="addMember()">＋ 新增成員</button>
-      </div>
-      <div class="roster-list" id="rosterList"></div>
-      <div class="folder-preview" id="folderPreview">尚未輸入成員，資料夾名稱：<b>（未命名）</b></div>
-    </div>
+    <div class="team-strip" id="filmTeam"></div>
 
     <div class="drive-box">
       <h3>Google 雲端硬碟連接</h3>
-      <p style="font-size:12.5px;color:var(--text-dim);margin:0;">連接後，3 段影片會上傳到以「小隊成員姓名（頓號區隔）」命名的資料夾中，老師可直接在雲端硬碟收作業。</p>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:0;">連接後，影片會上傳到以「班別＋組別」命名的資料夾，並自動分享給老師。</p>
       <div class="drive-row">
         <button class="ghost" id="driveConnectBtn" onclick="connectDrive()">連接 Google 雲端硬碟</button>
         <span class="drive-status" id="driveStatus">尚未連接</span>
       </div>
       <p style="font-size:11.5px;color:var(--text-dim);margin-top:10px;">
-        提醒：影片仍會存在「學生自己」的雲端硬碟裡（因為是用學生的帳號授權上傳），系統只是自動把資料夾分享給老師，
-        老師可以在自己雲端硬碟的「與我共用」找到所有小隊的資料夾，不需要學生手動分享。
+        影片存在你自己的雲端硬碟裡，系統只是把資料夾分享給老師（老師在「與我共用」就看得到）。授權約 1 小時後會過期，需要時再按一次連接。
       </p>
     </div>
 
     <div class="upload-slots" id="uploadSlots"></div>
-
-    <p style="font-size:12px;color:var(--text-dim);margin-top:18px;">
-      提醒：影片會直接從你的瀏覽器上傳到你（或老師）授權的 Google 帳號雲端硬碟，此頁面本身不會保存影片檔案。若未連接雲端硬碟，片段仍可在本機預覽並確認長度是否符合規定。
-    </p>
   </section>
 
-  <!-- ================= 4. AI CHAT ================= -->
+  <!-- ================= 4. PLAYER STATS ================= -->
+  <section class="panel" id="panel-stats">
+    <div class="section-head"><h2>球員表現紀錄表</h2><span class="note mono">ROTATE @ 4:00</span></div>
+    <p class="section-desc">每場第 4 分鐘輪替。輪休的同學用這頁記錄場上隊友的表現，並寫下我們隊伍遇到的問題。紀錄會存在這支手機，也可以繳交給老師。</p>
+
+    <div class="callout warn" id="statsNeedTeam">請先到「<b>01 賽程</b>」選擇你的班別和組別，這裡才會出現你們的比賽和隊友名單。</div>
+
+    <div id="statsBody" hidden>
+      <div class="stat-setup">
+        <div class="field">
+          <label>比賽場次</label>
+          <select id="statMatch" onchange="selectStatMatch(this.value)"></select>
+        </div>
+        <div class="field">
+          <label>對手</label>
+          <input type="text" id="statOpp" placeholder="例如：第6組" oninput="updateStatField('opp', this.value)">
+        </div>
+      </div>
+
+      <div class="seg" id="statHalfSeg">
+        <button data-half="first" onclick="setStatHalf('first')">前 4 分鐘</button>
+        <button data-half="second" onclick="setStatHalf('second')">後 4 分鐘</button>
+      </div>
+
+      <h4 class="step-title">場上球員（點選 3 人）</h4>
+      <div class="chip-set" id="statOnCourt"></div>
+
+      <div class="scoreboard">
+        <div><span>我隊</span><b id="statMyScore">0</b></div>
+        <i>:</i>
+        <div><span>對手</span><b id="statOppScore">0</b></div>
+      </div>
+      <div class="opp-score-btns">
+        <span>對手得分</span>
+        <button onclick="addOppScore(1)">＋1</button>
+        <button onclick="addOppScore(2)">＋2</button>
+        <button onclick="addOppScore(3)">＋3</button>
+        <button onclick="addOppScore(-1)">−1</button>
+      </div>
+      <p class="hint">得分依老師公告的計分方式按（FIBA 3x3 正式規則：弧內 1 分、弧外 2 分）。</p>
+
+      <div class="stat-players" id="statPlayers"></div>
+      <div class="handoff-actions">
+        <button class="ghost small" onclick="undoStat()">↶ 復原上一步</button>
+      </div>
+
+      <h4 class="step-title">我們隊伍遇到的問題</h4>
+      <div class="chip-set" id="statIssues"></div>
+      <div class="chat-input-row">
+        <textarea id="statNote" placeholder="其他觀察：例如對手一直換防，我們的擋拆打不開……" oninput="updateStatField('note', this.value)"></textarea>
+      </div>
+      <div class="chat-input-row">
+        <textarea id="statGood" placeholder="做得好的地方（選填）" oninput="updateStatField('good', this.value)"></textarea>
+      </div>
+
+      <h4 class="step-title">本場統計</h4>
+      <div class="table-wrap" id="statSummary"></div>
+      <div class="handoff-actions">
+        <button class="primary" id="statSubmitBtn" onclick="submitStats()">繳交到雲端硬碟</button>
+        <button class="primary alt" onclick="statsToAI()">帶到 AI 助教討論</button>
+        <button class="ghost" onclick="downloadStatsCsv()">下載 CSV</button>
+      </div>
+      <p class="hint" id="statStatus" style="margin-top:8px;"></p>
+
+      <details class="fold"><summary>這支手機記錄過的場次</summary><div id="statHistory"></div></details>
+    </div>
+  </section>
+
+  <!-- ================= 5. AI CHAT ================= -->
   <section class="panel" id="panel-chat">
     <div class="section-head"><h2>AI 後設認知助教</h2></div>
-    <p class="section-desc">助教不會給你答案，而是用提問帶你自己想清楚。</p>
+    <p class="section-desc">助教不會給你答案，而是用提問帶你自己想清楚。可以在「04 紀錄」按「帶到 AI 助教討論」，把比賽遇到的問題直接帶過來。</p>
+
+    <details class="fold" id="roleFold">
+      <summary>我的 3 對 3 角色（選填，AI 會依此調整提問角度）<span class="fold-status" id="roleSaveStatus"></span></summary>
+      <div class="role-cols" style="margin-top:12px;">
+        <div class="role-group">
+          <h3>場上位置</h3>
+          <div class="chip-set" id="positionChips">
+            <div class="chip" data-val="持球手（後衛）">持球手（後衛）</div>
+            <div class="chip" data-val="側翼（前鋒）">側翼（前鋒）</div>
+            <div class="chip" data-val="內線（長人）">內線（長人）</div>
+          </div>
+        </div>
+        <div class="role-group">
+          <h3>這次的角色</h3>
+          <div class="chip-set" id="teamChips">
+            <div class="chip" data-val="球員">球員</div>
+            <div class="chip" data-val="教練">教練</div>
+            <div class="chip" data-val="球場記錄員">球場記錄員</div>
+          </div>
+        </div>
+      </div>
+      <div class="save-row" style="margin-top:14px;">
+        <button class="primary small" onclick="saveRole()">儲存角色</button>
+      </div>
+    </details>
 
     <div class="flow mono">
       <span>① 判斷時機</span><i>→</i><span>② 寫下情境</span><i>→</i><span>③ 到 ChatGPT 對話</span><i>→</i><span>④ 收尾＋一次貼回</span><i>→</i><span>⑤ 族譜與後設認知評估</span>
@@ -765,12 +949,12 @@
           <button class="primary" id="graphSubmitBtn" onclick="submitKnowledgeGraph()">繳交到雲端硬碟</button>
           <button class="ghost" onclick="downloadDiagram('conceptMapContainer','我的知識族譜')">下載圖片</button>
         </div>
-        <p class="hint" id="graphSubmitStatus">族譜和後設認知評估會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。</p>
+        <p class="hint" id="graphSubmitStatus">族譜和後設認知評估會放進你們小組的雲端硬碟資料夾，並分享給老師。</p>
       </div>
     </div>
   </section>
 
-  <!-- ================= 5. RULES ================= -->
+  <!-- ================= 6. RULES ================= -->
   <section class="panel" id="panel-rules">
     <div class="section-head"><h2>籃球規則與裁判法</h2><span class="note mono">FIBA OFFICIAL</span></div>
     <p class="section-desc">
@@ -1291,62 +1475,272 @@ async function uploadFileToDrive(file, fileName, folderId, onProgress){
   });
 }
 
-// ================= 3. Roster (小隊成員名單) =================
-async function loadRoster(){
-  try{
-    const res = await window.storage.get('roster:mine', false);
-    return res ? JSON.parse(res.value) : [];
-  }catch(e){ return []; }
+// ================= 1. 賽制與賽程（資料來自兩班的賽制與賽程表 Excel） =================
+// 名單只放姓名，不放學號與系級（網站是公開的）。
+function lsGet(key, def){
+  try{ const v = localStorage.getItem('courtai:'+key); return v ? JSON.parse(v) : def; }catch(e){ return def; }
 }
-async function saveRoster(list){
-  try{ await window.storage.set('roster:mine', JSON.stringify(list), false); }catch(e){}
+function lsSet(key, val){
+  try{ localStorage.setItem('courtai:'+key, JSON.stringify(val)); }catch(e){}
 }
-async function addMember(){
-  const name = document.getElementById('memberName').value.trim();
-  const pos = document.getElementById('memberPos').value;
-  if(!name){ return; }
-  const list = await loadRoster();
-  list.push({id:Date.now()+'', name, pos});
-  await saveRoster(list);
-  document.getElementById('memberName').value='';
-  renderRoster();
-}
-async function removeMember(id){
-  let list = await loadRoster();
-  list = list.filter(m=>m.id!==id);
-  await saveRoster(list);
-  renderRoster();
-}
-async function renderRoster(){
-  const list = await loadRoster();
-  document.getElementById('rosterList').innerHTML = list.map(m=>`
-    <div class="roster-chip">${escapeHtml(m.name)}｜${escapeHtml(m.pos)} <button onclick="removeMember('${escapeHtml(m.id)}')">✕</button></div>
-  `).join('');
-  const folderName = getFolderName(list);
-  document.getElementById('folderPreview').innerHTML = list.length
-    ? `雲端硬碟資料夾名稱：<b>${escapeHtml(folderName)}</b>`
-    : `尚未輸入成員，資料夾名稱：<b>（未命名小隊）</b>`;
-}
-function getFolderName(list){ return list.map(m=>m.name).join('、') || '未命名小隊'; }
-renderRoster();
 
-// ================= 3. Upload slots (3 個影片上傳區) =================
+const SCHEDULE_DATA = {"thu12": {"days": [{"date": "11/26", "title": "預賽第 1 天", "matches": [{"tag": "第1時段", "time": "08:30–08:38", "court": "1號半場", "a": "第4組", "b": "第6組"}, {"tag": "第1時段", "time": "08:30–08:38", "court": "2號半場", "a": "第1組", "b": "第2組"}, {"tag": "第1時段", "time": "08:30–08:38", "court": "3號半場", "a": "第3組", "b": "第7組"}, {"tag": "第2時段", "time": "08:50–08:58", "court": "1號半場", "a": "第5組", "b": "第6組"}, {"tag": "第2時段", "time": "08:50–08:58", "court": "2號半場", "a": "第1組", "b": "第4組"}, {"tag": "第2時段", "time": "08:50–08:58", "court": "3號半場", "a": "第2組", "b": "第3組"}, {"tag": "第3時段", "time": "09:10–09:18", "court": "1號半場", "a": "第1組", "b": "第6組"}, {"tag": "第3時段", "time": "09:10–09:18", "court": "2號半場", "a": "第2組", "b": "第7組"}, {"tag": "第4時段", "time": "09:30–09:38", "court": "1號半場", "a": "第3組", "b": "第4組"}, {"tag": "第4時段", "time": "09:30–09:38", "court": "2號半場", "a": "第5組", "b": "第7組"}]}, {"date": "12/10", "title": "預賽第 2 天", "matches": [{"tag": "第1時段", "time": "08:30–08:38", "court": "1號半場", "a": "第2組", "b": "第6組"}, {"tag": "第1時段", "time": "08:30–08:38", "court": "2號半場", "a": "第1組", "b": "第3組"}, {"tag": "第1時段", "time": "08:30–08:38", "court": "3號半場", "a": "第4組", "b": "第5組"}, {"tag": "第2時段", "time": "08:50–08:58", "court": "1號半場", "a": "第6組", "b": "第7組"}, {"tag": "第2時段", "time": "08:50–08:58", "court": "2號半場", "a": "第2組", "b": "第4組"}, {"tag": "第2時段", "time": "08:50–08:58", "court": "3號半場", "a": "第1組", "b": "第5組"}, {"tag": "第3時段", "time": "09:10–09:18", "court": "1號半場", "a": "第3組", "b": "第6組"}, {"tag": "第3時段", "time": "09:10–09:18", "court": "2號半場", "a": "第4組", "b": "第7組"}, {"tag": "第3時段", "time": "09:10–09:18", "court": "3號半場", "a": "第2組", "b": "第5組"}, {"tag": "第4時段", "time": "09:30–09:38", "court": "1號半場", "a": "第3組", "b": "第5組"}, {"tag": "第4時段", "time": "09:30–09:38", "court": "2號半場", "a": "第1組", "b": "第7組"}]}, {"date": "12/17", "title": "決賽", "matches": [{"tag": "決賽上組", "time": "08:30–08:38", "court": "1號半場", "a": "預賽第1名", "b": "預賽第4名"}, {"tag": "決賽下組", "time": "08:30–08:38", "court": "2號半場", "a": "預賽第6名", "b": "預賽第7名"}, {"tag": "決賽上組", "time": "08:50–08:58", "court": "1號半場", "a": "預賽第2名", "b": "預賽第3名"}, {"tag": "決賽下組", "time": "08:50–08:58", "court": "2號半場", "a": "預賽第5名", "b": "預賽第7名"}, {"tag": "決賽上組", "time": "09:10–09:18", "court": "1號半場", "a": "預賽第1名", "b": "預賽第3名"}, {"tag": "決賽下組", "time": "09:10–09:18", "court": "2號半場", "a": "預賽第5名", "b": "預賽第6名"}]}, {"date": "12/24", "title": "決賽", "matches": [{"tag": "決賽上組", "time": "08:30–08:38", "court": "1號半場", "a": "預賽第4名", "b": "預賽第2名"}, {"tag": "決賽下組", "time": "08:30–08:38", "court": "2號半場", "a": "預賽第7名", "b": "預賽第6名"}, {"tag": "決賽上組", "time": "08:50–08:58", "court": "1號半場", "a": "預賽第1名", "b": "預賽第2名"}, {"tag": "決賽下組", "time": "08:50–08:58", "court": "2號半場", "a": "預賽第7名", "b": "預賽第5名"}, {"tag": "決賽上組", "time": "09:10–09:18", "court": "1號半場", "a": "預賽第3名", "b": "預賽第4名"}, {"tag": "決賽下組", "time": "09:10–09:18", "court": "2號半場", "a": "預賽第6名", "b": "預賽第5名"}]}], "groups": {"1": ["William Frederic SERELL", "江承俞", "江政融", "許皓筌", "洪心悅", "黃律凱"], "2": ["林展宏", "陳建霖", "楊雅筑", "吳俊廷", "江柏諭", "黃彥傑"], "3": ["蔡鋐家", "顏成翰", "張庭瑜", "蕭子修", "許景富"], "4": ["陳泓翰", "曾秔閩", "莊宸維", "申敬弘", "劉潔霓"], "5": ["李庭睿", "楊詠翔", "吳岳運", "鍾承佑", "李育凱"], "6": ["劉晉綸", "林子辰", "張惟維", "張廷悅", "李泳漢"], "7": ["陳子軒", "朱彧宏", "彭建鈞", "王璽鈞", "庫瑪耳岱米"]}}, "thu34": {"days": [{"date": "11/26", "title": "預賽第 1 天", "matches": [{"tag": "A區", "time": "10:30–10:38", "court": "1號半場", "a": "第1組", "b": "第4組"}, {"tag": "B區", "time": "10:30–10:38", "court": "2號半場", "a": "第2組", "b": "第5組"}, {"tag": "C區", "time": "10:30–10:38", "court": "3號半場", "a": "第3組", "b": "第6組"}, {"tag": "A區", "time": "10:50–10:58", "court": "1號半場", "a": "第4組", "b": "第7組"}, {"tag": "B區", "time": "10:50–10:58", "court": "2號半場", "a": "第5組", "b": "第8組"}, {"tag": "C區", "time": "10:50–10:58", "court": "3號半場", "a": "第6組", "b": "第9組"}, {"tag": "A區", "time": "11:10–11:18", "court": "1號半場", "a": "第7組", "b": "第1組"}, {"tag": "B區", "time": "11:10–11:18", "court": "2號半場", "a": "第8組", "b": "第2組"}, {"tag": "C區", "time": "11:10–11:18", "court": "3號半場", "a": "第9組", "b": "第3組"}]}, {"date": "12/10", "title": "預賽第 2 天", "matches": [{"tag": "A區", "time": "10:30–10:38", "court": "1號半場", "a": "第4組", "b": "第1組"}, {"tag": "B區", "time": "10:30–10:38", "court": "2號半場", "a": "第5組", "b": "第2組"}, {"tag": "C區", "time": "10:30–10:38", "court": "3號半場", "a": "第6組", "b": "第3組"}, {"tag": "A區", "time": "10:50–10:58", "court": "1號半場", "a": "第7組", "b": "第4組"}, {"tag": "B區", "time": "10:50–10:58", "court": "2號半場", "a": "第8組", "b": "第5組"}, {"tag": "C區", "time": "10:50–10:58", "court": "3號半場", "a": "第9組", "b": "第6組"}, {"tag": "A區", "time": "11:10–11:18", "court": "1號半場", "a": "第1組", "b": "第7組"}, {"tag": "B區", "time": "11:10–11:18", "court": "2號半場", "a": "第2組", "b": "第8組"}, {"tag": "C區", "time": "11:10–11:18", "court": "3號半場", "a": "第3組", "b": "第9組"}]}, {"date": "12/17", "title": "決賽第 1 天", "matches": [{"tag": "金盃", "time": "10:30–10:38", "court": "1號半場", "a": "A區第1", "b": "B區第1"}, {"tag": "銀盃", "time": "10:30–10:38", "court": "2號半場", "a": "A區第2", "b": "B區第2"}, {"tag": "銅盃", "time": "10:30–10:38", "court": "3號半場", "a": "A區第3", "b": "B區第3"}, {"tag": "金盃", "time": "10:50–10:58", "court": "1號半場", "a": "B區第1", "b": "C區第1"}, {"tag": "銀盃", "time": "10:50–10:58", "court": "2號半場", "a": "B區第2", "b": "C區第2"}, {"tag": "銅盃", "time": "10:50–10:58", "court": "3號半場", "a": "B區第3", "b": "C區第3"}, {"tag": "金盃", "time": "11:10–11:18", "court": "1號半場", "a": "C區第1", "b": "A區第1"}, {"tag": "銀盃", "time": "11:10–11:18", "court": "2號半場", "a": "C區第2", "b": "A區第2"}, {"tag": "銅盃", "time": "11:10–11:18", "court": "3號半場", "a": "C區第3", "b": "A區第3"}]}, {"date": "12/24", "title": "決賽第 2 天", "matches": [{"tag": "金盃", "time": "10:30–10:38", "court": "1號半場", "a": "B區第1", "b": "A區第1"}, {"tag": "銀盃", "time": "10:30–10:38", "court": "2號半場", "a": "B區第2", "b": "A區第2"}, {"tag": "銅盃", "time": "10:30–10:38", "court": "3號半場", "a": "B區第3", "b": "A區第3"}, {"tag": "金盃", "time": "10:50–10:58", "court": "1號半場", "a": "C區第1", "b": "B區第1"}, {"tag": "銀盃", "time": "10:50–10:58", "court": "2號半場", "a": "C區第2", "b": "B區第2"}, {"tag": "銅盃", "time": "10:50–10:58", "court": "3號半場", "a": "C區第3", "b": "B區第3"}, {"tag": "金盃", "time": "11:10–11:18", "court": "1號半場", "a": "A區第1", "b": "C區第1"}, {"tag": "銀盃", "time": "11:10–11:18", "court": "2號半場", "a": "A區第2", "b": "C區第2"}, {"tag": "銅盃", "time": "11:10–11:18", "court": "3號半場", "a": "A區第3", "b": "C區第3"}]}], "groups": {"1": ["陳俊樺", "許又文", "陸貽澔", "吳杰修", "洪佑齊", "鄧俊捷"], "2": ["黃大衛", "陳博安", "凃勻愷", "蕭源財", "許恩賜", "陳詣霖"], "3": ["曹安旭", "楊洛", "黃歆媞", "鄭又維", "黃昱熹"], "4": ["沈瑜軒", "阮宥中", "郭哲志", "董安", "林佑澤"], "5": ["王富禾", "徐婧瑜", "許祐齊", "蔡欣儀", "黃郁凱"], "6": ["楊漢威", "陳英明", "陳廷睿", "鄭煜鋒", "郭威昊"], "7": ["陳冠宏", "吳尚竑", "洪子恆", "陳懿恩", "楊詠旭"], "8": ["張心睿", "陳威佑", "姚鼎彥", "袁華岑", "陳譽仁"], "9": ["吳秉叡", "黃正丞", "李有傑", "黃景賢", "吳允翔"]}}};
+
+const CLASSES = {
+  thu12: {
+    label:'週四 1、2 節', short:'週四1-2節', teams:7, students:37,
+    facts:[
+      ['比賽方式','半場 3 對 3'],
+      ['每場','8 分鐘，第 4 分鐘固定換人'],
+      ['參賽隊伍','7 組，共 37 人'],
+      ['場地','4 個半場，每時段最多 3 場'],
+      ['積分','勝 3、和 1、負 0'],
+      ['輪休工作','技術統計'],
+      ['預賽','七隊單循環：21 場，每隊 6 場'],
+      ['決賽','上組 6 場（每隊 3 場）；下組 6 場（每隊 4 場）'],
+      ['比賽時段','08:30、08:50、09:10、09:30'],
+      ['總計','33 場，排出第 1～7 名']
+    ],
+    flow:[
+      ['預賽','七隊單循環（11/26、12/10）'],
+      ['預賽第 1～4 名','決賽上組單循環 → 最終第 1～4 名'],
+      ['預賽第 5～7 名','決賽下組雙循環 → 最終第 5～7 名']
+    ],
+    rules:[
+      '預賽每日負擔：6 隊為 3 場＋3 場；第 5 組為 2 場＋4 場（12/10 需打 4 場，該組同學額外加 1 分）。',
+      '同一隊不會在同一時段同時出賽。',
+      '預賽與決賽積分分開計算，依勝 3、和 1、負 0 排序；決賽各組重新計分，同分必要時加賽。',
+      '每次下課前，各隊須向老師回報成績；12/10 預賽結束後，公告決賽名單與場次。'
+    ],
+    dayPlan:null,
+    rewards:'第一名加 5 分、第二名加 4.5 分、第三名加 4 分、第四名加 3.5 分、第五名加 3 分、第六名加 2.5 分、第七名加 2 分。'
+  },
+  thu34: {
+    label:'週四 3、4 節', short:'週四3-4節', teams:9, students:47,
+    facts:[
+      ['比賽方式','半場 3 對 3'],
+      ['每場','8 分鐘（前後各 4 分鐘），中場約 1 分鐘輪替'],
+      ['參賽隊伍','9 組，共 47 人'],
+      ['場地','1～3 號半場比賽；第 4 半場暖身、補強與候賽'],
+      ['積分','勝 3、和 1、負 0；8 分鐘到時平手為和局'],
+      ['預賽分區','A 區 1、4、7 組；B 區 2、5、8 組；C 區 3、6、9 組'],
+      ['預賽','11/26、12/10，各區雙循環，每隊 4 場'],
+      ['決賽','12/17、12/24，各盃雙循環，每隊 4 場'],
+      ['上課時段','10:20 報到熱身；10:30、10:50、11:10 開賽'],
+      ['總計','36 場，每隊 8 場；每次上課 9 場']
+    ],
+    flow:[
+      ['預賽','A／B／C 區各自雙循環（11/26、12/10）'],
+      ['各區第 1 名','金盃'],
+      ['各區第 2 名','銀盃'],
+      ['各區第 3 名','銅盃']
+    ],
+    rules:[
+      '同積分時：先比相互對戰積分，再比總得失分差、總得分；仍相同則加賽。',
+      '補考同學依原分組參賽，出場時間與紀錄任務一視同仁。',
+      '輪休隊員記錄得分、籃板、助攻、失誤與上場時間；非出賽隊可協助核對。',
+      '每次下課前跟老師報成績；12/10 預賽結束後，計算決賽名單與場次。'
+    ],
+    dayPlan:[
+      ['10:20–10:30','集合、熱身及規則提醒'],
+      ['10:30–10:38','第一輪比賽'],
+      ['10:50–10:58','第二輪比賽'],
+      ['11:10–11:18','第三輪比賽'],
+      ['11:20–11:50','統計核對、回饋及收整']
+    ],
+    rewards:'第一名加 5 分、第二名加 4.5 分、第三名加 4 分、第四名加 3.5 分、第五名加 3 分、第六名加 2.5 分、第七名加 2 分、第八名加 1.5 分、第九名加 1 分。'
+  }
+};
+const REWARD_COMMON = [
+  '為鼓勵同學積極參與期末籃球比賽，並展現團隊合作與運動家精神，本課程依各隊最終排名提供學期總成績加分獎勵。',
+  '各隊成員須依規定參與比賽、配合輪替制度，並於輪休期間完成指定技術紀錄工作，始得取得排名加分。若因特殊原因無法上場，得經授課教師同意，以替代學習任務完成評量。',
+  '本項加分以學期總成績 100 分為上限，並依課程評量規定辦理。'
+];
+// 每 4 分鐘固定輪替：[階段, 上場隊員編號, 輪休／紀錄隊員編號]
+const ROTATION = {
+  5:[['第1場前4分鐘',[1,2,3],[4,5]], ['第1場後4分鐘',[1,4,5],[2,3]], ['第2場前4分鐘',[2,3,4],[1,5]], ['第2場後4分鐘',[2,3,5],[1,4]]],
+  6:[['第1場前4分鐘',[1,2,3],[4,5,6]], ['第1場後4分鐘',[4,5,6],[1,2,3]], ['第2場前4分鐘',[1,4,5],[2,3,6]], ['第2場後4分鐘',[2,3,6],[1,4,5]]]
+};
+const ROTATION_NOTE = {5:'5 人組要跨場次累計，讓每個人的上場時間平衡。', 6:'6 人組每場每人都上場 4 分鐘。'};
+
+let schedState = lsGet('sched:state', {cls:null, group:null, me:null, day:null});
+
+function currentTeam(){
+  const {cls, group} = schedState;
+  if(!cls || !group || !CLASSES[cls]) return null;
+  const members = SCHEDULE_DATA[cls].groups[group] || [];
+  return {cls, classShort:CLASSES[cls].short, classLabel:CLASSES[cls].label, group, members, me:schedState.me};
+}
+function teamName(g){ return `第${g}組`; }
+function isMyMatch(m){
+  const t = currentTeam();
+  return !!t && (m.a === teamName(t.group) || m.b === teamName(t.group));
+}
+// 依今天日期找出下一個比賽日（賽程年份以今年計）
+function nextDayIndex(days){
+  const now = new Date(); now.setHours(0,0,0,0);
+  const idx = days.findIndex(d=>{
+    const [mm, dd] = d.date.split('/').map(Number);
+    return new Date(now.getFullYear(), mm-1, dd) >= now;
+  });
+  return idx === -1 ? days.length - 1 : idx;
+}
+function saveSchedState(){ lsSet('sched:state', schedState); }
+
+function setClass(cls){
+  if(schedState.cls !== cls){ schedState = {cls, group:null, me:null, day:null}; saveSchedState(); }
+  renderSchedule();
+  onTeamChanged();
+}
+function setGroup(g){
+  schedState.group = schedState.group === g ? null : g;
+  schedState.me = null;
+  saveSchedState();
+  renderSchedule();
+  onTeamChanged();
+}
+function setMe(name){
+  schedState.me = schedState.me === name ? null : name;
+  saveSchedState();
+  renderMyTeam();
+}
+function setDay(i){
+  schedState.day = i;
+  saveSchedState();
+  renderMatches();
+}
+
+function renderSchedule(){
+  document.getElementById('classPicker').innerHTML = Object.entries(CLASSES).map(([id,c])=>
+    `<button class="${schedState.cls===id?'active':''}" onclick="setClass('${id}')"><b>${c.label}</b><small>${c.teams} 組・${c.students} 人</small></button>`
+  ).join('');
+  const body = document.getElementById('scheduleBody');
+  if(!schedState.cls){ body.hidden = true; return; }
+  body.hidden = false;
+  const c = CLASSES[schedState.cls], data = SCHEDULE_DATA[schedState.cls];
+  document.getElementById('groupPicker').innerHTML = Object.keys(data.groups).map(g=>
+    `<div class="chip ${String(schedState.group)===g?'selected':''}" onclick="setGroup('${g}')">第 ${g} 組</div>`
+  ).join('');
+  renderMyTeam();
+  const days = data.days;
+  if(schedState.day == null || schedState.day >= days.length) schedState.day = nextDayIndex(days);
+  renderMatches();
+  renderRotation();
+  document.getElementById('factGrid').innerHTML = c.facts.map(([k,v])=>`<div class="fact"><b>${k}</b><span>${v}</span></div>`).join('');
+  document.getElementById('bracketFlow').innerHTML = c.flow.map(([k,v],i)=>
+    `<div class="bracket-row${i===0?' first':''}"><span>${k}</span><i>→</i><b>${v}</b></div>`).join('');
+  document.getElementById('rosterAll').innerHTML = Object.entries(data.groups).map(([g,names])=>
+    `<div class="roster-row"><b>第 ${g} 組</b><span>${names.map(escapeHtml).join('、')}</span></div>`).join('');
+  document.getElementById('rankRules').innerHTML = c.rules.map(r=>`<li>${r}</li>`).join('');
+  document.getElementById('rewardBox').innerHTML = `<p class="reward-hi">${c.rewards}</p>` + REWARD_COMMON.map(t=>`<p class="hint">${t}</p>`).join('');
+}
+
+function renderMyTeam(){
+  const box = document.getElementById('myTeamCard');
+  const t = currentTeam();
+  if(!t){ box.innerHTML = '<p class="hint" style="margin-top:10px;">點選你的組別，就會標出你們的比賽。</p>'; return; }
+  const days = SCHEDULE_DATA[t.cls].days;
+  const counts = days.filter(d=>d.title.includes('預賽')).map(d=>`${d.date} ${d.matches.filter(isMyMatch).length} 場`).join('、');
+  box.innerHTML = `<div class="team-card">
+    <div class="team-card-head"><span class="team-tag">${t.classShort}</span><h3>第 ${t.group} 組</h3><small>${t.members.length} 人</small></div>
+    <p class="hint" style="margin:6px 0 8px;">我是（點自己的名字，紀錄表和 AI 助教會用到）：</p>
+    <div class="chip-set">${t.members.map(n=>`<div class="chip ${t.me===n?'selected':''}" onclick="setMe(${escapeHtml(JSON.stringify(n))})">${escapeHtml(n)}</div>`).join('')}</div>
+    <p class="team-meta">預賽：${counts}　決賽依預賽排名公告</p>
+  </div>`;
+  const badge = document.getElementById('roleBadge');
+  badge.innerHTML = `<b>${t.classShort}</b>｜<b>第 ${t.group} 組</b>${t.me ? '｜'+escapeHtml(t.me) : ''}`;
+}
+
+function renderMatches(){
+  const cls = schedState.cls; if(!cls) return;
+  const days = SCHEDULE_DATA[cls].days, c = CLASSES[cls];
+  const i = schedState.day;
+  document.getElementById('dateTabs').innerHTML = days.map((d,k)=>{
+    const mine = d.matches.some(isMyMatch);
+    return `<button class="${k===i?'active':''}" onclick="setDay(${k})"><b>${d.date}</b><small>${d.title}</small>${mine?'<i class="dot-mine"></i>':''}</button>`;
+  }).join('');
+  document.getElementById('dayPlan').innerHTML = c.dayPlan
+    ? `<details class="fold slim"><summary>當天課程流程</summary>${c.dayPlan.map(([t,x])=>`<div class="plan-row"><b>${t}</b><span>${x}</span></div>`).join('')}</details>` : '';
+  const day = days[i];
+  const t = currentTeam();
+  const list = day.matches.map(m=>{
+    const mine = isMyMatch(m);
+    const hl = s => t && s === teamName(t.group) ? `<b class="me">${s}</b>` : `<b>${s}</b>`;
+    return `<div class="match-card${mine?' mine':''}">
+      <div class="match-meta"><span class="time">${m.time}</span><span>${m.court}</span><span class="tag">${m.tag}</span>${mine?'<span class="mine-badge">我的比賽</span>':''}</div>
+      <div class="match-teams">${hl(m.a)}<i>vs</i>${hl(m.b)}</div>
+    </div>`;
+  }).join('');
+  const note = day.title.includes('決賽') ? '<p class="hint">決賽隊伍依預賽排名代入，12/10 預賽結束後由老師公告。</p>' : '';
+  document.getElementById('matchList').innerHTML = note + list;
+}
+
+function renderRotation(){
+  const box = document.getElementById('rotationBox');
+  const t = currentTeam();
+  const sizes = t ? [t.members.length] : [5, 6];
+  const label = (nums) => nums.map(n => t && t.members[n-1] ? escapeHtml(t.members[n-1]) : `隊員${n}`).join('、');
+  box.innerHTML = sizes.filter(s=>ROTATION[s]).map(s=>`
+    <div class="table-wrap"><table class="rot-table">
+      <thead><tr><th colspan="3">${s} 人組${t ? '（已代入你們的名單，依隊員編號）' : ''}</th></tr>
+      <tr><th>時間</th><th>上場</th><th>輪休・負責紀錄</th></tr></thead>
+      <tbody>${ROTATION[s].map(([when,on,off])=>`<tr><td>${when}</td><td>${label(on)}</td><td class="rec">${label(off)}</td></tr>`).join('')}</tbody>
+    </table></div>
+    <p class="hint">${ROTATION_NOTE[s]}輪休的同學請到「04 紀錄」記錄場上隊友。</p>`).join('');
+}
+
+// 班別或組別改變時，更新其他分頁
+function onTeamChanged(){
+  renderRotation();
+  renderFilmTeam();
+  initStatsPanel();
+}
+
+// ================= 3. 小組影片拍攝區 =================
+// 小隊名單與資料夾名稱都來自「01 賽程」選擇的班別與組別
+async function loadRoster(){
+  const t = currentTeam();
+  return t ? t.members.map(name=>({name})) : [];
+}
+function getFolderName(){
+  const t = currentTeam();
+  return t ? `${t.classShort}_第${t.group}組` : '未命名小隊';
+}
+function renderFilmTeam(){
+  const t = currentTeam();
+  document.getElementById('filmTeam').innerHTML = t
+    ? `上傳到雲端硬碟資料夾：<b>${escapeHtml(getFolderName())}</b><br><small>${t.members.map(escapeHtml).join('、')}</small>`
+    : `<span style="color:var(--danger);">請先到「01 賽程」選擇班別與組別，影片才會放進你們小組的資料夾。</span>`;
+}
+
 const SLOT_COUNT = 3;
 const MAX_CLIP_SECONDS = 24;
+const TACTICS = ['擋拆（Pick & Roll）','手遞手（Handoff）','傳切（Give & Go）','無球掩護（Off-ball Screen）','背切（Backdoor Cut）','假擋真切（Slip）','其他'];
 function buildUploadSlots(){
   const wrap = document.getElementById('uploadSlots');
   let html = '';
   for(let i=1;i<=SLOT_COUNT;i++){
     html += `
     <div class="upload-slot" id="slot-${i}">
-      <h4>影片片段 ${i}</h4>
-      <div class="upload-box">
-        <p>選擇影片檔案</p>
+      <h4>戰術影片 ${i}</h4>
+      <div class="field">
+        <label>這段打的是什麼戰術？</label>
+        <select id="tactic-${i}">
+          <option value="">請選擇戰術</option>
+          ${TACTICS.map(t=>`<option>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>一句話說明（選填）</label>
+        <input type="text" id="tacticNote-${i}" placeholder="例如：2 號幫 1 號擋人後順下">
+      </div>
+      <div class="upload-box" style="margin-top:10px;">
+        <p>拍攝或選擇影片</p>
         <input type="file" accept="video/*" onchange="handleClipSelect(event, ${i})">
         <div class="limit-badge mono">LIMIT ≤ ${MAX_CLIP_SECONDS}s</div>
       </div>
       <div class="preview-wrap" id="previewWrap-${i}" style="display:none;">
-        <video id="clipPreview-${i}" class="preview" controls></video>
+        <video id="clipPreview-${i}" class="preview" controls playsinline></video>
         <p class="slot-meta" id="clipMeta-${i}"></p>
         <div class="slot-actions" id="clipActions-${i}"></div>
       </div>
@@ -1402,18 +1796,31 @@ async function uploadSlot(slot){
   const file = slotFiles[slot];
   if(!file){ return; }
   const actions = document.getElementById('clipActions-'+slot);
+  const tactic = document.getElementById('tactic-'+slot).value;
+  if(!tactic){
+    actions.innerHTML = `<span class="clip-warning">請先在上方選擇這段影片打的戰術。</span>`;
+    setTimeout(()=>{ if(slotFiles[slot] === file) showUploadButton(slot, '上傳至雲端硬碟'); }, 3000);
+    return;
+  }
+  if(!currentTeam()){
+    actions.innerHTML = `<span class="clip-warning">請先到「01 賽程」選擇班別與組別。</span>`;
+    setTimeout(()=>{ if(slotFiles[slot] === file) showUploadButton(slot, '上傳至雲端硬碟'); }, 3000);
+    return;
+  }
   if(!driveTokenValid()){
     actions.innerHTML = `<span class="clip-warning">請先在上方按「連接 Google 雲端硬碟」完成授權（授權約 1 小時後會過期，需要重新連接）。</span>`;
     setTimeout(()=>{ if(slotFiles[slot] === file) showUploadButton(slot, '上傳至雲端硬碟'); }, 4000);
     return;
   }
-  const roster = await loadRoster();
-  const folderName = getFolderName(roster);
+  const folderName = getFolderName();
+  const tacticShort = tactic.replace(/（.*）/, '');
+  const note = safeFileName(document.getElementById('tacticNote-'+slot).value).slice(0, 20);
+  const fileName = [`片段${slot}`, tacticShort, note, file.name].filter(Boolean).join('_');
   actions.innerHTML = `<span class="slot-meta" id="uploadLabel-${slot}">準備上傳…</span><progress class="upload-progress" id="uploadBar-${slot}" max="1" value="0"></progress>`;
   try{
     const folderId = await getTeamFolder(folderName);
     const shared = await shareFolderWithTeacher(folderId);
-    const result = await uploadFileToDrive(file, `片段${slot}_${file.name}`, folderId, p=>{
+    const result = await uploadFileToDrive(file, fileName, folderId, p=>{
       document.getElementById('uploadBar-'+slot).value = p;
       document.getElementById('uploadLabel-'+slot).textContent = `上傳中… ${Math.round(p*100)}%`;
     });
@@ -1429,36 +1836,314 @@ async function uploadSlot(slot){
   }
 }
 
+// ================= 4. 球員表現紀錄（輪休同學記錄場上隊友） =================
+const STAT_KEYS = [['miss','投失'],['reb','籃板'],['ast','助攻'],['stl','抄截'],['tov','失誤'],['foul','犯規']];
+const ISSUE_TAGS = ['溝通喊話不足','換防沒跟上','籃板沒卡位','傳球失誤多','空間太擠','出手太倉促','沒有執行戰術','回防太慢','體力下滑','犯規太多'];
+const HALF_NAME = {first:'前 4 分鐘', second:'後 4 分鐘'};
+let statRecords = lsGet('stats:records', {});
+let statKey = null;
+let statHalf = 'first';
+let statUndo = [];
+
+function saveStatRecords(){ lsSet('stats:records', statRecords); }
+function emptyLine(){ return {pts:0, made:0, miss:0, reb:0, ast:0, stl:0, tov:0, foul:0}; }
+
+// 我的比賽（預賽）＋決賽各時段（隊伍待公告）＋練習賽
+function statMatchOptions(){
+  const t = currentTeam(); if(!t) return [];
+  const opts = [];
+  SCHEDULE_DATA[t.cls].days.forEach(d=>{
+    if(d.title.includes('預賽')){
+      d.matches.filter(isMyMatch).forEach(m=>{
+        const opp = m.a === teamName(t.group) ? m.b : m.a;
+        opts.push({key:`${t.cls}|${t.group}|${d.date}|${m.time}`, label:`${d.date} ${m.time.split('–')[0]} ${m.court}｜vs ${opp}`, opp, date:d.date});
+      });
+    }else{
+      [...new Set(d.matches.map(m=>m.time))].forEach(time=>{
+        opts.push({key:`${t.cls}|${t.group}|${d.date}|${time}`, label:`${d.date} ${time.split('–')[0]} 決賽`, opp:'', date:d.date});
+      });
+    }
+  });
+  opts.push({key:`${t.cls}|${t.group}|practice`, label:'練習賽／其他', opp:'', date:''});
+  return opts;
+}
+function currentStatRecord(){ return statKey ? statRecords[statKey] : null; }
+
+function initStatsPanel(){
+  const t = currentTeam();
+  document.getElementById('statsNeedTeam').hidden = !!t;
+  document.getElementById('statsBody').hidden = !t;
+  if(!t) return;
+  const opts = statMatchOptions();
+  // 預設選今天或之後最近的一場
+  const today = new Date(); today.setHours(0,0,0,0);
+  const upcoming = opts.find(o=>{
+    if(!o.date) return false;
+    const [mm,dd] = o.date.split('/').map(Number);
+    return new Date(today.getFullYear(), mm-1, dd) >= today;
+  });
+  if(!statKey || !opts.some(o=>o.key===statKey)) statKey = (upcoming || opts[0]).key;
+  document.getElementById('statMatch').innerHTML = opts.map(o=>
+    `<option value="${escapeHtml(o.key)}" ${o.key===statKey?'selected':''}>${escapeHtml(o.label)}${statRecords[o.key]?'　✓已記錄':''}</option>`).join('');
+  document.getElementById('statIssues').innerHTML = ISSUE_TAGS.map(tag=>
+    `<div class="chip" data-tag="${tag}" onclick="toggleIssue('${tag}')">${tag}</div>`).join('');
+  selectStatMatch(statKey);
+}
+
+function selectStatMatch(key){
+  statKey = key;
+  statUndo = [];
+  const opt = statMatchOptions().find(o=>o.key===key);
+  if(!statRecords[key]){
+    statRecords[key] = {key, label: opt ? opt.label : key, opp: opt ? opt.opp : '', oppScore:0,
+      onCourt:{first:[], second:[]}, stats:{first:{}, second:{}}, issues:[], note:'', good:'', updatedAt:null};
+  }
+  const r = statRecords[key];
+  document.getElementById('statOpp').value = r.opp || '';
+  document.getElementById('statNote').value = r.note || '';
+  document.getElementById('statGood').value = r.good || '';
+  setStatHalf(statHalf);
+}
+
+function setStatHalf(half){
+  statHalf = half;
+  document.querySelectorAll('#statHalfSeg button').forEach(b=>b.classList.toggle('active', b.dataset.half===half));
+  renderStats();
+}
+
+function touchStat(){
+  const r = currentStatRecord();
+  r.updatedAt = new Date().toISOString();
+  const t = currentTeam();
+  if(t && t.me) r.recorder = t.me;
+  saveStatRecords();
+}
+function updateStatField(field, value){
+  const r = currentStatRecord(); if(!r) return;
+  r[field] = value;
+  touchStat();
+  if(field==='opp') renderStatSummary();
+}
+function toggleOnCourt(name){
+  const r = currentStatRecord();
+  const list = r.onCourt[statHalf];
+  const i = list.indexOf(name);
+  if(i >= 0) list.splice(i, 1);
+  else{
+    if(list.length >= 3){ setStatStatus('場上只能選 3 人，請先取消一位。', 'var(--danger)'); return; }
+    list.push(name);
+  }
+  touchStat();
+  renderStats();
+}
+function toggleIssue(tag){
+  const r = currentStatRecord();
+  const i = r.issues.indexOf(tag);
+  if(i >= 0) r.issues.splice(i, 1); else r.issues.push(tag);
+  touchStat();
+  renderStats();
+}
+function addStat(name, key, pts){
+  const r = currentStatRecord();
+  const line = r.stats[statHalf][name] || (r.stats[statHalf][name] = emptyLine());
+  if(key === 'pts'){ line.pts += pts; line.made += 1; }
+  else line[key] += 1;
+  statUndo.push({half:statHalf, name, key, pts});
+  touchStat();
+  renderStats();
+  if(navigator.vibrate) navigator.vibrate(15);
+}
+function undoStat(){
+  const last = statUndo.pop();
+  if(!last){ setStatStatus('沒有可以復原的動作。'); return; }
+  const line = currentStatRecord().stats[last.half][last.name];
+  if(last.key === 'pts'){ line.pts -= last.pts; line.made -= 1; }
+  else line[last.key] -= 1;
+  touchStat();
+  renderStats();
+  setStatStatus(`已復原：${last.name} 的${last.key==='pts' ? '＋'+last.pts+' 分' : STAT_KEYS.find(k=>k[0]===last.key)[1]}`);
+}
+function addOppScore(n){
+  const r = currentStatRecord();
+  r.oppScore = Math.max(0, (r.oppScore || 0) + n);
+  touchStat();
+  renderStats();
+}
+function setStatStatus(text, color){
+  const el = document.getElementById('statStatus');
+  el.textContent = text;
+  el.style.color = color || '';
+}
+
+function statTotals(r){
+  const t = currentTeam();
+  const names = t ? t.members.slice() : [];
+  ['first','second'].forEach(h=>Object.keys(r.stats[h]).forEach(n=>{ if(!names.includes(n)) names.push(n); }));
+  return names.map(name=>{
+    const sum = emptyLine();
+    const halves = [];
+    ['first','second'].forEach(h=>{
+      const line = r.stats[h][name];
+      if(r.onCourt[h].includes(name) || line) halves.push(h==='first'?'前':'後');
+      if(line) Object.keys(sum).forEach(k=> sum[k] += line[k]);
+    });
+    return {name, halves, ...sum};
+  });
+}
+function myScore(r){ return statTotals(r).reduce((s,p)=>s+p.pts, 0); }
+
+function renderStats(){
+  const r = currentStatRecord(); if(!r) return;
+  const t = currentTeam();
+  const on = r.onCourt[statHalf];
+  document.getElementById('statOnCourt').innerHTML = t.members.map(n=>
+    `<div class="chip ${on.includes(n)?'selected':''}" onclick="toggleOnCourt(${escapeHtml(JSON.stringify(n))})">${escapeHtml(n)}</div>`).join('');
+  document.getElementById('statMyScore').textContent = myScore(r);
+  document.getElementById('statOppScore').textContent = r.oppScore || 0;
+  document.getElementById('statPlayers').innerHTML = on.length ? on.map(n=>{
+    const line = r.stats[statHalf][n] || emptyLine();
+    const arg = escapeHtml(JSON.stringify(n));
+    return `<div class="stat-player">
+      <div class="sp-head"><b>${escapeHtml(n)}</b><span>${line.pts}<small> 分</small></span></div>
+      <div class="sp-score">
+        <button onclick="addStat(${arg},'pts',1)">＋1</button>
+        <button onclick="addStat(${arg},'pts',2)">＋2</button>
+        <button onclick="addStat(${arg},'pts',3)">＋3</button>
+      </div>
+      <div class="sp-grid">${STAT_KEYS.map(([k,l])=>`<button onclick="addStat(${arg},'${k}')"><span>${l}</span><b>${line[k]}</b></button>`).join('')}</div>
+    </div>`;
+  }).join('') : `<div class="empty-state">先點選這 ${HALF_NAME[statHalf]} 在場上的 3 位隊友，就會出現紀錄按鈕。</div>`;
+  document.querySelectorAll('#statIssues .chip').forEach(c=>c.classList.toggle('selected', r.issues.includes(c.dataset.tag)));
+  renderStatSummary();
+  renderStatHistory();
+}
+
+function renderStatSummary(){
+  const r = currentStatRecord(); if(!r) return;
+  const rows = statTotals(r).filter(p=>p.halves.length);
+  document.getElementById('statSummary').innerHTML = rows.length ? `<table class="rot-table stat-table">
+    <thead><tr><th>球員</th><th>上場</th><th>得分</th><th>投進</th><th>投失</th><th>籃板</th><th>助攻</th><th>抄截</th><th>失誤</th><th>犯規</th></tr></thead>
+    <tbody>${rows.map(p=>`<tr><td>${escapeHtml(p.name)}</td><td>${p.halves.join('、')}</td><td><b>${p.pts}</b></td><td>${p.made}</td><td>${p.miss}</td><td>${p.reb}</td><td>${p.ast}</td><td>${p.stl}</td><td>${p.tov}</td><td>${p.foul}</td></tr>`).join('')}</tbody>
+  </table>` : '<p class="hint">還沒有紀錄。</p>';
+}
+
+function renderStatHistory(){
+  const t = currentTeam();
+  const list = Object.values(statRecords).filter(r=>r.updatedAt && t && r.key.startsWith(`${t.cls}|${t.group}|`));
+  document.getElementById('statHistory').innerHTML = list.length ? list.map(r=>
+    `<div class="roster-row"><b>${escapeHtml(r.label)}</b><span>${myScore(r)} : ${r.oppScore||0}${r.opp?'（vs '+escapeHtml(r.opp)+'）':''}</span></div>`).join('')
+    : '<p class="hint">還沒有記錄過的場次。</p>';
+}
+
+function buildStatsCsv(r){
+  const t = currentTeam();
+  const q = s => `"${String(s ?? '').replace(/"/g,'""')}"`;
+  const lines = [
+    ['班別', t.classShort], ['組別', `第${t.group}組`], ['場次', r.label], ['對手', r.opp || ''],
+    ['比分', `${myScore(r)}:${r.oppScore||0}`], ['紀錄者', r.recorder || signedInName || ''], [],
+    ['球員','上場','得分','投進','投失','籃板','助攻','抄截','失誤','犯規']
+  ];
+  statTotals(r).filter(p=>p.halves.length).forEach(p=>lines.push([p.name, p.halves.join('、'), p.pts, p.made, p.miss, p.reb, p.ast, p.stl, p.tov, p.foul]));
+  lines.push([], ['隊伍遇到的問題', r.issues.join('、')], ['其他觀察', r.note || ''], ['做得好的地方', r.good || '']);
+  return '﻿' + lines.map(l=>l.map(q).join(',')).join('\r\n');
+}
+function statFileBase(r){
+  const t = currentTeam();
+  return safeFileName(`表現紀錄_${t.classShort}_第${t.group}組_${r.label.replace(/[｜\s]+/g,'_')}_${r.recorder || signedInName || '紀錄者'}`);
+}
+function downloadStatsCsv(){
+  const r = currentStatRecord(); if(!r) return;
+  triggerDownload(new Blob([buildStatsCsv(r)], {type:'text/csv;charset=utf-8'}), statFileBase(r) + '.csv');
+}
+
+async function submitStats(){
+  const r = currentStatRecord(); if(!r) return;
+  if(!r.updatedAt){ setStatStatus('這一場還沒有任何紀錄。', 'var(--danger)'); return; }
+  // 授權視窗必須在按鈕點擊的當下開啟，否則會被瀏覽器擋成彈出視窗
+  if(!driveTokenValid()){
+    setStatStatus('請在跳出的視窗授權 Google 雲端硬碟，授權完成後會自動繳交……');
+    if(!connectDrive(()=>submitStats())) setStatStatus('Google 授權服務無法載入，請重新整理頁面後再試。', 'var(--danger)');
+    return;
+  }
+  const btn = document.getElementById('statSubmitBtn');
+  btn.disabled = true;
+  try{
+    const folderName = getFolderName();
+    const folderId = await getTeamFolder(folderName);
+    await shareFolderWithTeacher(folderId);
+    const blob = new Blob([buildStatsCsv(r)], {type:'text/csv'});
+    await uploadFileToDrive(blob, `${statFileBase(r)}_${fileStamp()}.csv`, folderId, p=>setStatStatus(`上傳中… ${Math.round(p*100)}%`));
+    setStatStatus(`已繳交到「${folderName}」資料夾 ✓`, 'var(--success)');
+  }catch(err){
+    console.error(err);
+    setStatStatus(err.message || '繳交失敗，請再試一次。', 'var(--danger)');
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+// 把這場的問題帶到 AI 助教，當作反應性後設認知的情境
+function statsToAI(){
+  const r = currentStatRecord(); if(!r) return;
+  if(!r.issues.length && !r.note){ setStatStatus('先勾選或寫下「我們隊伍遇到的問題」，再帶到 AI 助教。', 'var(--danger)'); return; }
+  const top = statTotals(r).filter(p=>p.halves.length);
+  const tov = top.reduce((s,p)=>s+p.tov,0), reb = top.reduce((s,p)=>s+p.reb,0), miss = top.reduce((s,p)=>s+p.miss,0);
+  const text = [
+    `剛剛的 3 對 3 比賽（${r.label}${r.opp && !r.label.includes(r.opp) ? '，對手 '+r.opp : ''}），比分 ${myScore(r)} 比 ${r.oppScore||0}。`,
+    r.issues.length ? `我們隊伍遇到的問題：${r.issues.join('、')}。` : '',
+    r.note ? `我觀察到：${r.note}` : '',
+    `數據上，我們全隊投失 ${miss} 次、籃板 ${reb} 個、失誤 ${tov} 次。`,
+    '我想弄清楚問題出在哪裡，下一場要怎麼調整。'
+  ].filter(Boolean).join('\n');
+  setMode('reactive');
+  document.getElementById('chatInput').value = text;
+  document.getElementById('gameTag').value = r.label;
+  saveGameTag();
+  document.querySelector('nav.tabs button[data-tab="chat"]').click();
+}
+
+renderSchedule();
+renderFilmTeam();
+initStatsPanel();
+
 initGoogleGate();
 
 // ================= 1. video library =================
 // 全班共用的正式影片清單。老師在「老師編輯模式」按「匯出影片清單」後，把複製到的內容整段取代這裡即可。
 const VIDEO_LIBRARY = [
-  // 進攻戰術
-  {id:'seed1', videoId:'V0pxlMP6H3Q', title:'圖解：擋拆、攻防轉換、傳切、快打(早攻)戰術', category:'offense'},
-  {id:'seed2', videoId:'m_YSHTtN4Gk', title:'擋拆／運球掩護基礎教學', category:'offense'},
-  {id:'seed3', videoId:'rD35JxBMDR4', title:'三角戰術（Triangle Offense）：經典戰術解析', category:'offense'},
-  {id:'seed4', videoId:'9pupaIn_9n0', title:'5-Out 進攻的五個基本打法', category:'offense'},
-  {id:'seed5', videoId:'daUzko6I2cA', title:'進攻體系案例分析：波士頓賽爾提克進攻篇', category:'offense'},
-  {id:'seed6', videoId:'IByvReE49qg', title:'NBA 戰術：Pistol 快速攻擊跑位', category:'offense'},
-  // 防守戰術
-  {id:'seed7', videoId:'KwzHW-c5h7M', title:'現代 NBA 防守觀念：換防與防守演進', category:'defense'},
-  {id:'seed8', videoId:'0XOuT4DHjw8', title:'大學系隊最愛的防守體系：2-3 區域聯防', category:'defense'},
-  {id:'seed9', videoId:'w_rjWX7PAVM', title:'戰術簡析：「摸肩膀」戰術破解三二區域聯防', category:'defense'},
-  {id:'seed10', videoId:'zUq-9O_npKM', title:'【規則知多少】進攻、阻擋犯規判定（防守合法站位觀念）', category:'defense'},
-  {id:'seed11', videoId:'yn8zqCz8TZo', title:'解析 BBALLBREAKDOWN 的創新 NBA 防守體系', category:'defense'},
-  {id:'seed12', videoId:'CSZuhVd1Cmw', title:'盯人防守輪轉觀念教學（Man To Man Defense Rotations）', category:'defense'},
-  // 小組配合
-  {id:'seed13', videoId:'dxORJt02kLU', title:'鬥牛不只是單打：實用 3x3 小組戰術分析', category:'combo'},
-  {id:'seed14', videoId:'OUAjEXe-gTk', title:'歷久不衰的兩人小組配合：擋拆戰術', category:'combo'},
-  {id:'seed15', videoId:'bmR3ksBGUps', title:'牛角戰術（Horns）小組配合實例', category:'combo'},
-  {id:'seed16', videoId:'X2C2Iienffc', title:'兩人配合教學：How To Teach The 2 Man Game', category:'combo'},
-  {id:'seed17', videoId:'O_Z4gkyPNG0', title:'傳切配合基礎教學：How to Run Give and Go', category:'combo'},
-  {id:'seed18', videoId:'LOL5ZNuP7vk', title:'兩人傳切戰術示範：The Give-and-Go', category:'combo'}
+  // 3 對 3 戰術
+  {id:'t1', videoId:'07HYH-_4Zyo', title:'【蔡蔡籃球】中華隊 3 對 3 戰術「POST SPLIT」', category:'tactic3'},
+  {id:'t2', videoId:'kgJGb49s1e4', title:'三對三也可以打牛角？FIBA 3x3 世界盃冠軍戰術分析', category:'tactic3'},
+  {id:'t3', videoId:'x0ldVEbRWmk', title:'明星球員不藏私！六招 3 對 3 戰術 ft. 璞園籃球隊', category:'tactic3'},
+  {id:'t4', videoId:'dxORJt02kLU', title:'鬥牛只有單打？實用 3x3 戰術分析', category:'tactic3'},
+  {id:'t5', videoId:'ac0FXNdOJRE', title:'超實用三對三戰術「3,5 empty」', category:'tactic3'},
+  {id:'t6', videoId:'puZxpKfcv7Y', title:'Pick & Roll 擋拆小組配合（訓練實錄）', category:'tactic3'},
+  {id:'t7', videoId:'OUAjEXe-gTk', title:'兩人小組配合：對球掩護／擋拆戰術', category:'tactic3'},
+  {id:'t8', videoId:'O_Z4gkyPNG0', title:'傳切配合：How to Run Give and Go', category:'tactic3'},
+  {id:'t9', videoId:'67UCS2FeBMs', title:'Simple 3v3 Basketball Plays（簡單 3 對 3 戰術）', category:'tactic3'},
+  {id:'t10', videoId:'jMLd9jupKkE', title:'Advanced 3 on 3 Basketball Plays（進階 3 對 3 戰術）', category:'tactic3'},
+  // 中華台北男籃（FIBA 官方頻道）
+  {id:'m1', videoId:'KP_k7gdhvBk', title:'韓國 vs 中華台北｜2027 世界盃亞洲區資格賽 精華', category:'tpeMen'},
+  {id:'m2', videoId:'d-lwn-LioHM', title:'中華台北 vs 韓國｜2027 世界盃亞洲區資格賽 精華', category:'tpeMen'},
+  {id:'m3', videoId:'oi_-zg4wPNs', title:'中華台北 vs 中國｜2027 世界盃亞洲區資格賽 精華', category:'tpeMen'},
+  {id:'m4', videoId:'lkdnqoZNUws', title:'中國 vs 中華台北｜2027 世界盃亞洲區資格賽 延長精華', category:'tpeMen'},
+  {id:'m5', videoId:'d-YD0wiN7ts', title:'中華台北 vs 日本｜2027 世界盃亞洲區資格賽 延長精華', category:'tpeMen'},
+  {id:'m6', videoId:'Lq1vonUhFK0', title:'日本 vs 中華台北｜2027 世界盃亞洲區資格賽 精華', category:'tpeMen'},
+  {id:'m7', videoId:'6YS5ECRzSdU', title:'伊朗 vs 中華台北｜2025 亞洲盃 延長精華', category:'tpeMen'},
+  {id:'m8', videoId:'TSx_i3wlSfA', title:'中華台北 vs 約旦｜2025 亞洲盃 延長精華', category:'tpeMen'},
+  {id:'m9', videoId:'9GuDkmW-IT0', title:'中華台北 vs 菲律賓｜2025 亞洲盃 延長精華', category:'tpeMen'},
+  {id:'m10', videoId:'J82V9oYZaWA', title:'【3x3】中華台北 vs 菲律賓｜男子｜2026 3x3 亞洲盃 精華', category:'tpeMen'},
+  {id:'m11', videoId:'dhQ_51VpxOI', title:'【3x3】蒙古 vs 中華台北｜男子｜2026 3x3 亞洲盃 精華', category:'tpeMen'},
+  // 中華台北女籃（FIBA 官方頻道）
+  {id:'w1', videoId:'wCQyqHmbJK0', title:'【3x3】日本 vs 中華台北｜女子｜2026 3x3 亞洲盃 精華', category:'tpeWomen'},
+  {id:'w2', videoId:'hBl515fg084', title:'【3x3】日本 vs 中華台北｜女子｜2026 3x3 亞洲盃 全場', category:'tpeWomen'},
+  {id:'w3', videoId:'DYN0JCUtkEs', title:'準決賽 中華台北 vs 蒙古｜2025 女子亞洲盃 B 級 全場', category:'tpeWomen'},
+  {id:'w4', videoId:'-dQet-z8m4c', title:'中華台北 vs 哈薩克｜2025 女子亞洲盃 B 級 全場', category:'tpeWomen'},
+  {id:'w5', videoId:'E4k0WXXbv9A', title:'印度 vs 中華台北｜2025 女子亞洲盃 B 級 全場', category:'tpeWomen'}
 ];
 
-let currentCat = 'offense';
-const catLabel = {offense:'進攻戰術', defense:'防守戰術', combo:'小組配合'};
+let currentCat = 'tactic3';
+const catLabel = {tactic3:'3 對 3 戰術', tpeMen:'中華男籃', tpeWomen:'中華女籃'};
 
 document.getElementById('catTabs').addEventListener('click', (e)=>{
   if(e.target.tagName!=='BUTTON') return;
@@ -1530,11 +2215,14 @@ async function renderVideos(){
   grid.innerHTML = list.map(v=>`
     <div class="video-card">
       ${teacher ? `<button class="del" onclick="deleteVideo('${escapeHtml(v.id)}')">刪除 ✕</button>` : ''}
-      <div class="frame"><iframe src="https://www.youtube.com/embed/${encodeURIComponent(v.videoId)}" loading="lazy" allowfullscreen></iframe></div>
+      <div class="frame"><button class="yt-thumb" aria-label="播放影片" style="background-image:url('https://i.ytimg.com/vi/${encodeURIComponent(v.videoId)}/hqdefault.jpg')" onclick="playVideo(this, '${encodeURIComponent(v.videoId)}')"></button></div>
       <h4>${escapeHtml(v.title)}</h4>
       <span class="tag mono">${catLabel[v.category] || ''}</span>
     </div>
   `).join('');
+}
+function playVideo(btn, id){
+  btn.outerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
 }
 async function addVideo(){
   if(!isTeacher()) return;
@@ -1603,13 +2291,13 @@ async function saveRole(){
   }
   const profile = {position:selectedPosition, teamRole:selectedTeamRole};
   try{ await window.storage.set('profile:role', JSON.stringify(profile), false); }catch(e){}
-  document.getElementById('roleSaveStatus').style.color = 'var(--success)';
-  document.getElementById('roleSaveStatus').textContent = '已儲存！';
   currentRole = profile;
   updateRoleBadge(profile);
+  document.getElementById('roleSaveStatus').style.color = 'var(--success)';
+  document.getElementById('roleFold').open = false;
 }
 function updateRoleBadge(profile){
-  document.getElementById('roleBadge').innerHTML = `目前角色 → <b>${escapeHtml(profile.teamRole)}</b>／<b>${escapeHtml(profile.position)}</b>`;
+  document.getElementById('roleSaveStatus').textContent = `：${profile.teamRole}／${profile.position}`;
 }
 async function loadRole(){
   try{
@@ -1652,7 +2340,7 @@ async function loadGameTag(){
 function currentGameTag(){ return document.getElementById('gameTag').value.trim(); }
 loadGameTag();
 
-// 依學生在「角色選擇」分頁儲存的位置與團隊角色，調整 AI 助教提問的角度。
+// 依學生在 AI 助教「我的 3 對 3 角色」儲存的位置與團隊角色，調整 AI 助教提問的角度。
 function buildRoleContext(){
   if(!currentRole) return '';
   const pos = currentRole.position;
@@ -1675,7 +2363,7 @@ function buildSystemPrompt(){
 想麻煩你用這樣的方式陪我想，而不是直接把答案告訴我：
 1. 我想練習自己判斷戰術，所以請不要直接告訴我「該打哪個戰術」或給我單一標準答案，麻煩用提問引導我自己想清楚。
 2. 可以照這個順序一步步問我：先幫我辨識場上的線索 → 讓我試著預測可能的結果 → 引導我提出自己的策略 → 請我說明理由 → 最後可以聊聊怎麼實際驗證、事後怎麼反思修正。每次先推進一到兩個階段就好，不用一次講完全部。
-3. ${modeDesc}
+3. ${modeDesc}我們打的是半場 3 對 3（每組 5～6 人，每場 8 分鐘、第 4 分鐘輪替），請用 3 對 3 的情境來引導我。
 4. 可以多用提問、或給我幾個選項讓我比較，讓我自己說出判斷和理由，而不是等我被動接收答案。
 5. 如果我講得不夠清楚（例如沒說防守方式、隊友位置、時間壓力），麻煩先問我補充這些線索，再繼續往下引導。
 6. 語氣像一位有耐心的教練就好，簡短、口語化，每次回覆大概4-6句，可以用1-2個追問收尾。
@@ -1702,7 +2390,7 @@ async function buildAndCopyPrompt(){
     appendMsg('sys', '自動複製失敗，請展開「查看提示詞內容」手動複製。');
   }
   if(!currentRole){
-    appendMsg('sys', '提醒：你還沒在「角色選擇」分頁儲存角色。');
+    appendMsg('sys', '提醒：你還沒設定「我的 3 對 3 角色」（選填）。');
   }
   appendMsg('user', text);
   addToLog('user', text);
@@ -2082,7 +2770,7 @@ async function renderConceptMap(code){
     if(svgEl && svgEl.getBoundingClientRect().width > container.clientWidth){
       container.insertAdjacentHTML('afterbegin', '<p class="hint swipe-hint">↔ 圖比較寬，可以左右滑動查看</p>');
     }
-    document.getElementById('graphSubmitStatus').textContent = '族譜和後設認知評估會放進「03 我的比賽片段」的小隊資料夾，並分享給老師。';
+    document.getElementById('graphSubmitStatus').textContent = '族譜和後設認知評估會放進你們小組的雲端硬碟資料夾，並分享給老師。';
     document.getElementById('graphSubmitStatus').style.color = '';
     return true;
   }catch(e){
@@ -2229,7 +2917,7 @@ async function submitKnowledgeGraph(){
   }
   const roster = await loadRoster();
   if(!roster.length){
-    setGraphStatus('請先到「03 我的比賽片段」填寫小隊成員名單，族譜會放進同一個小隊資料夾。', 'var(--danger)');
+    setGraphStatus('請先到「01 賽程」選擇班別與組別，族譜會放進你們小組的資料夾。', 'var(--danger)');
     return;
   }
   const btn = document.getElementById('graphSubmitBtn');
@@ -2237,7 +2925,7 @@ async function submitKnowledgeGraph(){
   try{
     setGraphStatus('正在轉成圖片……');
     const png = await diagramToPngBlob('conceptMapContainer');
-    const folderName = getFolderName(roster);
+    const folderName = getFolderName();
     const folderId = await getTeamFolder(folderName);
     const shared = await shareFolderWithTeacher(folderId);
     const base = `${safeFileName(signedInName) || '學生'}_${fileStamp()}`;
@@ -2346,8 +3034,8 @@ async function diagramToPngBlob(containerId){
   canvas.width = width * scale;
   canvas.height = height * scale;
   const ctx = canvas.getContext('2d');
-  // 深色底，跟平台視覺一致（PNG 若不填底色會是透明，貼進白底文件會看不清楚）
-  ctx.fillStyle = '#05060a';
+  // 深色底，跟族譜底板一致（PNG 若不填底色會是透明，貼進白底文件會看不清楚）
+  ctx.fillStyle = '#1b2235';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
