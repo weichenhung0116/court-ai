@@ -434,6 +434,20 @@
   .note-list{margin:0;padding-left:18px;font-size:13px;line-height:1.8;}
   .reward-hi{font-size:13.5px;font-weight:700;color:var(--orange);line-height:1.7;margin:0 0 6px;}
 
+  .submit-guide{margin-top:14px;background:#fff;border-radius:18px;padding:14px 16px;border:1px solid var(--hair);box-shadow:0 2px 10px rgba(28,37,54,0.06);}
+  .submit-guide h4{margin:0 0 10px;font-size:15px;}
+  .sg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .sg-col{border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.6;}
+  .sg-col.group{background:#fff1e3;}
+  .sg-col.solo{background:#e6f6fa;}
+  .sg-col b{display:block;margin-bottom:4px;}
+  .sg-col.group b{color:var(--orange);}
+  .sg-col.solo b{color:var(--cyan);}
+  .sg-col ul{margin:0;padding-left:18px;}
+  .sg-col li span{display:inline-block;font-size:11px;font-weight:700;background:#fff;border-radius:999px;padding:0 8px;margin-right:6px;}
+  .submit-guide .hint{margin:10px 0 0;}
+  @media (max-width: 600px){ .sg-grid{grid-template-columns:1fr;} }
+
   /* ===== 02 影片：先顯示縮圖，點了才載入播放器（手機比較順） ===== */
   .yt-thumb{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#000 center/cover no-repeat;}
   .yt-thumb::after{
@@ -643,6 +657,27 @@
       <div class="chip-set group-picker" id="groupPicker"></div>
       <div id="myTeamCard"></div>
 
+      <div class="submit-guide">
+        <h4>作業怎麼繳交？</h4>
+        <div class="sg-grid">
+          <div class="sg-col group">
+            <b>小組作業（每組 1 份）</b>
+            <ul>
+              <li><span>03 拍攝</span>3 段 3 對 3 戰術影片，每段 ≤ 24 秒，每人至少入鏡 1 段</li>
+              <li>由組內 1 位上傳負責人上傳</li>
+            </ul>
+          </div>
+          <div class="sg-col solo">
+            <b>個人作業（每人自己繳）</b>
+            <ul>
+              <li><span>04 紀錄</span>輪休時負責記錄的場次，每場結束按「繳交到雲端硬碟」</li>
+              <li><span>05 AI 助教</span>知識族譜＋後設認知評估（可附對話紀錄）</li>
+            </ul>
+          </div>
+        </div>
+        <p class="hint">檔案會存到你自己 Google 雲端硬碟裡的「班別_組別_姓名」資料夾，並自動分享給老師。上傳前請先點選「我是」自己的名字。</p>
+      </div>
+
       <h4 class="step-title">賽程表</h4>
       <div class="date-tabs" id="dateTabs"></div>
       <div class="day-plan" id="dayPlan"></div>
@@ -663,13 +698,12 @@
 
   <!-- ================= 2. VIDEO LIBRARY ================= -->
   <section class="panel" id="panel-videos">
-    <div class="section-head"><h2>戰術影片</h2><span class="note mono">3x3 · TEAM TAIPEI</span></div>
-    <p class="section-desc">3 對 3 戰術教學，以及 2025～2026 年中華台北男、女籃在 FIBA 賽事的比賽影片。看比賽時，試著找出他們用了哪些 3 對 3 也能打的配合。</p>
+    <div class="section-head"><h2>戰術影片</h2><span class="note mono">BASICS · 3x3</span></div>
+    <p class="section-desc">先看「基本戰術」認識擋拆、手遞手、傳切等配合，再看「3 對 3 戰術」學怎麼把它們組合起來。拍攝小組影片時，就從這些戰術裡挑。</p>
 
     <div class="cat-tabs" id="catTabs">
-      <button data-cat="tactic3" class="active">3 對 3 戰術</button>
-      <button data-cat="tpeMen">中華男籃</button>
-      <button data-cat="tpeWomen">中華女籃</button>
+      <button data-cat="basic" class="active">基本戰術</button>
+      <button data-cat="tactic3">3 對 3 戰術</button>
     </div>
 
     <div class="video-grid" id="videoGrid"></div>
@@ -691,9 +725,8 @@
       <div class="field" style="max-width:150px;">
         <label>加入分類</label>
         <select id="vidCat">
+          <option value="basic">基本戰術</option>
           <option value="tactic3">3 對 3 戰術</option>
-          <option value="tpeMen">中華男籃</option>
-          <option value="tpeWomen">中華女籃</option>
         </select>
       </div>
       <button class="primary" onclick="addVideo()">＋ 新增到草稿</button>
@@ -718,6 +751,9 @@
         <li>手機<b>橫拿</b>，從側邊或後方拍，畫面要看得到 3 名進攻球員和籃框。</li>
         <li>開拍前先喊出戰術名稱，例如「擋拆！」。</li>
         <li>24 秒內完成「發動 → 配合 → 出手」，太長請先在手機上剪短。</li>
+        <li><b>每位隊員至少要出現在 1 段影片裡</b>：3 段影片輪流換人上場，全隊都要入鏡。</li>
+        <li>場上 3 人執行戰術，<b>拍攝的同學要邊拍邊做旁白解說</b>，例如「1 號持球，2 號上來擋人，1 號往右切……」。</li>
+        <li>小組影片由組內 <b>1 位上傳負責人</b>上傳就好，避免重複。</li>
       </ol>
     </div>
 
@@ -725,7 +761,7 @@
 
     <div class="drive-box">
       <h3>Google 雲端硬碟連接</h3>
-      <p style="font-size:12.5px;color:var(--text-dim);margin:0;">連接後，影片會上傳到以「班別＋組別」命名的資料夾，並自動分享給老師。</p>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:0;">連接後，影片會上傳到你雲端硬碟裡的「班別_組別_姓名」資料夾，並自動分享給老師。</p>
       <div class="drive-row">
         <button class="ghost" id="driveConnectBtn" onclick="connectDrive()">連接 Google 雲端硬碟</button>
         <span class="drive-status" id="driveStatus">尚未連接</span>
@@ -801,6 +837,7 @@
         <button class="ghost" onclick="downloadStatsCsv()">下載 CSV</button>
       </div>
       <p class="hint" id="statStatus" style="margin-top:8px;"></p>
+      <p class="hint">紀錄存在這支手機的瀏覽器裡：同一支手機、同一個瀏覽器重新打開網頁都還在。換手機、用無痕模式或清除瀏覽器資料就會不見（iPhone Safari 太久沒開本網站也可能被清掉），所以<b>每場結束請按「繳交到雲端硬碟」</b>保存。</p>
 
       <details class="fold"><summary>這支手機記錄過的場次</summary><div id="statHistory"></div></details>
     </div>
@@ -868,14 +905,12 @@
     <div class="chat-input-row" style="margin-top:0;">
       <textarea id="chatInput" placeholder="你看到了什麼？你怎麼想？哪裡卡住？"></textarea>
     </div>
-    <div class="game-tag-row">
-      <label for="gameTag">場次</label>
-      <input type="text" id="gameTag" placeholder="例：第2場 vs 化工系（選填）" onchange="saveGameTag()">
-    </div>
+    <input type="hidden" id="gameTag">
     <div class="handoff-actions">
       <button class="primary" onclick="buildAndCopyPrompt()">③ 複製提示詞</button>
       <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
     </div>
+    <p class="hint" id="promptStatus" style="margin-top:8px;"></p>
     <details class="prompt-details">
       <summary>查看提示詞內容</summary>
       <div class="prompt-out" id="promptOut">尚未產生提示詞。</div>
@@ -907,28 +942,12 @@
       </div>
       <p class="hint" id="importStatus" style="margin-top:8px;"></p>
 
-      <h4 class="step-title" style="font-size:12.5px;color:var(--text-dim);">對話紀錄（存在這台裝置）</h4>
-      <div class="chat-window" id="chatWindow">
-        <div class="msg sys">還沒有對話紀錄。</div>
-      </div>
-      <div class="handoff-actions">
-        <span style="flex:1;"></span>
-        <button class="ghost small" onclick="downloadLog()">下載紀錄</button>
-        <button class="ghost small" onclick="clearLog()">清除紀錄</button>
-      </div>
       <details class="prompt-details">
         <summary>想把好幾個 ChatGPT 對話（好幾場比賽）合併成一張族譜？</summary>
         <p class="hint" style="margin:8px 0;">每個對話都先用上面的方式匯入。要合併時，按下面的按鈕複製「合併分析指令」（已經包含這台裝置上的全部對話紀錄），貼到一個<b>新的</b> ChatGPT 對話，再把回覆貼回上面的框框按「匯入並分析」。</p>
-        <button class="ghost small" onclick="buildAndCopyConceptPrompt()">複製合併分析指令</button>
-      </details>
-      <details class="prompt-details">
-        <summary>備用：手動逐段加入對話</summary>
-        <div class="chat-input-row">
-          <textarea id="pasteBack" placeholder="貼上一段對話……"></textarea>
-        </div>
         <div class="handoff-actions">
-          <button class="primary small" onclick="logExchange('user')">＋ 我說的</button>
-          <button class="primary alt small" onclick="logExchange('ai')">＋ AI 回覆</button>
+          <button class="ghost small" onclick="buildAndCopyConceptPrompt()">複製合併分析指令</button>
+          <button class="ghost small" onclick="clearLog()">清除這台裝置的對話紀錄</button>
         </div>
       </details>
     </div>
@@ -1603,6 +1622,7 @@ function setMe(name){
   schedState.me = schedState.me === name ? null : name;
   saveSchedState();
   renderMyTeam();
+  renderFilmTeam();
 }
 function setDay(i){
   schedState.day = i;
@@ -1702,14 +1722,17 @@ async function loadRoster(){
   const t = currentTeam();
   return t ? t.members.map(name=>({name})) : [];
 }
+// 每位同學一個資料夾（存在自己的雲端硬碟），老師依名稱排序就能看到同一組的所有人
 function getFolderName(){
   const t = currentTeam();
-  return t ? `${t.classShort}_第${t.group}組` : '未命名小隊';
+  if(!t) return '未命名小隊';
+  const who = safeFileName(t.me || signedInName || '') || '未選姓名';
+  return `${t.classShort}_第${t.group}組_${who}`;
 }
 function renderFilmTeam(){
   const t = currentTeam();
   document.getElementById('filmTeam').innerHTML = t
-    ? `上傳到雲端硬碟資料夾：<b>${escapeHtml(getFolderName())}</b><br><small>${t.members.map(escapeHtml).join('、')}</small>`
+    ? `上傳到雲端硬碟資料夾：<b>${escapeHtml(getFolderName())}</b><br><small>${t.me ? '' : '提醒：請先到「01 賽程」點選「我是」自己的名字。<br>'}${t.members.map(escapeHtml).join('、')}</small>`
     : `<span style="color:var(--danger);">請先到「01 賽程」選擇班別與組別，影片才會放進你們小組的資料夾。</span>`;
 }
 
@@ -2111,39 +2134,37 @@ initGoogleGate();
 // ================= 1. video library =================
 // 全班共用的正式影片清單。老師在「老師編輯模式」按「匯出影片清單」後，把複製到的內容整段取代這裡即可。
 const VIDEO_LIBRARY = [
+  // 基本戰術
+  {id:'b1', videoId:'J9boIhyuMCg', title:'擋拆（Pick & Roll）｜[DV籃球夢工廠] 擋拆技巧教學', category:'basic'},
+  {id:'b2', videoId:'wsZhZp6FXz8', title:'手遞手（Handoff）｜3 vs 3 進攻戰術：Hand Off＋單擋', category:'basic'},
+  {id:'b3', videoId:'5U7Z7WhyYFQ', title:'手遞手（Handoff）｜Hand Off 時的四個選擇', category:'basic'},
+  {id:'b4', videoId:'LOL5ZNuP7vk', title:'傳切（Give & Go）｜The Give-and-Go', category:'basic'},
+  {id:'b5', videoId:'B0182oQgOE8', title:'無球掩護（Off-ball Screen）｜Off ball screens in basketball', category:'basic'},
+  {id:'b6', videoId:'O4EX3P76h_U', title:'背切（Backdoor Cut）｜The Backdoor Cut', category:'basic'},
+  {id:'b7', videoId:'YMwYqz9Cg3g', title:'假擋真切（Slip）｜牛角溜切 Horns Slip', category:'basic'},
+  {id:'b8', videoId:'OUAjEXe-gTk', title:'擋拆（Pick & Roll）｜兩人小組配合：對球掩護／擋拆', category:'basic'},
+  {id:'b9', videoId:'puZxpKfcv7Y', title:'擋拆（Pick & Roll）｜擋拆小組配合（訓練實錄）', category:'basic'},
+  {id:'b10', videoId:'O_Z4gkyPNG0', title:'傳切（Give & Go）｜How to Run Give and Go', category:'basic'},
   // 3 對 3 戰術
-  {id:'t1', videoId:'07HYH-_4Zyo', title:'【蔡蔡籃球】中華隊 3 對 3 戰術「POST SPLIT」', category:'tactic3'},
-  {id:'t2', videoId:'kgJGb49s1e4', title:'三對三也可以打牛角？FIBA 3x3 世界盃冠軍戰術分析', category:'tactic3'},
-  {id:'t3', videoId:'x0ldVEbRWmk', title:'明星球員不藏私！六招 3 對 3 戰術 ft. 璞園籃球隊', category:'tactic3'},
-  {id:'t4', videoId:'dxORJt02kLU', title:'鬥牛只有單打？實用 3x3 戰術分析', category:'tactic3'},
-  {id:'t5', videoId:'ac0FXNdOJRE', title:'超實用三對三戰術「3,5 empty」', category:'tactic3'},
-  {id:'t6', videoId:'puZxpKfcv7Y', title:'Pick & Roll 擋拆小組配合（訓練實錄）', category:'tactic3'},
-  {id:'t7', videoId:'OUAjEXe-gTk', title:'兩人小組配合：對球掩護／擋拆戰術', category:'tactic3'},
-  {id:'t8', videoId:'O_Z4gkyPNG0', title:'傳切配合：How to Run Give and Go', category:'tactic3'},
-  {id:'t9', videoId:'67UCS2FeBMs', title:'Simple 3v3 Basketball Plays（簡單 3 對 3 戰術）', category:'tactic3'},
-  {id:'t10', videoId:'jMLd9jupKkE', title:'Advanced 3 on 3 Basketball Plays（進階 3 對 3 戰術）', category:'tactic3'},
-  // 中華台北男籃（FIBA 官方頻道）
-  {id:'m1', videoId:'KP_k7gdhvBk', title:'韓國 vs 中華台北｜2027 世界盃亞洲區資格賽 精華', category:'tpeMen'},
-  {id:'m2', videoId:'d-lwn-LioHM', title:'中華台北 vs 韓國｜2027 世界盃亞洲區資格賽 精華', category:'tpeMen'},
-  {id:'m3', videoId:'oi_-zg4wPNs', title:'中華台北 vs 中國｜2027 世界盃亞洲區資格賽 精華', category:'tpeMen'},
-  {id:'m4', videoId:'lkdnqoZNUws', title:'中國 vs 中華台北｜2027 世界盃亞洲區資格賽 延長精華', category:'tpeMen'},
-  {id:'m5', videoId:'d-YD0wiN7ts', title:'中華台北 vs 日本｜2027 世界盃亞洲區資格賽 延長精華', category:'tpeMen'},
-  {id:'m6', videoId:'Lq1vonUhFK0', title:'日本 vs 中華台北｜2027 世界盃亞洲區資格賽 精華', category:'tpeMen'},
-  {id:'m7', videoId:'6YS5ECRzSdU', title:'伊朗 vs 中華台北｜2025 亞洲盃 延長精華', category:'tpeMen'},
-  {id:'m8', videoId:'TSx_i3wlSfA', title:'中華台北 vs 約旦｜2025 亞洲盃 延長精華', category:'tpeMen'},
-  {id:'m9', videoId:'9GuDkmW-IT0', title:'中華台北 vs 菲律賓｜2025 亞洲盃 延長精華', category:'tpeMen'},
-  {id:'m10', videoId:'J82V9oYZaWA', title:'【3x3】中華台北 vs 菲律賓｜男子｜2026 3x3 亞洲盃 精華', category:'tpeMen'},
-  {id:'m11', videoId:'dhQ_51VpxOI', title:'【3x3】蒙古 vs 中華台北｜男子｜2026 3x3 亞洲盃 精華', category:'tpeMen'},
-  // 中華台北女籃（FIBA 官方頻道）
-  {id:'w1', videoId:'wCQyqHmbJK0', title:'【3x3】日本 vs 中華台北｜女子｜2026 3x3 亞洲盃 精華', category:'tpeWomen'},
-  {id:'w2', videoId:'hBl515fg084', title:'【3x3】日本 vs 中華台北｜女子｜2026 3x3 亞洲盃 全場', category:'tpeWomen'},
-  {id:'w3', videoId:'DYN0JCUtkEs', title:'準決賽 中華台北 vs 蒙古｜2025 女子亞洲盃 B 級 全場', category:'tpeWomen'},
-  {id:'w4', videoId:'-dQet-z8m4c', title:'中華台北 vs 哈薩克｜2025 女子亞洲盃 B 級 全場', category:'tpeWomen'},
-  {id:'w5', videoId:'E4k0WXXbv9A', title:'印度 vs 中華台北｜2025 女子亞洲盃 B 級 全場', category:'tpeWomen'}
+  {id:'t1', videoId:'Pt8WxNCHHkE', title:'3 vs 3 進攻戰術（2）｜籃球研究室', category:'tactic3'},
+  {id:'t2', videoId:'FGxAYJiTC7g', title:'3 vs 3 進攻戰術（3）｜籃球研究室', category:'tactic3'},
+  {id:'t3', videoId:'Mlh2wOopzoc', title:'3 vs 3 進攻戰術（4）｜籃球研究室', category:'tactic3'},
+  {id:'t4', videoId:'tOffcRKUMNY', title:'3 vs 3 進攻戰術（5）｜籃球研究室', category:'tactic3'},
+  {id:'t5', videoId:'9qk_llL0-ig', title:'3 vs 3 進攻戰術（6）強弱邊的運用｜籃球研究室', category:'tactic3'},
+  {id:'t6', videoId:'6ZnKa1uQ-Ww', title:'3 vs 3 進攻戰術（7）｜籃球研究室', category:'tactic3'},
+  {id:'t7', videoId:'eibsr5B-p4U', title:'3 vs 3 進攻戰術（8）同邊雙擋｜籃球研究室', category:'tactic3'},
+  {id:'t8', videoId:'t8bNiMJqMBM', title:'3 vs 3 進攻戰術（9）運用球例｜籃球研究室', category:'tactic3'},
+  {id:'t9', videoId:'07HYH-_4Zyo', title:'【蔡蔡籃球】中華隊 3 對 3 戰術「POST SPLIT」', category:'tactic3'},
+  {id:'t10', videoId:'kgJGb49s1e4', title:'三對三也可以打牛角？FIBA 3x3 世界盃冠軍戰術分析', category:'tactic3'},
+  {id:'t11', videoId:'x0ldVEbRWmk', title:'明星球員不藏私！六招 3 對 3 戰術 ft. 璞園籃球隊', category:'tactic3'},
+  {id:'t12', videoId:'dxORJt02kLU', title:'鬥牛只有單打？實用 3x3 戰術分析', category:'tactic3'},
+  {id:'t13', videoId:'ac0FXNdOJRE', title:'超實用三對三戰術「3,5 empty」', category:'tactic3'},
+  {id:'t14', videoId:'67UCS2FeBMs', title:'Simple 3v3 Basketball Plays（簡單 3 對 3 戰術）', category:'tactic3'},
+  {id:'t15', videoId:'jMLd9jupKkE', title:'Advanced 3 on 3 Basketball Plays（進階 3 對 3 戰術）', category:'tactic3'}
 ];
 
-let currentCat = 'tactic3';
-const catLabel = {tactic3:'3 對 3 戰術', tpeMen:'中華男籃', tpeWomen:'中華女籃'};
+let currentCat = 'basic';
+const catLabel = {basic:'基本戰術', tactic3:'3 對 3 戰術'};
 
 document.getElementById('catTabs').addEventListener('click', (e)=>{
   if(e.target.tagName!=='BUTTON') return;
@@ -2338,7 +2359,6 @@ async function loadGameTag(){
   }catch(e){}
 }
 function currentGameTag(){ return document.getElementById('gameTag').value.trim(); }
-loadGameTag();
 
 // 依學生在 AI 助教「我的 3 對 3 角色」儲存的位置與團隊角色，調整 AI 助教提問的角度。
 function buildRoleContext(){
@@ -2366,9 +2386,10 @@ function buildSystemPrompt(){
 3. ${modeDesc}我們打的是半場 3 對 3（每組 5～6 人，每場 8 分鐘、第 4 分鐘輪替），請用 3 對 3 的情境來引導我。
 4. 可以多用提問、或給我幾個選項讓我比較，讓我自己說出判斷和理由，而不是等我被動接收答案。
 5. 如果我講得不夠清楚（例如沒說防守方式、隊友位置、時間壓力），麻煩先問我補充這些線索，再繼續往下引導。
-6. 語氣像一位有耐心的教練就好，簡短、口語化，每次回覆大概4-6句，可以用1-2個追問收尾。
+6. 語氣像一位有耐心的教練就好，簡短、口語化，每次回覆大概4-6句；還需要引導時，用1-2個追問收尾。
 7. 如果我忍不住直接跟你要答案，麻煩溫和地提醒我一下，然後用一個問題把球丟回給我，讓我繼續想。
-${roleLine ? '8. ' + roleLine + '\n' : ''}
+8. 請隨時判斷我的進展：如果幾輪對話後，我已經能自己說出觀察到的線索、提出策略並說明理由（也就是有了自己的答案），就不用再繼續追問。請簡短肯定我想到的重點，幫我把它整理成一兩句可以帶上場的做法，然後結束這個話題，提醒我可以回平台做收尾。
+${roleLine ? '9. ' + roleLine + '\n' : ''}
 我的情況是：
 `;
 }
@@ -2383,6 +2404,7 @@ async function buildAndCopyPrompt(){
   if(!text){ alert('請先用自己的話寫下你的情境。'); return; }
   const full = buildSystemPrompt() + text;
   document.getElementById('promptOut').textContent = full;
+  document.getElementById('promptStatus').innerHTML = '';
   try{
     await navigator.clipboard.writeText(full);
     appendMsg('sys', '提示詞已複製，請到 ChatGPT 貼上。對話過程不用貼回來，聊完再到第 ④ 步一次匯入。');
@@ -2399,30 +2421,16 @@ async function buildAndCopyPrompt(){
 function openChatGPT(){
   window.open('https://chatgpt.com/', '_blank');
 }
+// 對話紀錄只在背景保存（繳交與合併分析會用到），畫面上只顯示提示訊息
 function appendMsg(role, text){
-  const win = document.getElementById('chatWindow');
-  const empty = win.querySelector('.msg.sys.empty');
-  if(empty) empty.remove();
-  const div = document.createElement('div');
-  div.className = 'msg ' + role;
-  div.textContent = text;
-  win.appendChild(div);
-  win.scrollTop = win.scrollHeight;
-}
-function logExchange(role){
-  const text = document.getElementById('pasteBack').value.trim();
-  if(!text) return;
-  appendMsg(role, text);
-  addToLog(role, text);
-  document.getElementById('pasteBack').value = '';
+  if(role !== 'sys') return;
+  document.getElementById('promptStatus').insertAdjacentHTML('beforeend', escapeHtml(text) + '<br>');
 }
 
 // ---------- 對話紀錄保存（存在這台裝置的瀏覽器，重新整理不會消失） ----------
 const LOG_KEY = 'chat:reflectionLog';
 
-function resetChatWindow(){
-  document.getElementById('chatWindow').innerHTML = '<div class="msg sys empty">還沒有對話紀錄。</div>';
-}
+function resetChatWindow(){}
 function addToLog(role, text){
   reflectionLog.push({role, text, mode: chatMode, game: currentGameTag(), at: new Date().toISOString()});
   saveLog();
@@ -2442,10 +2450,10 @@ async function restoreLog(){
 }
 async function clearLog(){
   if(!reflectionLog.length) return;
-  if(!confirm('確定要清除全部對話紀錄嗎？清除後無法復原，建議先下載保存。')) return;
+  if(!confirm('確定要清除這台裝置上的全部對話紀錄嗎？清除後無法復原。')) return;
   reflectionLog = [];
   try{ await window.storage.delete(LOG_KEY); }catch(e){}
-  resetChatWindow();
+  setImportStatus('已清除這台裝置的對話紀錄。');
 }
 function logEntryLabel(item){
   const who = item.role==='user' ? '我' : 'AI';
