@@ -2142,9 +2142,6 @@ const VIDEO_LIBRARY = [
   {id:'b5', videoId:'B0182oQgOE8', title:'無球掩護（Off-ball Screen）｜Off ball screens in basketball', category:'basic'},
   {id:'b6', videoId:'O4EX3P76h_U', title:'背切（Backdoor Cut）｜The Backdoor Cut', category:'basic'},
   {id:'b7', videoId:'YMwYqz9Cg3g', title:'假擋真切（Slip）｜牛角溜切 Horns Slip', category:'basic'},
-  {id:'b8', videoId:'OUAjEXe-gTk', title:'擋拆（Pick & Roll）｜兩人小組配合：對球掩護／擋拆', category:'basic'},
-  {id:'b9', videoId:'puZxpKfcv7Y', title:'擋拆（Pick & Roll）｜擋拆小組配合（訓練實錄）', category:'basic'},
-  {id:'b10', videoId:'O_Z4gkyPNG0', title:'傳切（Give & Go）｜How to Run Give and Go', category:'basic'},
   // 3 對 3 戰術
   {id:'t1', videoId:'Pt8WxNCHHkE', title:'3 vs 3 進攻戰術（2）｜籃球研究室', category:'tactic3'},
   {id:'t2', videoId:'FGxAYJiTC7g', title:'3 vs 3 進攻戰術（3）｜籃球研究室', category:'tactic3'},
@@ -2153,14 +2150,7 @@ const VIDEO_LIBRARY = [
   {id:'t5', videoId:'9qk_llL0-ig', title:'3 vs 3 進攻戰術（6）強弱邊的運用｜籃球研究室', category:'tactic3'},
   {id:'t6', videoId:'6ZnKa1uQ-Ww', title:'3 vs 3 進攻戰術（7）｜籃球研究室', category:'tactic3'},
   {id:'t7', videoId:'eibsr5B-p4U', title:'3 vs 3 進攻戰術（8）同邊雙擋｜籃球研究室', category:'tactic3'},
-  {id:'t8', videoId:'t8bNiMJqMBM', title:'3 vs 3 進攻戰術（9）運用球例｜籃球研究室', category:'tactic3'},
-  {id:'t9', videoId:'07HYH-_4Zyo', title:'【蔡蔡籃球】中華隊 3 對 3 戰術「POST SPLIT」', category:'tactic3'},
-  {id:'t10', videoId:'kgJGb49s1e4', title:'三對三也可以打牛角？FIBA 3x3 世界盃冠軍戰術分析', category:'tactic3'},
-  {id:'t11', videoId:'x0ldVEbRWmk', title:'明星球員不藏私！六招 3 對 3 戰術 ft. 璞園籃球隊', category:'tactic3'},
-  {id:'t12', videoId:'dxORJt02kLU', title:'鬥牛只有單打？實用 3x3 戰術分析', category:'tactic3'},
-  {id:'t13', videoId:'ac0FXNdOJRE', title:'超實用三對三戰術「3,5 empty」', category:'tactic3'},
-  {id:'t14', videoId:'67UCS2FeBMs', title:'Simple 3v3 Basketball Plays（簡單 3 對 3 戰術）', category:'tactic3'},
-  {id:'t15', videoId:'jMLd9jupKkE', title:'Advanced 3 on 3 Basketball Plays（進階 3 對 3 戰術）', category:'tactic3'}
+  {id:'t8', videoId:'t8bNiMJqMBM', title:'3 vs 3 進攻戰術（9）運用球例｜籃球研究室', category:'tactic3'}
 ];
 
 let currentCat = 'basic';
@@ -2207,7 +2197,8 @@ async function saveVideoDraft(list){
 async function getVideoList(){
   if(isTeacher()){
     const draft = await loadVideoDraft();
-    if(draft) return draft;
+    // 舊版草稿用的是已經不存在的分類，直接忽略，避免蓋掉正式清單
+    if(draft && draft.some(v=>catLabel[v.category])) return draft;
   }
   return VIDEO_LIBRARY.slice();
 }
@@ -2219,7 +2210,8 @@ async function renderVideos(){
   const grid = document.getElementById('videoGrid');
   const teacher = isTeacher();
   const all = await getVideoList();
-  const hasDraft = teacher && !!(await loadVideoDraft());
+  const draft = teacher ? await loadVideoDraft() : null;
+  const hasDraft = !!(draft && draft.some(v=>catLabel[v.category]));
   if(seq !== videoRenderSeq) return;
   if(teacher){
     const st = document.getElementById('videoDraftStatus');
