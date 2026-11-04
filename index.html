@@ -669,7 +669,8 @@ const I18N_EN = {
   "和 AI 助教討論，再回小組交流":"Talk with the AI coach, then share with your group",
   "每節繳交 1 張反思知識族譜":"Submit 1 reflective knowledge map each session","期末作業":"Final assignments",
   "參與 4 節課應有的出賽":"Play in all your games across the 4 sessions","繳交輪休時每一場的紀錄":"Submit your record for every game you recorded",
-  "繳交 4 節課的反思知識族譜":"Submit reflective knowledge maps for all 4 sessions","繳交 3 部練習影片":"Submit 3 practice videos",
+  "繳交 4 節課的反思知識族譜":"Submit reflective knowledge maps for all 4 sessions","由隊長統一繳交 3 部練習影片":"Your captain submits 3 practice videos",
+  "本組隊長（全組討論選出 1 位，每位組員都要在自己的手機點選同一位）：":"Group captain (choose 1 together, then everyone taps the same person on their own phone):",
   "班別":"Class","每組場數":"Games per group","6 人組":"6-player group","5 人組":"5-player group",
   "各項要繳幾份，請看「07 成績」。":"See 07 Grades for how many of each you need to submit.",
 
@@ -681,7 +682,7 @@ const I18N_EN = {
   "作業怎麼繳交？":"How to submit your work",
   "小組作業（每組 1 份）":"Group work (1 per group)","03 拍攝":"03 Film","04 紀錄":"04 Stats","05 AI 助教":"05 AI Coach","01 賽程":"01 Schedule",
   "3 段影片（1 段基本動作、2 段 3 對 3 戰術），每段 ≤ 60 秒，每人至少入鏡 1 段":"3 clips (1 basic move, 2 3-on-3 tactics), each ≤ 60 seconds, with every player in at least 1 clip",
-  "由組內 1 位上傳負責人上傳":"Uploaded by 1 person from your group",
+  "由隊長統一上傳":"Uploaded by your group captain",
   "個人作業（每人自己繳）":"Individual work (everyone submits their own)",
   "輪休時負責記錄的場次，每場結束按「繳交到雲端硬碟」":"The games you recorded while resting. Tap \"Submit to Google Drive\" after each game",
   "知識族譜＋後設認知評估（可附對話紀錄）":"Knowledge map + metacognitive evaluation (chat log optional)",
@@ -1157,7 +1158,7 @@ function setLang(lang){
             <b>小組作業（每組 1 份）</b>
             <ul>
               <li><span>03 拍攝</span>3 段影片（1 段基本動作、2 段 3 對 3 戰術），每段 ≤ 60 秒，每人至少入鏡 1 段</li>
-              <li>由組內 1 位上傳負責人上傳</li>
+              <li>由隊長統一上傳</li>
             </ul>
           </div>
           <div class="sg-col solo">
@@ -1249,13 +1250,13 @@ function setLang(lang){
         <li data-en="Finish &quot;start → teamwork → shot&quot; within 24 seconds, and film <b>every scoring chance</b>. If it runs long, trim it on your phone first.">24 秒內完成「發動 → 配合 → 出手」，<b>每一個機會都要拍出來</b>，太長請先在手機上剪短。</li>
         <li data-en="<b>Every player must appear in at least 1 clip.</b> Rotate players across the 3 clips so the whole team is on camera."><b>每位隊員至少要出現在 1 段影片裡</b>：3 段影片輪流換人上場，全隊都要入鏡。</li>
         <li data-en="While 3 players run the tactic, <b>the person filming narrates</b>, e.g. &quot;Player 1 has the ball, player 2 comes up to screen, player 1 cuts right…&quot;">場上 3 人執行戰術，<b>拍攝的同學要邊拍邊做旁白解說</b>，例如「1 號持球，2 號上來擋人，1 號往右切……」。</li>
-        <li data-en="Only <b>1 person from your group</b> needs to upload the team videos, to avoid duplicates.">小組影片由組內 <b>1 位上傳負責人</b>上傳就好，避免重複。</li>
+        <li data-en="Your <b>group captain</b> uploads all the group videos, to avoid duplicates.">小組影片由<b>隊長</b>統一上傳，避免重複。</li>
       </ol>
     </div>
 
     <div class="team-strip" id="filmTeam"></div>
 
-    <div class="drive-box">
+    <div class="drive-box" id="filmDriveBox">
       <h3>Google 雲端硬碟連接</h3>
       <p style="font-size:12.5px;color:var(--text-dim);margin:0;">連接後，影片會上傳到你雲端硬碟裡的「班別_組別_姓名」資料夾，並自動分享給老師。</p>
       <div class="drive-row">
@@ -1637,7 +1638,7 @@ function setLang(lang){
         </ul>
         <p class="sop-do" style="margin-top:10px;" data-en="<b>Each group</b>"><b>每個小組</b></p>
         <ul class="gr-list">
-          <li>繳交 3 部練習影片</li>
+          <li>由隊長統一繳交 3 部練習影片</li>
         </ul>
       </div></div>
     </div>
@@ -2165,12 +2166,14 @@ const ROTATION = {
 const ROTATION_NOTE = {5:'5 人組要跨場次累計，讓每個人的上場時間平衡。', 6:'6 人組每場每人都上場 4 分鐘。'};
 
 let schedState = lsGet('sched:state', {cls:null, group:null, me:null, day:null});
+const CAPTAIN_KEY = 'sched:captains'; // 純前端沒有共用資料庫，隊長存在各自裝置，每位組員都要點選同一位
 
 function currentTeam(){
   const {cls, group} = schedState;
   if(!cls || !group || !CLASSES[cls]) return null;
   const members = SCHEDULE_DATA[cls].groups[group] || [];
-  return {cls, classShort:CLASSES[cls].short, classLabel:CLASSES[cls].label, group, members, me:schedState.me};
+  return {cls, classShort:CLASSES[cls].short, classLabel:CLASSES[cls].label, group, members, me:schedState.me,
+    captain:lsGet(CAPTAIN_KEY, {})[`${cls}|${group}`] || null};
 }
 function teamName(g){ return `第${g}組`; }
 function isMyMatch(m){
@@ -2203,6 +2206,15 @@ function setGroup(g){
 function setMe(name){
   schedState.me = schedState.me === name ? null : name;
   saveSchedState();
+  renderMyTeam();
+  renderFilmTeam();
+}
+function setCaptain(name){
+  const t = currentTeam(); if(!t) return;
+  const captains = lsGet(CAPTAIN_KEY, {});
+  const key = `${t.cls}|${t.group}`;
+  if(t.captain === name) delete captains[key]; else captains[key] = name;
+  lsSet(CAPTAIN_KEY, captains);
   renderMyTeam();
   renderFilmTeam();
 }
@@ -2251,6 +2263,8 @@ function renderMyTeam(){
     <div class="team-card-head"><span class="team-tag">${t.classShort}</span><h3>第 ${t.group} 組</h3><small>${t.members.length} 人</small></div>
     <p class="hint" style="margin:6px 0 8px;">我是（點自己的名字，紀錄表和 AI 助教會用到）：</p>
     <div class="chip-set">${t.members.map(n=>`<div class="chip ${t.me===n?'selected':''}" onclick="setMe(${escapeHtml(JSON.stringify(n))})">${escapeHtml(n)}</div>`).join('')}</div>
+    <p class="hint" style="margin:12px 0 8px;">本組隊長（全組討論選出 1 位，每位組員都要在自己的手機點選同一位）：</p>
+    <div class="chip-set">${t.members.map(n=>`<div class="chip ${t.captain===n?'selected':''}" onclick="setCaptain(${escapeHtml(JSON.stringify(n))})">${escapeHtml(n)}</div>`).join('')}</div>
     <p class="team-meta">預賽：${counts}　決賽依預賽排名公告</p>
   </div>`;
   const badge = document.getElementById('roleBadge');
@@ -2317,9 +2331,19 @@ function getFolderName(){
 }
 function renderFilmTeam(){
   const t = currentTeam();
+  const isCaptain = !!t && !!t.me && t.me === t.captain;
+  let status = '';
+  if(t && !t.captain) status = gradeText('本組還沒有隊長。請先到「01 賽程」選出隊長，影片由隊長統一上傳。', 'Your group has no captain yet. Choose one in 01 Schedule. The captain uploads all the group videos.');
+  else if(t && !t.me) status = gradeText('請先到「01 賽程」點選「我是」自己的名字。', 'Choose your name under "I am" in 01 Schedule first.');
+  else if(t && !isCaptain) status = gradeText(`本組影片由隊長 <b>${escapeHtml(t.captain)}</b> 統一上傳，你不用上傳，但請一起拍攝。`, `Your captain <b>${escapeHtml(t.captain)}</b> uploads the group videos. You do not need to upload, but please help film.`);
   document.getElementById('filmTeam').innerHTML = t
-    ? `上傳到雲端硬碟資料夾：<b>${escapeHtml(getFolderName())}</b><br><small>${t.me ? '' : '提醒：請先到「01 賽程」點選「我是」自己的名字。<br>'}${t.members.map(escapeHtml).join('、')}</small>`
+    ? (isCaptain
+      ? `${gradeText('你是隊長，請上傳全組 3 段影片到資料夾：','You are the captain. Upload all 3 group clips to this folder:')}<b>${escapeHtml(getFolderName())}</b><br><small>${t.members.map(escapeHtml).join('、')}</small>`
+      : `${status}<br><small>${t.members.map(escapeHtml).join('、')}</small>`)
     : `<span style="color:var(--danger);">請先到「01 賽程」選擇班別與組別，影片才會放進你們小組的資料夾。</span>`;
+  // 只有隊長看得到上傳區，避免同組重複上傳
+  document.getElementById('filmDriveBox').style.display = isCaptain ? '' : 'none';
+  document.getElementById('uploadSlots').style.display = isCaptain ? '' : 'none';
   if(typeof restoreClipChoices === 'function' && document.getElementById('tactic-1')) restoreClipChoices();
 }
 
@@ -3584,6 +3608,7 @@ function dateLocale(){ return isEn() ? 'en-US' : 'zh-TW'; }
 function onLangChange(){
   renderGoogleButton();
   renderRubricGuide();
+  renderFilmTeam();
   renderGrades();
   if(latestEvaluation) renderRubric(latestEvaluation, lastRubricPrev);
   const r = currentStatRecord();
@@ -3785,7 +3810,9 @@ async function renderGrades(){
     tile(gradeText('出賽','Games'), `${REQUIRED_SESSIONS} ${gradeText('節','sessions')}`, gradeText('由老師點名','Attendance taken by your teacher')),
     tile(gradeText('輪休紀錄','Records'), `${records} / ${need}`, memberNo ? gradeText(`你是 ${team.members.length} 人組隊員 ${memberNo}`, `Player ${memberNo} in a ${team.members.length}-player group`) : gradeText('請先到 01 點選自己的名字','Choose your name in 01 first')),
     tile(gradeText('反思知識族譜','Knowledge maps'), `${graphs} / ${REQUIRED_SESSIONS}`, gradeText('每節 1 張','1 per session')),
-    tile(gradeText('小組影片','Group clips'), `${clips} / ${REQUIRED_CLIPS}`, gradeText('只顯示這台裝置上傳的','Only clips uploaded on this device'))
+    team.captain && team.me === team.captain
+      ? tile(gradeText('小組影片','Group clips'), `${clips} / ${REQUIRED_CLIPS}`, gradeText('你是隊長，由你上傳','You are the captain, so you upload'))
+      : tile(gradeText('小組影片','Group clips'), gradeText('隊長上傳','By captain'), team.captain ? gradeText(`隊長：${escapeHtml(team.captain)}`, `Captain: ${escapeHtml(team.captain)}`) : gradeText('請先到 01 選出隊長','Choose a captain in 01 first'))
   ].join('');
 
   let last = null;
