@@ -506,6 +506,22 @@
     .date-tabs button b{font-size:15px;}
   }
 
+  /* ===== 05 AI 助教 5 步驟 ===== */
+  .sop{display:flex;flex-direction:column;gap:12px;}
+  .sop-step{display:flex;gap:12px;background:#fff;border:1px solid var(--hair);border-radius:16px;padding:14px;box-shadow:0 2px 10px rgba(28,37,54,0.06);}
+  .sop-n{
+    flex-shrink:0;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#ff6a1a,#ff9a1f);color:#fff;font-weight:800;font-size:16px;
+  }
+  .sop-body{flex:1;min-width:0;}
+  .sop-body h4{margin:4px 0 8px;font-size:15.5px;}
+  .sop-body textarea{width:100%;}
+  .sop-do{font-size:13.5px;line-height:1.7;margin:0 0 4px;}
+  .sop .mode-row{grid-template-columns:1fr 1fr;gap:8px;}
+  .sop .mode-card{padding:10px;border-radius:12px;}
+  .sop .mode-when{margin:4px 0 6px;line-height:1.5;}
+  .mode-tag{font-size:10.5px;color:var(--text-dim);}
+
   /* ===== 中／英切換 ===== */
   .lang-toggle{
     position:absolute;top:12px;right:14px;z-index:1000;display:flex;gap:2px;padding:3px;
@@ -741,7 +757,30 @@ const I18N_EN = {
   "先勾選或寫下「我們隊伍遇到的問題」，再帶到 AI 助教。":"Select or write \"Problems our team faced\" first, then bring it to the AI Coach.",
 
   // ---------- 05 AI 助教 ----------
-  "助教不會給你答案，而是用提問帶你自己想清楚。可以在「04 紀錄」按「帶到 AI 助教討論」，把比賽遇到的問題直接帶過來。":"The coach won't give you the answers; it asks questions that help you think it through. In \"04 Stats\", tap \"Discuss with AI Coach\" to bring your game problems straight here.",
+  "助教不會給你答案，而是用提問帶你自己想清楚。照著下面 5 步做就好。":"The coach won't give you the answers; it asks questions that help you think it through. Just follow the 5 steps below.",
+  "事情發生了嗎？":"Has it happened yet?","還沒發生":"Not yet","已經發生":"Already happened","賽前、暫停、回合開始前":"Before a game, in a time-out, before a possession","戰術被破、卡住、結果不如預期":"Play stopped, got stuck, not what you expected",
+  "前瞻性 BEFORE":"Proactive · BEFORE","反應性 AFTER":"Reactive · AFTER","用自己的話寫下情況":"Write the situation in your own words","也可以貼上「04 紀錄」複製的觀察內容。":"You can also paste the observations copied from \"04 Stats\".",
+  "想一想：我看到什麼線索？我預測會發生什麼？我打算怎麼做、為什麼？":"Think about: What cues do I see? What do I predict will happen? What will I do, and why?","想一想：實際發生了什麼？和預期差在哪裡？下次要怎麼調整？":"Think about: What actually happened? How was it different from what I expected? What will I change next time?",
+  "到 ChatGPT 對話":"Chat in ChatGPT","按「複製提示詞」→ 到 ChatGPT 貼上送出 → 聊到自己想清楚為止。":"Tap \"Copy prompt\" → paste and send it in ChatGPT → chat until it's clear to you.","複製提示詞":"Copy prompt",
+  "聊完後，請 ChatGPT 收尾":"When you finish, ask ChatGPT to wrap up","按「複製收尾指令」→ 貼到同一個 ChatGPT 對話送出。":"Tap \"Copy wrap-up command\" → paste and send it in the same ChatGPT chat.",
+  "把回覆貼回來":"Paste the reply back","複製 ChatGPT 的回覆 → 貼到下面 → 按「產生族譜與評估」。":"Copy ChatGPT's reply → paste it below → tap \"Create map & evaluation\".",
+  "手機：按最後一則回覆下方的複製鍵。電腦：按 ⌘A／Ctrl+A 全選整頁再複製，對話紀錄會一起存下來。":"Phone: tap the Copy button under the last reply. Computer: press ⌘A / Ctrl+A to select the whole page, then copy, so your chat log is saved too.",
+  "貼在這裡……":"Paste here…","產生族譜與評估":"Create map & evaluation","結果：我的知識族譜與後設認知評估":"Results: my knowledge map and metacognitive evaluation",
+  "完成第 5 步後，族譜和評估會出現在這裡。確認後按「繳交到雲端硬碟」。":"Your map and evaluation appear here after step 5. Check them, then tap \"Submit to Google Drive\".",
+  "進階選項（可以跳過）":"Advanced options (you can skip these)","把好幾個 ChatGPT 對話合併成一張族譜":"Combine several ChatGPT chats into one map",
+  "請先做第 1 步：選擇事情「還沒發生」或「已經發生」。":"Do step 1 first: choose \"Not yet\" or \"Already happened\".",
+  "提示詞已複製 ✓ 請到 ChatGPT 貼上送出，聊天內容不用貼回來。":"Prompt copied ✓ Paste and send it in ChatGPT. You don't need to paste the chat back.",
+  "自動複製失敗，請手動複製下方的提示詞。":"Automatic copy failed. Please copy the prompt below manually.","自動複製失敗，請手動複製第 4 步下方的指令。":"Automatic copy failed. Please copy the command under step 4 manually.",
+  "收尾指令已複製 ✓ 請貼到同一個 ChatGPT 對話送出。":"Wrap-up command copied ✓ Paste and send it in the same ChatGPT chat.",
+  "目前還沒有對話紀錄。請先完成第 1～5 步。":"No chat log yet. Please finish steps 1–5 first.",
+  "合併分析指令已複製 ✓ 請貼到新的 ChatGPT 對話，再把回覆貼到第 5 步。":"Combined command copied ✓ Paste it into a new ChatGPT chat, then paste the reply in step 5.",
+  "族譜已畫出，但沒有找到後設認知評估。請做第 4 步，讓 ChatGPT 一起產生評估。":"The map is drawn, but no evaluation was found. Do step 4 so ChatGPT creates it too.",
+  "這些對話之前已經匯入過了，也還沒有找到族譜與評估。請先做第 4 步。":"These messages were already imported, and no map or evaluation was found. Do step 4 first.",
+  "看不出這段內容的格式。請先做第 4 步，再複製 ChatGPT 最後的回覆貼回來。":"This format wasn't recognized. Do step 4 first, then copy ChatGPT's last reply and paste it back.",
+  "請先完成第 5 步，產生你的知識族譜與評估。":"Finish step 5 first to create your map and evaluation.",
+  "複製觀察內容":"Copy observations","點選上面的問題會自動帶出情況，你也可以自己修改或補充……":"Tap a problem above to fill this in automatically. You can edit or add to it…",
+  "請先點選問題，或寫下你的觀察。":"Tap a problem or write your observations first.","已複製 ✓ 請到「05 AI 助教」第 2 步貼上。":"Copied ✓ Paste it in step 2 of \"05 AI Coach\".","自動複製失敗，內容已選取，請手動複製。":"Automatic copy failed. The text is selected, so please copy it manually.",
+  "影片 2 和影片 3 必須選不同的戰術。":"Clips 2 and 3 must use different tactics.",
   "我的 3 對 3 角色（選填，AI 會依此調整提問角度）":"My 3-on-3 role (optional; the AI adapts its questions)","場上位置":"Position","持球手（後衛）":"Ball handler (guard)","側翼（前鋒）":"Wing (forward)","內線（長人）":"Inside (big)",
   "這次的角色":"Role this time","教練":"Coach","球場記錄員":"Scorekeeper","儲存角色":"Save role","請選擇球場位置與團隊角色後再儲存":"Choose a position and a role before saving",
   "① 判斷時機":"① Choose timing","② 寫下情境":"② Describe it","③ 到 ChatGPT 對話":"③ Chat in ChatGPT","④ 收尾＋一次貼回":"④ Wrap up, paste once","⑤ 族譜與後設認知評估":"⑤ Map & evaluation",
@@ -885,10 +924,10 @@ const I18N_RULES = [
   [/^上傳失敗（(\d+)），請稍後再試。$/, m => `Upload failed (${m[1]}). Please try again later.`],
   [/^授權失敗：(.*)$/, m => `Authorization failed: ${m[1]}`],
   [/^已登入：(.*)$/, m => `Signed in: ${m[1]}`],
-  [/^已加入 (\d+) 則對話紀錄，族譜與後設認知評估已產生 ✓ 請往下看第 ⑤ 步。$/, m => `Added ${m[1]} messages. Your map and evaluation are ready ✓ See step ⑤ below.`],
-  [/^對話紀錄之前已匯入過，族譜與後設認知評估已產生 ✓ 請往下看第 ⑤ 步。$/, () => 'These messages were already imported. Your map and evaluation are ready ✓ See step ⑤ below.'],
-  [/^這次只貼了回覆、沒有對話全文，族譜與後設認知評估已產生 ✓ 請往下看第 ⑤ 步。$/, () => 'Only the reply was pasted, without the full chat. Your map and evaluation are ready ✓ See step ⑤ below.'],
-  [/^已加入 (\d+) 則對話紀錄，但還沒有找到族譜與評估。請先把「收尾指令」貼到 ChatGPT，等它回覆後再全選複製貼回來。$/, m => `Added ${m[1]} messages, but no map or evaluation was found. Send the wrap-up command to ChatGPT, then select all, copy and paste back after it replies.`],
+  [/^已加入 (\d+) 則對話紀錄，族譜與後設認知評估已產生 ✓ 請往下看結果。$/, m => `Added ${m[1]} messages. Your map and evaluation are ready ✓ See the results below.`],
+  [/^對話紀錄之前已匯入過，族譜與後設認知評估已產生 ✓ 請往下看結果。$/, () => 'These messages were already imported. Your map and evaluation are ready ✓ See the results below.'],
+  [/^這次只貼了回覆、沒有對話全文，族譜與後設認知評估已產生 ✓ 請往下看結果。$/, () => 'Only the reply was pasted, without the full chat. Your map and evaluation are ready ✓ See the results below.'],
+  [/^已加入 (\d+) 則對話紀錄，但還沒有找到族譜與評估。請先做第 4 步，等 ChatGPT 回覆後再貼回來。$/, m => `Added ${m[1]} messages, but no map or evaluation was found. Do step 4, then paste back ChatGPT's reply.`],
   [/^比上次（(.+)）進步 (\d+) 分$/, m => `Up ${m[2]} points from last time (${m[1]})`],
   [/^比上次（(.+)）少 (\d+) 分$/, m => `Down ${m[2]} points from last time (${m[1]})`],
   [/^和上次（(.+)）一樣$/, m => `Same as last time (${m[1]})`],
@@ -1169,8 +1208,8 @@ function setLang(lang){
       <ol>
         <li data-en="Hold your phone <b>sideways</b> and film from the side or behind, so all 3 offensive players and the basket are in frame.">手機<b>橫拿</b>，從側邊或後方拍，畫面要看得到 3 名進攻球員和籃框。</li>
         <li data-en="First choose the move or tactic from the 3-on-3 tactics that you want to practice and film.">先選取你在 3 對 3 戰術中，你要練習及拍攝的動作或戰術。</li>
-        <li data-en="There are 3 assigned clips: <b>1 basic move and 2 3-on-3 tactics</b>.">指定三個影片作業，<b>一個為基本動作、兩個必須為 3 對 3 戰術</b>。</li>
-        <li data-en="Before you start, call out the tactic name, e.g. &quot;(2)&quot;.">開拍前先喊出戰術名稱，例如「（2）」。</li>
+        <li data-en="There are 3 assigned clips: <b>1 basic move and 2 different 3-on-3 tactics</b>.">指定三個影片作業，<b>一個為基本動作、兩個必須為不同的 3 對 3 戰術</b>。</li>
+        <li data-en="Before you start, call out the tactic name, e.g. &quot;Pick and roll&quot; or &quot;Tactic (2)&quot;.">開拍前先喊出戰術名稱，例如「擋拆或戰術（2）」。</li>
         <li data-en="Finish &quot;start → teamwork → shot&quot; within 24 seconds, and film <b>every scoring chance</b>. If it runs long, trim it on your phone first.">24 秒內完成「發動 → 配合 → 出手」，<b>每一個機會都要拍出來</b>，太長請先在手機上剪短。</li>
         <li data-en="<b>Every player must appear in at least 1 clip.</b> Rotate players across the 3 clips so the whole team is on camera."><b>每位隊員至少要出現在 1 段影片裡</b>：3 段影片輪流換人上場，全隊都要入鏡。</li>
         <li data-en="While 3 players run the tactic, <b>the person filming narrates</b>, e.g. &quot;Player 1 has the ball, player 2 comes up to screen, player 1 cuts right…&quot;">場上 3 人執行戰術，<b>拍攝的同學要邊拍邊做旁白解說</b>，例如「1 號持球，2 號上來擋人，1 號往右切……」。</li>
@@ -1244,8 +1283,12 @@ function setLang(lang){
       <h4 class="step-title">我們隊伍遇到的問題</h4>
       <div class="chip-set" id="statIssues"></div>
       <div class="chat-input-row">
-        <textarea id="statNote" placeholder="其他觀察：例如對手一直換防，我們的擋拆打不開……" oninput="updateStatField('note', this.value)"></textarea>
+        <textarea id="statNote" rows="5" placeholder="點選上面的問題會自動帶出情況，你也可以自己修改或補充……" oninput="updateStatField('note', this.value)"></textarea>
       </div>
+      <div class="handoff-actions">
+        <button class="primary alt small" onclick="copyObservation()">複製觀察內容</button>
+      </div>
+      <p class="hint" id="noteCopyStatus" style="margin-top:6px;"></p>
       <div class="chat-input-row">
         <textarea id="statGood" placeholder="做得好的地方（選填）" oninput="updateStatField('good', this.value)"></textarea>
       </div>
@@ -1267,8 +1310,107 @@ function setLang(lang){
   <!-- ================= 5. AI CHAT ================= -->
   <section class="panel" id="panel-chat">
     <div class="section-head"><h2>AI 後設認知助教</h2></div>
-    <p class="section-desc">助教不會給你答案，而是用提問帶你自己想清楚。可以在「04 紀錄」按「帶到 AI 助教討論」，把比賽遇到的問題直接帶過來。</p>
+    <p class="section-desc">助教不會給你答案，而是用提問帶你自己想清楚。照著下面 5 步做就好。</p>
 
+    <div class="sop">
+      <div class="sop-step">
+        <div class="sop-n">1</div>
+        <div class="sop-body">
+          <h4>事情發生了嗎？</h4>
+          <div class="mode-row">
+            <div class="mode-card" data-mode="proactive" onclick="setMode('proactive')">
+              <div class="mode-title">還沒發生</div>
+              <p class="mode-when">賽前、暫停、回合開始前</p>
+              <span class="mode-tag mono">前瞻性 BEFORE</span>
+            </div>
+            <div class="mode-card" data-mode="reactive" onclick="setMode('reactive')">
+              <div class="mode-title">已經發生</div>
+              <p class="mode-when">戰術被破、卡住、結果不如預期</p>
+              <span class="mode-tag mono">反應性 AFTER</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sop-step">
+        <div class="sop-n">2</div>
+        <div class="sop-body">
+          <h4>用自己的話寫下情況</h4>
+          <p class="hint" id="modeCues">也可以貼上「04 紀錄」複製的觀察內容。</p>
+          <textarea id="chatInput" rows="4" placeholder="你看到了什麼？你怎麼想？哪裡卡住？"></textarea>
+          <input type="hidden" id="gameTag">
+        </div>
+      </div>
+
+      <div class="sop-step">
+        <div class="sop-n">3</div>
+        <div class="sop-body">
+          <h4>到 ChatGPT 對話</h4>
+          <p class="sop-do">按「複製提示詞」→ 到 ChatGPT 貼上送出 → 聊到自己想清楚為止。</p>
+          <div class="handoff-actions">
+            <button class="primary" onclick="buildAndCopyPrompt()">複製提示詞</button>
+            <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
+          </div>
+          <p class="hint" id="promptStatus" style="margin-top:8px;"></p>
+          <details class="prompt-details" id="promptDetails" hidden>
+            <summary>查看提示詞內容</summary>
+            <div class="prompt-out" id="promptOut">尚未產生提示詞。</div>
+          </details>
+        </div>
+      </div>
+
+      <div class="sop-step">
+        <div class="sop-n">4</div>
+        <div class="sop-body">
+          <h4>聊完後，請 ChatGPT 收尾</h4>
+          <p class="sop-do">按「複製收尾指令」→ 貼到同一個 ChatGPT 對話送出。</p>
+          <div class="handoff-actions">
+            <button class="primary" onclick="buildAndCopyWrapUpPrompt()">複製收尾指令</button>
+          </div>
+          <p class="hint" id="wrapStatus" style="margin-top:8px;"></p>
+          <details class="prompt-details" id="wrapDetails" hidden>
+            <summary>查看收尾指令內容</summary>
+            <div class="prompt-out" id="conceptPromptOut">尚未產生指令。</div>
+          </details>
+        </div>
+      </div>
+
+      <div class="sop-step">
+        <div class="sop-n">5</div>
+        <div class="sop-body">
+          <h4>把回覆貼回來</h4>
+          <p class="sop-do">複製 ChatGPT 的回覆 → 貼到下面 → 按「產生族譜與評估」。</p>
+          <p class="hint">手機：按最後一則回覆下方的複製鍵。電腦：按 ⌘A／Ctrl+A 全選整頁再複製，對話紀錄會一起存下來。</p>
+          <textarea id="importBox" rows="4" placeholder="貼在這裡……"></textarea>
+          <div class="handoff-actions">
+            <button class="primary" onclick="importChatGPT()">產生族譜與評估</button>
+          </div>
+          <p class="hint" id="importStatus" style="margin-top:8px;"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mindmap-block">
+      <h4>結果：我的知識族譜與後設認知評估</h4>
+      <p class="mm-desc">完成第 5 步後，族譜和評估會出現在這裡。確認後按「繳交到雲端硬碟」。</p>
+      <div class="mindmap-container" id="conceptMapContainer"></div>
+      <div class="rubric-box" id="rubricContainer" hidden></div>
+      <details class="prompt-details">
+        <summary>評估規準說明</summary>
+        <div id="rubricGuide"></div>
+      </details>
+
+      <div class="submit-box" id="graphSubmitBox" hidden>
+        <label class="check"><input type="checkbox" id="submitWithLog" checked> 同時繳交對話紀錄（.txt）</label>
+        <div class="handoff-actions">
+          <button class="primary" id="graphSubmitBtn" onclick="submitKnowledgeGraph()">繳交到雲端硬碟</button>
+          <button class="ghost" onclick="downloadDiagram('conceptMapContainer','我的知識族譜')">下載圖片</button>
+        </div>
+        <p class="hint" id="graphSubmitStatus">族譜和後設認知評估會放進你們小組的雲端硬碟資料夾，並分享給老師。</p>
+      </div>
+    </div>
+
+    <h4 class="step-title">進階選項（可以跳過）</h4>
     <details class="fold" id="roleFold">
       <summary>我的 3 對 3 角色（選填，AI 會依此調整提問角度）<span class="fold-status" id="roleSaveStatus"></span></summary>
       <div class="role-cols" style="margin-top:12px;">
@@ -1293,105 +1435,15 @@ function setLang(lang){
         <button class="primary small" onclick="saveRole()">儲存角色</button>
       </div>
     </details>
-
-    <div class="flow mono">
-      <span>① 判斷時機</span><i>→</i><span>② 寫下情境</span><i>→</i><span>③ 到 ChatGPT 對話</span><i>→</i><span>④ 收尾＋一次貼回</span><i>→</i><span>⑤ 族譜與後設認知評估</span>
-    </div>
-
-    <h4 class="step-title">① 現在是哪一種時機？</h4>
-    <div class="mode-row">
-      <div class="mode-card" data-mode="proactive" onclick="setMode('proactive')">
-        <div class="mode-title">前瞻性後設認知 <span class="mono">BEFORE</span></div>
-        <p class="mode-when" data-en="It <b>hasn't happened yet</b>: before a game, in a time-out, before a possession">事情<b>還沒發生</b>：賽前、暫停時、回合開始前</p>
-        <ul class="mode-cues">
-          <li>我觀察到對手有什麼線索？</li>
-          <li>我預測接下來會發生什麼？</li>
-          <li>我打算怎麼做？為什麼？</li>
-        </ul>
-        <p class="mode-eg">例：對方中鋒很會護框，我想先預判……</p>
+    <details class="fold">
+      <summary>把好幾個 ChatGPT 對話合併成一張族譜</summary>
+      <p class="hint" style="margin:0 0 8px;" data-en="Do steps 1–5 for each chat first. Then tap the button below and paste the command into a <b>new</b> ChatGPT chat. Finally, do step 5 with its reply.">每個對話都先做完第 1～5 步。接著按下面的按鈕，貼到一個<b>新的</b> ChatGPT 對話，再用它的回覆做第 5 步。</p>
+      <div class="handoff-actions">
+        <button class="ghost small" onclick="buildAndCopyConceptPrompt()">複製合併分析指令</button>
+        <button class="ghost small" onclick="clearLog()">清除這台裝置的對話紀錄</button>
       </div>
-      <div class="mode-card" data-mode="reactive" onclick="setMode('reactive')">
-        <div class="mode-title">反應性後設認知 <span class="mono">AFTER</span></div>
-        <p class="mode-when" data-en="It <b>already happened</b>: your play was stopped, you got stuck, or it didn't go as expected">事情<b>已經發生</b>：戰術被破、當下卡住、結果不如預期</p>
-        <ul class="mode-cues">
-          <li>剛剛實際發生了什麼？</li>
-          <li>和我原本預期的差在哪裡？</li>
-          <li>下次我要怎麼調整？</li>
-        </ul>
-        <p class="mode-eg">例：擋拆後對方直接換防，我愣住了……</p>
-      </div>
-    </div>
-
-    <h4 class="step-title">② 用自己的話寫下情境</h4>
-    <div class="chat-input-row" style="margin-top:0;">
-      <textarea id="chatInput" placeholder="你看到了什麼？你怎麼想？哪裡卡住？"></textarea>
-    </div>
-    <input type="hidden" id="gameTag">
-    <div class="handoff-actions">
-      <button class="primary" onclick="buildAndCopyPrompt()">③ 複製提示詞</button>
-      <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
-    </div>
-    <p class="hint" id="promptStatus" style="margin-top:8px;"></p>
-    <details class="prompt-details">
-      <summary>查看提示詞內容</summary>
-      <div class="prompt-out" id="promptOut">尚未產生提示詞。</div>
+      <p class="hint" id="mergeStatus" style="margin-top:8px;"></p>
     </details>
-
-    <p class="hint" style="margin-top:10px;" data-en="Just chat with the coach in ChatGPT. <b>You don't need to paste anything back during the chat.</b> Do step ④ when you finish.">在 ChatGPT 和教練來回對話就好，<b>過程中不用貼回來</b>；聊完再做第 ④ 步。</p>
-
-    <div class="chat-log">
-      <h4 class="step-title">④ 聊完了：收尾，然後一次貼回</h4>
-      <ol class="import-steps">
-        <li data-en="Tap &quot;Copy wrap-up command&quot; and send it in the <b>same</b> ChatGPT chat. You don't need to paste the conversation; ChatGPT remembers it.">按「複製收尾指令」，貼到<b>同一個</b> ChatGPT 對話送出。不用再貼對話內容，ChatGPT 記得剛剛聊了什麼。</li>
-        <li data-en="After ChatGPT replies, press <b>⌘A</b> (Windows: <b>Ctrl+A</b>) on the ChatGPT page and copy.<br><span class='hint'>If select-all is hard on your phone, tap the Copy button under the last reply instead (you get the map and evaluation, but not the full chat).</span>">ChatGPT 回覆後，在 ChatGPT 頁面按 <b>⌘A</b>（Windows：<b>Ctrl+A</b>）全選 → 複製。<br>
-          <span class="hint">手機不好全選的話，按最後那則回覆下方的「複製」按鈕也可以（只會得到族譜和評估，不含對話全文）。</span></li>
-        <li>貼到下面的框框，按「匯入並分析」。</li>
-      </ol>
-      <div class="handoff-actions">
-        <button class="primary" onclick="buildAndCopyWrapUpPrompt()">複製收尾指令</button>
-        <button class="ghost" onclick="openChatGPT()">開啟 ChatGPT</button>
-      </div>
-      <details class="prompt-details">
-        <summary>查看收尾指令內容</summary>
-        <div class="prompt-out" id="conceptPromptOut">尚未產生指令。</div>
-      </details>
-      <div class="chat-input-row">
-        <textarea id="importBox" placeholder="把整個 ChatGPT 對話（或最後那則回覆）貼在這裡……"></textarea>
-      </div>
-      <div class="handoff-actions">
-        <button class="primary" onclick="importChatGPT()">匯入並分析</button>
-      </div>
-      <p class="hint" id="importStatus" style="margin-top:8px;"></p>
-
-      <details class="prompt-details">
-        <summary>想把好幾個 ChatGPT 對話（好幾場比賽）合併成一張族譜？</summary>
-        <p class="hint" style="margin:8px 0;" data-en="Import each chat as above first. To combine them, tap the button below to copy the combined analysis command (it includes every chat log on this device), paste it into a <b>new</b> ChatGPT chat, then paste the reply in the box above and tap Import &amp; analyze.">每個對話都先用上面的方式匯入。要合併時，按下面的按鈕複製「合併分析指令」（已經包含這台裝置上的全部對話紀錄），貼到一個<b>新的</b> ChatGPT 對話，再把回覆貼回上面的框框按「匯入並分析」。</p>
-        <div class="handoff-actions">
-          <button class="ghost small" onclick="buildAndCopyConceptPrompt()">複製合併分析指令</button>
-          <button class="ghost small" onclick="clearLog()">清除這台裝置的對話紀錄</button>
-        </div>
-      </details>
-    </div>
-
-    <div class="mindmap-block">
-      <h4>⑤ 我的知識族譜與後設認知評估</h4>
-      <p class="mm-desc">看見自己談到哪些戰術概念、概念之間怎麼連結，並依「知識族譜後設認知評估規準」檢視你的後設認知表現。</p>
-      <div class="mindmap-container" id="conceptMapContainer"></div>
-      <div class="rubric-box" id="rubricContainer" hidden></div>
-      <details class="prompt-details">
-        <summary>評估規準說明</summary>
-        <div id="rubricGuide"></div>
-      </details>
-
-      <div class="submit-box" id="graphSubmitBox" hidden>
-        <label class="check"><input type="checkbox" id="submitWithLog" checked> 同時繳交對話紀錄（.txt）</label>
-        <div class="handoff-actions">
-          <button class="primary" id="graphSubmitBtn" onclick="submitKnowledgeGraph()">繳交到雲端硬碟</button>
-          <button class="ghost" onclick="downloadDiagram('conceptMapContainer','我的知識族譜')">下載圖片</button>
-        </div>
-        <p class="hint" id="graphSubmitStatus">族譜和後設認知評估會放進你們小組的雲端硬碟資料夾，並分享給老師。</p>
-      </div>
-    </div>
   </section>
 
   <!-- ================= 6. RULES ================= -->
@@ -2086,7 +2138,11 @@ function renderSchedule(){
 function renderMyTeam(){
   const box = document.getElementById('myTeamCard');
   const t = currentTeam();
-  if(!t){ box.innerHTML = '<p class="hint" style="margin-top:10px;">點選你的組別，就會標出你們的比賽。</p>'; return; }
+  if(!t){
+    box.innerHTML = '<p class="hint" style="margin-top:10px;">點選你的組別，就會標出你們的比賽。</p>';
+    document.getElementById('roleBadge').textContent = '尚未選擇組別 → 請到「01 賽程」選擇';
+    return;
+  }
   const days = SCHEDULE_DATA[t.cls].days;
   const counts = days.filter(d=>d.title.includes('預賽')).map(d=>`${d.date} ${d.matches.filter(isMyMatch).length} 場`).join('、');
   box.innerHTML = `<div class="team-card">
@@ -2162,6 +2218,7 @@ function renderFilmTeam(){
   document.getElementById('filmTeam').innerHTML = t
     ? `上傳到雲端硬碟資料夾：<b>${escapeHtml(getFolderName())}</b><br><small>${t.me ? '' : '提醒：請先到「01 賽程」點選「我是」自己的名字。<br>'}${t.members.map(escapeHtml).join('、')}</small>`
     : `<span style="color:var(--danger);">請先到「01 賽程」選擇班別與組別，影片才會放進你們小組的資料夾。</span>`;
+  if(typeof restoreClipChoices === 'function' && document.getElementById('tactic-1')) restoreClipChoices();
 }
 
 const SLOT_COUNT = 3;
@@ -2183,7 +2240,7 @@ function buildUploadSlots(){
       <h4>${CLIP_TASKS[i-1].title}</h4>
       <div class="field">
         <label>這段打的是什麼戰術？</label>
-        <select id="tactic-${i}">
+        <select id="tactic-${i}" onchange="syncClipChoices()">
           <option value="">請選擇戰術</option>
           ${CLIP_TASKS[i-1].options.map(t=>`<option value="${t}">${t}</option>`).join('')}
         </select>
@@ -2203,6 +2260,19 @@ function buildUploadSlots(){
   wrap.innerHTML = html;
 }
 buildUploadSlots();
+
+// 影片 2、3 必須是不同的戰術：另一段選過（或上傳過）的選項就不能再選
+function syncClipChoices(){
+  const a = document.getElementById('tactic-2'), b = document.getElementById('tactic-3');
+  [[a,b],[b,a]].forEach(([sel, other])=>{
+    [...sel.options].forEach(o=>{ o.disabled = !!o.value && o.value === other.value; });
+  });
+}
+function restoreClipChoices(){
+  const done = lsGet('film:done:' + getFolderName(), {});
+  [1,2,3].forEach(i=>{ document.getElementById('tactic-'+i).value = done[i] || ''; });
+  syncClipChoices();
+}
 
 const slotFiles = {};
 const slotUrls = {};
@@ -2256,6 +2326,11 @@ async function uploadSlot(slot){
     setTimeout(()=>{ if(slotFiles[slot] === file) showUploadButton(slot, '上傳至雲端硬碟'); }, 3000);
     return;
   }
+  if(slot > 1 && tactic === document.getElementById('tactic-'+(5-slot)).value){
+    actions.innerHTML = `<span class="clip-warning">影片 2 和影片 3 必須選不同的戰術。</span>`;
+    setTimeout(()=>{ if(slotFiles[slot] === file) showUploadButton(slot, '上傳至雲端硬碟'); }, 3000);
+    return;
+  }
   if(!currentTeam()){
     actions.innerHTML = `<span class="clip-warning">請先到「01 賽程」選擇班別與組別。</span>`;
     setTimeout(()=>{ if(slotFiles[slot] === file) showUploadButton(slot, '上傳至雲端硬碟'); }, 3000);
@@ -2278,6 +2353,9 @@ async function uploadSlot(slot){
       document.getElementById('uploadLabel-'+slot).textContent = `上傳中… ${Math.round(p*100)}%`;
     });
     if(!result.id) throw new Error('上傳回應異常，請到雲端硬碟確認檔案是否存在。');
+    const done = lsGet('film:done:' + folderName, {});
+    done[slot] = tactic;
+    lsSet('film:done:' + folderName, done);
     const shareNote = !teacherEmail
       ? '（尚未設定老師信箱，資料夾只存在你自己的雲端硬碟）'
       : shared ? `（已分享給 ${escapeHtml(teacherEmail)}）` : '（自動分享給老師失敗，請自行到雲端硬碟把資料夾分享給老師）';
@@ -2293,6 +2371,19 @@ async function uploadSlot(slot){
 const STAT_KEYS = [['miss','投失'],['reb','籃板'],['ast','助攻'],['stl','抄截'],['tov','失誤'],['foul','犯規']];
 const ISSUE_TAGS = ['溝通喊話不足','換防沒跟上','籃板沒卡位','傳球失誤多','空間太擠','出手太倉促','沒有執行戰術','回防太慢','體力下滑','犯規太多'];
 const HALF_NAME = {first:'前 4 分鐘', second:'後 4 分鐘'};
+// 點選問題時自動帶出的情況描述 [中文, 英文]，學生可以再修改
+const ISSUE_NOTES = {
+  '溝通喊話不足':['場上大家很少喊話，掩護、換防和傳球前都沒有先說，常常看不懂隊友下一步要做什麼。','We hardly talked on court. Nobody called out screens, switches or passes, so we often could not tell what a teammate would do next.'],
+  '換防沒跟上':['對手擋拆時我們換防慢了一步，持球的人或順下的人常常有空檔。','When they ran a pick and roll we were a step late on the switch, so the ball handler or the roller was often open.'],
+  '籃板沒卡位':['對手投籃時我們沒有先卡位，對手常常搶到進攻籃板再出手一次。','We did not box out on their shots, so they often got the offensive rebound and a second shot.'],
+  '傳球失誤多':['我們傳球前沒有看清楚防守，傳球路線常常被抄走或傳出界。','We passed without reading the defense, and our passes were often stolen or went out of bounds.'],
+  '空間太擠':['我們 3 個人站得太近，一個防守者就能同時顧到兩個人，切入沒有空間。','The 3 of us stood too close together, so one defender could guard two of us and there was no room to drive.'],
+  '出手太倉促':['我們還沒找到好機會就急著出手，常常是在被防守干擾下投籃。','We rushed our shots before finding a good chance, and often shot with a defender on us.'],
+  '沒有執行戰術':['比賽中大家各打各的，原本練好的戰術沒有發動。','Everyone played on their own in the game, and we never started the tactics we had practiced.'],
+  '回防太慢':['失誤或投籃沒進之後，我們回防太慢，對手很快就得分。','After turnovers or missed shots we were slow getting back, and they scored quickly.'],
+  '體力下滑':['比賽後段大家跑不動，跑位和防守的腳步都慢了下來。','Late in the game we got tired, and our cuts and defensive footwork slowed down.'],
+  '犯規太多':['防守時動作太大或站位不好，一直犯規，讓對手得到機會。','Our defense was too physical or out of position, so we kept fouling and gave them chances.']
+};
 let statRecords = lsGet('stats:records', {});
 let statKey = null;
 let statHalf = 'first';
@@ -2392,9 +2483,40 @@ function toggleOnCourt(name){
 function toggleIssue(tag){
   const r = currentStatRecord();
   const i = r.issues.indexOf(tag);
-  if(i >= 0) r.issues.splice(i, 1); else r.issues.push(tag);
+  const pair = ISSUE_NOTES[tag] || [];
+  const lines = (r.note || '').split('\n').filter(l=>l.trim() && !pair.includes(l.trim()));
+  if(i >= 0) r.issues.splice(i, 1);
+  else{ r.issues.push(tag); lines.push(pair[isEn() ? 1 : 0]); }
+  r.note = lines.join('\n');
+  document.getElementById('statNote').value = r.note;
+  document.getElementById('noteCopyStatus').textContent = '';
   touchStat();
   renderStats();
+}
+// 複製觀察內容，到 AI 助教第 2 步貼上提問
+async function copyObservation(){
+  const box = document.getElementById('statNote');
+  const status = document.getElementById('noteCopyStatus');
+  const text = box.value.trim();
+  status.style.color = '';
+  if(!text){
+    status.style.color = 'var(--danger)';
+    status.textContent = '請先點選問題，或寫下你的觀察。';
+    return;
+  }
+  // 先用瀏覽器舊方法複製（在部分手機上比較穩），失敗再用新方法
+  box.select();
+  let ok = false;
+  try{ ok = document.execCommand('copy'); }catch(e){}
+  if(!ok){
+    try{ await navigator.clipboard.writeText(text); ok = true; }catch(e){}
+  }
+  if(ok){
+    status.textContent = '已複製 ✓ 請到「05 AI 助教」第 2 步貼上。';
+  }else{
+    status.style.color = 'var(--danger)';
+    status.textContent = '自動複製失敗，內容已選取，請手動複製。';
+  }
 }
 function addStat(name, key, pts){
   const r = currentStatRecord();
@@ -2770,11 +2892,16 @@ let chatMode = null;   // 尚未選擇；學生必須先判斷是哪一種時機
 let reflectionLog = [];
 const MODE_NAME = {proactive:'前瞻性', reactive:'反應性'};
 const SITUATION_LABEL_EN = 'My situation:';
+const MODE_CUES = {
+  proactive:'想一想：我看到什麼線索？我預測會發生什麼？我打算怎麼做、為什麼？',
+  reactive:'想一想：實際發生了什麼？和預期差在哪裡？下次要怎麼調整？'
+};
 
 function setMode(mode){
   chatMode = mode;
   document.querySelectorAll('.mode-card').forEach(b=>b.classList.toggle('selected', b.dataset.mode===mode));
   document.querySelector('.mode-row').classList.remove('need-pick');
+  document.getElementById('modeCues').textContent = MODE_CUES[mode];
 }
 
 // 場次標籤：讓系列比賽的對話可以分場整理
@@ -2856,7 +2983,7 @@ ${roleLine ? '9. ' + roleLine + '\n' : ''}
 async function buildAndCopyPrompt(){
   if(!chatMode){
     document.querySelector('.mode-row').classList.add('need-pick');
-    alert('請先判斷：現在是「前瞻性」（事情還沒發生）還是「反應性」（事情已經發生）？');
+    alert('請先做第 1 步：選擇事情「還沒發生」或「已經發生」。');
     return;
   }
   const text = document.getElementById('chatInput').value.trim();
@@ -2866,12 +2993,12 @@ async function buildAndCopyPrompt(){
   document.getElementById('promptStatus').innerHTML = '';
   try{
     await navigator.clipboard.writeText(full);
-    appendMsg('sys', '提示詞已複製，請到 ChatGPT 貼上。對話過程不用貼回來，聊完再到第 ④ 步一次匯入。');
+    appendMsg('sys', '提示詞已複製 ✓ 請到 ChatGPT 貼上送出，聊天內容不用貼回來。');
   }catch(e){
-    appendMsg('sys', '自動複製失敗，請展開「查看提示詞內容」手動複製。');
-  }
-  if(!currentRole){
-    appendMsg('sys', '提醒：你還沒設定「我的 3 對 3 角色」（選填）。');
+    const box = document.getElementById('promptDetails');
+    box.hidden = false;
+    box.open = true;
+    appendMsg('sys', '自動複製失敗，請手動複製下方的提示詞。');
   }
   appendMsg('user', text);
   addToLog('user', text);
@@ -2912,7 +3039,7 @@ async function clearLog(){
   if(!confirm('確定要清除這台裝置上的全部對話紀錄嗎？清除後無法復原。')) return;
   reflectionLog = [];
   try{ await window.storage.delete(LOG_KEY); }catch(e){}
-  setImportStatus('已清除這台裝置的對話紀錄。');
+  setImportStatus('已清除這台裝置的對話紀錄。', '', 'mergeStatus');
 }
 function logEntryLabel(item){
   const who = item.role==='user' ? '我' : 'AI';
@@ -3131,32 +3258,32 @@ ${transcript}
 ---`;
 }
 
-async function copyPromptToClipboard(full, okMsg){
+async function copyPromptToClipboard(full, okMsg, statusId){
   const out = document.getElementById('conceptPromptOut');
   out.textContent = full;
   try{
     await navigator.clipboard.writeText(full);
-    setImportStatus(okMsg);
+    setImportStatus(okMsg, '', statusId);
   }catch(e){
-    out.closest('details').open = true;
-    setImportStatus('自動複製失敗，請手動複製下方展開的指令。', 'var(--danger)');
+    const box = document.getElementById('wrapDetails');
+    box.hidden = false;
+    box.open = true;
+    setImportStatus('自動複製失敗，請手動複製第 4 步下方的指令。', 'var(--danger)', statusId);
   }
 }
 function buildAndCopyWrapUpPrompt(){
-  copyPromptToClipboard(buildWrapUpPrompt(), '收尾指令已複製 ✓ 請貼到「同一個」ChatGPT 對話送出，回覆後全選複製整頁，再貼回下面的框框。');
+  copyPromptToClipboard(buildWrapUpPrompt(), '收尾指令已複製 ✓ 請貼到同一個 ChatGPT 對話送出。', 'wrapStatus');
 }
 async function buildAndCopyConceptPrompt(){
   if(!reflectionLog.some(item=>item.role==='user')){
-    alert('目前還沒有「我說的」對話紀錄。請先把對話匯入。');
+    alert('目前還沒有對話紀錄。請先完成第 1～5 步。');
     return;
   }
-  const details = document.getElementById('conceptPromptOut').closest('details');
-  await copyPromptToClipboard(buildConceptMapPrompt(), '合併分析指令已複製 ✓ 請貼到「新的」ChatGPT 對話，再把回覆貼回下面的框框。');
-  details.scrollIntoView({block:'nearest'});
+  await copyPromptToClipboard(buildConceptMapPrompt(), '合併分析指令已複製 ✓ 請貼到新的 ChatGPT 對話，再把回覆貼到第 5 步。', 'mergeStatus');
 }
 
-function setImportStatus(text, color){
-  const el = document.getElementById('importStatus');
+function setImportStatus(text, color, id){
+  const el = document.getElementById(id || 'importStatus');
   el.textContent = text;
   el.style.color = color || '';
 }
@@ -3254,7 +3381,7 @@ async function importChatGPT(){
     if(ok) document.getElementById('graphSubmitBox').hidden = false;
     box.value = '';
     const logNote = added ? `已加入 ${added} 則對話紀錄，` : (turns.length ? '對話紀錄之前已匯入過，' : '這次只貼了回覆、沒有對話全文，');
-    setImportStatus(`${logNote}族譜與後設認知評估已產生 ✓ 請往下看第 ⑤ 步。`, 'var(--success)');
+    setImportStatus(`${logNote}族譜與後設認知評估已產生 ✓ 請往下看結果。`, 'var(--success)');
     document.querySelector('.mindmap-block').scrollIntoView({behavior:'smooth', block:'start'});
     return;
   }
@@ -3265,18 +3392,18 @@ async function importChatGPT(){
     if(ok){
       document.getElementById('graphSubmitBox').hidden = false;
       box.value = '';
-      setImportStatus('族譜已畫出，但沒有找到後設認知評估。請改用「複製收尾指令」，讓 ChatGPT 一起產生評估。', 'var(--orange)');
+      setImportStatus('族譜已畫出，但沒有找到後設認知評估。請做第 4 步，讓 ChatGPT 一起產生評估。', 'var(--orange)');
     }
     return;
   }
 
   if(added){
     box.value = '';
-    setImportStatus(`已加入 ${added} 則對話紀錄，但還沒有找到族譜與評估。請先把「收尾指令」貼到 ChatGPT，等它回覆後再全選複製貼回來。`, 'var(--orange)');
+    setImportStatus(`已加入 ${added} 則對話紀錄，但還沒有找到族譜與評估。請先做第 4 步，等 ChatGPT 回覆後再貼回來。`, 'var(--orange)');
   }else if(turns.length){
-    setImportStatus('這些對話之前已經匯入過了；也還沒有找到族譜與評估。請先把「收尾指令」貼到 ChatGPT。', 'var(--orange)');
+    setImportStatus('這些對話之前已經匯入過了，也還沒有找到族譜與評估。請先做第 4 步。', 'var(--orange)');
   }else{
-    setImportStatus('看不出這段內容的格式。請在 ChatGPT 頁面按 ⌘A／Ctrl+A 全選後複製，或按最後那則回覆下方的「複製」按鈕，再貼一次。', 'var(--danger)');
+    setImportStatus('看不出這段內容的格式。請先做第 4 步，再複製 ChatGPT 最後的回覆貼回來。', 'var(--danger)');
   }
 }
 
@@ -3466,7 +3593,7 @@ function safeFileName(s){ return (s || '').replace(/[\\/:*?"<>|]/g, '').trim(); 
 
 async function submitKnowledgeGraph(){
   if(!document.querySelector('#conceptMapContainer svg')){
-    setGraphStatus('請先完成第 ④ 步，產生你的知識族譜與評估。', 'var(--danger)');
+    setGraphStatus('請先完成第 5 步，產生你的知識族譜與評估。', 'var(--danger)');
     return;
   }
   // 授權視窗必須在按鈕點擊的當下開啟，否則會被瀏覽器擋成彈出視窗
