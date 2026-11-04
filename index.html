@@ -506,6 +506,18 @@
     .date-tabs button b{font-size:15px;}
   }
 
+  /* ===== 中／英切換 ===== */
+  .lang-toggle{
+    position:absolute;top:12px;right:14px;z-index:1000;display:flex;gap:2px;padding:3px;
+    background:rgba(255,255,255,0.95);border-radius:999px;box-shadow:0 2px 8px rgba(28,37,54,0.18);
+  }
+  .lang-toggle button{
+    border:none;background:transparent;border-radius:999px;min-width:38px;min-height:30px;padding:0 10px;
+    font-size:13px;font-weight:700;color:var(--text-dim);cursor:pointer;
+  }
+  .lang-toggle button.active{background:var(--orange);color:#fff;}
+  @media (min-width: 821px){ .header-right{margin-right:104px;} }
+
   /* ===== rules section ===== */
   .rule-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
   .rule-card{background:var(--panel-2);border:1px solid var(--hair);padding:18px;clip-path:var(--clip);display:flex;flex-direction:column;gap:10px;}
@@ -592,11 +604,418 @@
     .add-video-form .field,.roster-form .field{max-width:none !important;}
   }
 </style>
+<script>
+// ================= 中／英切換 =================
+// 中文是原文；切到英文時才把畫面上的文字換掉，學生資料、儲存內容與繳交檔案都維持中文（老師看的版本）。
+const I18N_EN = {
+  // ---------- 頁首、導覽、登入 ----------
+  "COURT.AI ｜ 籃球戰術後設認知鷹架":"COURT.AI | Basketball Tactics Metacognitive Scaffold",
+  "請先使用 Google 帳號登入":"Please sign in with your Google account",
+  "這是老師設定的存取限制，登入後才能查看賽程、戰術影片、上傳小組影片、填寫紀錄表與使用 AI 助教。":"Your teacher has limited access to this site. Sign in to see the schedule, watch tactics videos, upload team videos, fill in the stat sheet and use the AI coach.",
+  "籃球戰術後設認知鷹架 — 不直接給答案，用提問引導你看懂比賽。":"A metacognitive scaffold for basketball tactics: no direct answers, just questions that help you read the game.",
+  "未登入 Google 帳號":"Not signed in to Google",
+  "尚未選擇組別 → 請到「01 賽程」選擇":"No group selected → choose one in \"01 Schedule\"",
+  "賽制與賽程":"Format & Schedule","賽程":"Schedule","戰術影片":"Tactics Videos","影片":"Videos",
+  "小組影片拍攝":"Team Filming","拍攝":"Film","表現紀錄表":"Stat Sheet","紀錄":"Stats",
+  "AI 後設認知助教":"AI Metacognitive Coach","AI 助教":"AI Coach","籃球規則與裁判法":"Rules & Officiating","規則":"Rules",
+  "關閉":"Close","教師須知：":"Teacher note:",
+  "登入資料讀取失敗，請重新整理頁面再試一次。":"Could not read your sign-in details. Please refresh and try again.",
+  "正在載入 Google 登入服務…":"Loading Google sign-in…",
+  "Google 登入服務無法載入，請確認網路連線（或學校網路是否封鎖 Google）後重新整理頁面。":"Google sign-in could not load. Check your connection (or whether the campus network blocks Google) and refresh.",
+
+  // ---------- 01 賽程 ----------
+  "3 對 3 賽制與賽程":"3-on-3 Format & Schedule",
+  "每組 5～6 人，場上 3 對 3。先選你的班別和組別，就會看到你們的賽程、輪替表和隊友名單。":"Each group has 5–6 players and plays 3-on-3. Choose your class and group to see your games, rotation and teammates.",
+  "① 我的班別":"① My class","② 我的組別":"② My group",
+  "週四 1、2 節":"Thu Periods 1–2","週四 3、4 節":"Thu Periods 3–4","週四1-2節":"Thu P1–2","週四3-4節":"Thu P3–4",
+  "作業怎麼繳交？":"How to submit your work",
+  "小組作業（每組 1 份）":"Group work (1 per group)","03 拍攝":"03 Film","04 紀錄":"04 Stats","05 AI 助教":"05 AI Coach","01 賽程":"01 Schedule",
+  "3 段影片（1 段基本動作、2 段 3 對 3 戰術），每段 ≤ 60 秒，每人至少入鏡 1 段":"3 clips (1 basic move, 2 3-on-3 tactics), each ≤ 60 seconds, with every player in at least 1 clip",
+  "由組內 1 位上傳負責人上傳":"Uploaded by 1 person from your group",
+  "個人作業（每人自己繳）":"Individual work (everyone submits their own)",
+  "輪休時負責記錄的場次，每場結束按「繳交到雲端硬碟」":"The games you recorded while resting. Tap \"Submit to Google Drive\" after each game",
+  "知識族譜＋後設認知評估（可附對話紀錄）":"Knowledge map + metacognitive evaluation (chat log optional)",
+  "檔案會存到你自己 Google 雲端硬碟裡的「班別_組別_姓名」資料夾，並自動分享給老師。上傳前請先點選「我是」自己的名字。":"Files are saved to a \"class_group_name\" folder in your own Google Drive and shared with your teacher automatically. Tap your name under \"I am\" before uploading.",
+  "賽程表":"Game schedule","每 4 分鐘輪替與紀錄分工":"4-minute rotation and recording duties","賽制重點":"Format at a glance",
+  "各組名單":"Group rosters","積分、排名與注意事項":"Points, rankings and notes","期末 3 對 3 比賽獎勵辦法":"End-of-term 3-on-3 bonus points",
+  "點選你的組別，就會標出你們的比賽。":"Tap your group to highlight your games.",
+  "我是（點自己的名字，紀錄表和 AI 助教會用到）：":"I am (tap your name; the stat sheet and AI coach use it):",
+  "當天課程流程":"Class plan for the day","我的比賽":"My game","決賽隊伍依預賽排名代入，12/10 預賽結束後由老師公告。":"Finals teams depend on the prelim rankings. Your teacher will announce them after the 12/10 prelims.",
+  "時間":"Time","上場":"On court","輪休・負責紀錄":"Resting · Recording",
+  "5 人組要跨場次累計，讓每個人的上場時間平衡。輪休的同學請到「04 紀錄」記錄場上隊友。":"5-player groups should balance playing time across games. Players who are resting record their teammates in \"04 Stats\".",
+  "6 人組每場每人都上場 4 分鐘。輪休的同學請到「04 紀錄」記錄場上隊友。":"In 6-player groups, everyone plays 4 minutes each game. Players who are resting record their teammates in \"04 Stats\".",
+  "預賽第 1 天":"Prelims Day 1","預賽第 2 天":"Prelims Day 2","決賽":"Finals","決賽第 1 天":"Finals Day 1","決賽第 2 天":"Finals Day 2",
+  "決賽上組":"Upper bracket","決賽下組":"Lower bracket","金盃":"Gold Cup","銀盃":"Silver Cup","銅盃":"Bronze Cup",
+  "比賽方式":"Format","半場 3 對 3":"Half-court 3-on-3","每場":"Each game","8 分鐘，第 4 分鐘固定換人":"8 minutes, with a fixed substitution at minute 4",
+  "參賽隊伍":"Teams","7 組，共 37 人":"7 groups, 37 students","場地":"Courts","4 個半場，每時段最多 3 場":"4 half courts, up to 3 games per time slot",
+  "積分":"Points","勝 3、和 1、負 0":"Win 3, draw 1, loss 0","輪休工作":"While resting","技術統計":"Record game stats",
+  "預賽":"Prelims","七隊單循環：21 場，每隊 6 場":"7-team round robin: 21 games, 6 per team",
+  "上組 6 場（每隊 3 場）；下組 6 場（每隊 4 場）":"Upper bracket 6 games (3 per team); lower bracket 6 games (4 per team)",
+  "比賽時段":"Game times","總計":"Total","33 場，排出第 1～7 名":"33 games, deciding places 1–7",
+  "七隊單循環（11/26、12/10）":"7-team round robin (11/26, 12/10)","預賽第 1～4 名":"Prelim places 1–4","預賽第 5～7 名":"Prelim places 5–7",
+  "決賽上組單循環 → 最終第 1～4 名":"Upper bracket round robin → final places 1–4","決賽下組雙循環 → 最終第 5～7 名":"Lower bracket double round robin → final places 5–7",
+  "預賽每日負擔：6 隊為 3 場＋3 場；第 5 組為 2 場＋4 場（12/10 需打 4 場，該組同學額外加 1 分）。":"Daily load in the prelims: 6 teams play 3 + 3 games; Group 5 plays 2 + 4 (4 games on 12/10, so that group earns 1 extra point).",
+  "同一隊不會在同一時段同時出賽。":"A team never plays two games in the same time slot.",
+  "預賽與決賽積分分開計算，依勝 3、和 1、負 0 排序；決賽各組重新計分，同分必要時加賽。":"Prelim and finals points are counted separately (win 3, draw 1, loss 0). Each finals bracket starts from zero, and ties go to an extra game if needed.",
+  "每次下課前，各隊須向老師回報成績；12/10 預賽結束後，公告決賽名單與場次。":"Report your results to your teacher before each class ends. The finals teams and games are announced after the 12/10 prelims.",
+  "第一名加 5 分、第二名加 4.5 分、第三名加 4 分、第四名加 3.5 分、第五名加 3 分、第六名加 2.5 分、第七名加 2 分。":"1st: +5 points, 2nd: +4.5, 3rd: +4, 4th: +3.5, 5th: +3, 6th: +2.5, 7th: +2.",
+  "第一名加 5 分、第二名加 4.5 分、第三名加 4 分、第四名加 3.5 分、第五名加 3 分、第六名加 2.5 分、第七名加 2 分、第八名加 1.5 分、第九名加 1 分。":"1st: +5 points, 2nd: +4.5, 3rd: +4, 4th: +3.5, 5th: +3, 6th: +2.5, 7th: +2, 8th: +1.5, 9th: +1.",
+  "8 分鐘（前後各 4 分鐘），中場約 1 分鐘輪替":"8 minutes (4 + 4), with about 1 minute at half to rotate","9 組，共 47 人":"9 groups, 47 students",
+  "1～3 號半場比賽；第 4 半場暖身、補強與候賽":"Games on half courts 1–3; half court 4 is for warm-ups, skill work and waiting",
+  "勝 3、和 1、負 0；8 分鐘到時平手為和局":"Win 3, draw 1, loss 0; a tie at 8 minutes is a draw","預賽分區":"Prelim zones",
+  "A 區 1、4、7 組；B 區 2、5、8 組；C 區 3、6、9 組":"Zone A: Groups 1, 4, 7; Zone B: Groups 2, 5, 8; Zone C: Groups 3, 6, 9",
+  "11/26、12/10，各區雙循環，每隊 4 場":"11/26 and 12/10, double round robin in each zone, 4 games per team",
+  "12/17、12/24，各盃雙循環，每隊 4 場":"12/17 and 12/24, double round robin in each cup, 4 games per team",
+  "上課時段":"Class time","10:20 報到熱身；10:30、10:50、11:10 開賽":"10:20 check-in and warm-up; games at 10:30, 10:50, 11:10",
+  "36 場，每隊 8 場；每次上課 9 場":"36 games, 8 per team; 9 games each class",
+  "A／B／C 區各自雙循環（11/26、12/10）":"Double round robin within Zones A/B/C (11/26, 12/10)",
+  "各區第 1 名":"1st in each zone","各區第 2 名":"2nd in each zone","各區第 3 名":"3rd in each zone",
+  "同積分時：先比相互對戰積分，再比總得失分差、總得分；仍相同則加賽。":"Ties: compare head-to-head points, then total point difference, then total points scored. If still tied, play an extra game.",
+  "補考同學依原分組參賽，出場時間與紀錄任務一視同仁。":"Students taking a make-up play in their original group, with the same playing time and recording duties.",
+  "輪休隊員記錄得分、籃板、助攻、失誤與上場時間；非出賽隊可協助核對。":"Resting players record points, rebounds, assists, turnovers and playing time. Teams not playing can help check the records.",
+  "每次下課前跟老師報成績；12/10 預賽結束後，計算決賽名單與場次。":"Report your results to your teacher before each class ends. The finals teams and games are worked out after the 12/10 prelims.",
+  "集合、熱身及規則提醒":"Gather, warm up, rules reminder","第一輪比賽":"Round 1","第二輪比賽":"Round 2","第三輪比賽":"Round 3","統計核對、回饋及收整":"Check stats, feedback, pack up",
+  "為鼓勵同學積極參與期末籃球比賽，並展現團隊合作與運動家精神，本課程依各隊最終排名提供學期總成績加分獎勵。":"To encourage active participation, teamwork and sportsmanship in the end-of-term tournament, this course adds bonus points to the semester grade based on each team's final ranking.",
+  "各隊成員須依規定參與比賽、配合輪替制度，並於輪休期間完成指定技術紀錄工作，始得取得排名加分。若因特殊原因無法上場，得經授課教師同意，以替代學習任務完成評量。":"To earn the bonus, team members must play as required, follow the rotation and complete their recording duties while resting. If you cannot play for a special reason, you may complete an alternative learning task with your teacher's approval.",
+  "本項加分以學期總成績 100 分為上限，並依課程評量規定辦理。":"The semester grade is capped at 100 points, and the course assessment rules apply.",
+
+  // ---------- 02 影片 ----------
+  "先看「基本戰術」認識擋拆、手遞手、傳切等配合，再看「3 對 3 戰術」學怎麼把它們組合起來。拍攝小組影片時，就從這些戰術裡挑。":"Start with \"Basic Tactics\" to learn the pick and roll, handoff, give and go and more, then watch \"3-on-3 Tactics\" to see how they combine. Choose from these tactics for your team videos.",
+  "基本戰術":"Basic Tactics","3 對 3 戰術":"3-on-3 Tactics","YouTube 影片網址":"YouTube link","影片標題":"Video title","例如：手遞手配合示範":"e.g. Handoff demo","加入分類":"Category",
+  "＋ 新增到草稿":"+ Add to draft","匯出影片清單（複製程式碼）":"Export video list (copy code)","捨棄草稿，還原為網站上的清單":"Discard draft and restore the site list",
+  "目前顯示的是「草稿」，尚未發布：匯出後貼回程式碼並重新上傳網站，學生才看得到。":"You are viewing an unpublished draft. Export it, paste it into the code and re-upload the site so students can see it.",
+  "目前顯示的是網站上的正式清單。":"You are viewing the published list.","刪除 ✕":"Delete ✕","播放影片":"Play video",
+  "無法辨識這個 YouTube 網址，請確認格式。":"This YouTube link was not recognized. Please check it.","這支影片已經在影片庫裡了。":"This video is already in the library.",
+  "已複製影片清單程式碼。請貼到 HTML 檔中 const VIDEO_LIBRARY = [...] 的位置取代原本內容，再重新上傳網站。":"Video list code copied. Paste it over const VIDEO_LIBRARY = [...] in the HTML file, then re-upload the site.",
+  "自動複製失敗，請手動選取下方顯示的程式碼並複製。":"Automatic copy failed. Please select the code below and copy it manually.",
+  "確定要捨棄草稿，還原成網站上目前的正式清單嗎？":"Discard the draft and restore the published list?",
+  "擋拆（Pick & Roll）｜[DV籃球夢工廠] 擋拆技巧教學":"Pick & Roll | DA VILLAGE: pick and roll technique",
+  "3 vs 3 進攻戰術（12）Hand Off＋單擋｜籃球研究室":"3-on-3 offense (12): handoff + single screen | Basketball Lab",
+  "手遞手（Handoff）｜Hand Off 時的四個選擇":"Handoff | Four options on a handoff",
+  "傳切（Give & Go）｜The Give-and-Go":"Give & Go | The Give-and-Go",
+  "無球掩護（Off-ball Screen）｜Off ball screens in basketball":"Off-ball Screen | Off ball screens in basketball",
+  "背切（Backdoor Cut）｜The Backdoor Cut":"Backdoor Cut | The Backdoor Cut",
+  "假擋真切（Slip）｜牛角溜切 Horns Slip":"Slip | Horns Slip",
+  "3 vs 3 進攻戰術（2）｜籃球研究室":"3-on-3 offense (2) | Basketball Lab","3 vs 3 進攻戰術（3）｜籃球研究室":"3-on-3 offense (3) | Basketball Lab",
+  "3 vs 3 進攻戰術（4）｜籃球研究室":"3-on-3 offense (4) | Basketball Lab","3 vs 3 進攻戰術（5）｜籃球研究室":"3-on-3 offense (5) | Basketball Lab",
+  "3 vs 3 進攻戰術（6）強弱邊的運用｜籃球研究室":"3-on-3 offense (6): using the strong and weak sides | Basketball Lab","3 vs 3 進攻戰術（7）｜籃球研究室":"3-on-3 offense (7) | Basketball Lab",
+  "3 vs 3 進攻戰術（8）同邊雙擋｜籃球研究室":"3-on-3 offense (8): same-side double screen | Basketball Lab","3 vs 3 進攻戰術（9）運用球例｜籃球研究室":"3-on-3 offense (9): using the rules | Basketball Lab",
+
+  // ---------- 03 拍攝 ----------
+  "小組影片拍攝區":"Team Filming","拍攝小提醒":"Filming tips",
+  "Google 雲端硬碟連接":"Connect Google Drive","連接後，影片會上傳到你雲端硬碟裡的「班別_組別_姓名」資料夾，並自動分享給老師。":"Once connected, videos go to the \"class_group_name\" folder in your Drive and are shared with your teacher automatically.",
+  "連接 Google 雲端硬碟":"Connect Google Drive","尚未連接":"Not connected",
+  "影片存在你自己的雲端硬碟裡，系統只是把資料夾分享給老師（老師在「與我共用」就看得到）。授權約 1 小時後會過期，需要時再按一次連接。":"Videos stay in your own Drive; the folder is simply shared with your teacher, who finds it under \"Shared with me\". Access expires after about 1 hour, so connect again if needed.",
+  "上傳到雲端硬碟資料夾：":"Uploading to Drive folder: ","提醒：請先到「01 賽程」點選「我是」自己的名字。":"Reminder: tap your name under \"I am\" in \"01 Schedule\" first.",
+  "請先到「01 賽程」選擇班別與組別，影片才會放進你們小組的資料夾。":"Choose your class and group in \"01 Schedule\" first so your videos go into the right folder.",
+  "這段打的是什麼戰術？":"Which tactic is in this clip?","請選擇戰術":"Choose a tactic","影片 1：基本動作":"Clip 1: Basic move","影片 2：3 對 3 戰術":"Clip 2: 3-on-3 tactic","影片 3：3 對 3 戰術":"Clip 3: 3-on-3 tactic",
+  "戰術（2）":"Tactic (2)","戰術（3）":"Tactic (3)","戰術（4）":"Tactic (4)","戰術（5）":"Tactic (5)","戰術（6）強弱邊的運用":"Tactic (6): strong and weak sides","戰術（7）":"Tactic (7)","戰術（8）同邊雙擋":"Tactic (8): same-side double screen","戰術（9）運用球例":"Tactic (9): using the rules","戰術（12）Hand Off＋單擋":"Tactic (12): handoff + single screen",
+  "拍攝或選擇影片":"Record or choose a video","讀取影片長度中…":"Reading video length…",
+  "擋拆（Pick & Roll）":"Pick & Roll","手遞手（Handoff）":"Handoff","傳切（Give & Go）":"Give & Go","無球掩護（Off-ball Screen）":"Off-ball Screen","背切（Backdoor Cut）":"Backdoor Cut","假擋真切（Slip）":"Slip",
+  "這個瀏覽器無法讀取此影片格式，請轉成 MP4 後再試一次。":"This browser cannot read this video format. Convert it to MP4 and try again.",
+  "無法判斷影片長度，請轉成 MP4 後再試一次。":"Could not read the video length. Convert it to MP4 and try again.",
+  "上傳至雲端硬碟":"Upload to Google Drive","請先在上方選擇這段影片打的戰術。":"Choose the tactic for this clip above first.","請先到「01 賽程」選擇班別與組別。":"Choose your class and group in \"01 Schedule\" first.",
+  "請先在上方按「連接 Google 雲端硬碟」完成授權（授權約 1 小時後會過期，需要重新連接）。":"Tap \"Connect Google Drive\" above first (access expires after about 1 hour).",
+  "準備上傳…":"Preparing upload…","上傳回應異常，請到雲端硬碟確認檔案是否存在。":"Unexpected upload response. Please check your Drive for the file.","上傳發生錯誤":"Upload error","重新上傳":"Upload again",
+  "尚未設定 OAuth 用戶端 ID（請聯絡老師檢查程式碼中的 CONFIG 設定）":"OAuth client ID is not set (ask your teacher to check CONFIG in the code)",
+  "Google 授權服務無法載入，請確認網路連線後重新整理頁面。":"Google authorization could not load. Check your connection and refresh.",
+  "已連接 Google 雲端硬碟 ✓（授權約 1 小時內有效）":"Google Drive connected ✓ (valid for about 1 hour)",
+  "授權視窗被關閉或遭到封鎖，請允許彈出視窗後再試一次。":"The authorization window was closed or blocked. Allow pop-ups and try again.",
+  "授權已過期，請重新按「連接 Google 雲端硬碟」":"Access has expired. Tap \"Connect Google Drive\" again",
+  "Google 雲端硬碟授權已過期，請重新連接後再上傳。":"Google Drive access has expired. Please reconnect and upload again.",
+  "無法建立上傳工作階段，請稍後再試。":"Could not start the upload. Please try again later.","網路中斷，上傳失敗，請確認網路後再試一次。":"Connection lost and the upload failed. Check your connection and try again.",
+
+  // ---------- 04 紀錄 ----------
+  "球員表現紀錄表":"Player Stat Sheet",
+  "每場第 4 分鐘輪替。輪休的同學用這頁記錄場上隊友的表現，並寫下我們隊伍遇到的問題。紀錄會存在這支手機，也可以繳交給老師。":"Players rotate at minute 4 of every game. If you are resting, use this page to record your teammates on court and note the problems your team faced. Records stay on this phone and can be submitted to your teacher.",
+  "比賽場次":"Game","對手":"Opponent","例如：第6組":"e.g. Group 6","前 4 分鐘":"First 4 min","後 4 分鐘":"Last 4 min","場上球員（點選 3 人）":"On court (tap 3 players)","我隊":"Us","對手得分":"Opponent scores",
+  "得分依老師公告的計分方式按（FIBA 3x3 正式規則：弧內 1 分、弧外 2 分）。":"Score as your teacher has announced (official FIBA 3x3: 1 point inside the arc, 2 outside).",
+  "↶ 復原上一步":"↶ Undo","我們隊伍遇到的問題":"Problems our team faced","其他觀察：例如對手一直換防，我們的擋拆打不開……":"Other observations, e.g. they kept switching, so our pick and roll wouldn't open up…","做得好的地方（選填）":"What went well (optional)",
+  "本場統計":"Game stats","繳交到雲端硬碟":"Submit to Google Drive","帶到 AI 助教討論":"Discuss with AI Coach","下載 CSV":"Download CSV","這支手機記錄過的場次":"Games recorded on this phone",
+  "投失":"Missed","籃板":"Rebounds","助攻":"Assists","抄截":"Steals","失誤":"Turnovers","犯規":"Fouls","球員":"Player","得分":"Points","投進":"Made","分":"pts",
+  "溝通喊話不足":"Not enough talking","換防沒跟上":"Slow on switches","籃板沒卡位":"No box-outs","傳球失誤多":"Too many bad passes","空間太擠":"Poor spacing","出手太倉促":"Rushed shots","沒有執行戰術":"Didn't run our tactics","回防太慢":"Slow getting back","體力下滑":"Got tired","犯規太多":"Too many fouls",
+  "練習賽／其他":"Practice / other","前":"1st","後":"2nd","前、後":"1st, 2nd",
+  "場上只能選 3 人，請先取消一位。":"Only 3 players can be on court. Deselect someone first.","沒有可以復原的動作。":"Nothing to undo.","還沒有紀錄。":"No records yet.","還沒有記錄過的場次。":"No games recorded yet.",
+  "這一場還沒有任何紀錄。":"This game has no records yet.","請在跳出的視窗授權 Google 雲端硬碟，授權完成後會自動繳交……":"Authorize Google Drive in the pop-up window. It will submit automatically once done…",
+  "Google 授權服務無法載入，請重新整理頁面後再試。":"Google authorization could not load. Refresh and try again.","繳交失敗，請再試一次。":"Submission failed. Please try again.",
+  "先勾選或寫下「我們隊伍遇到的問題」，再帶到 AI 助教。":"Select or write \"Problems our team faced\" first, then bring it to the AI Coach.",
+
+  // ---------- 05 AI 助教 ----------
+  "助教不會給你答案，而是用提問帶你自己想清楚。可以在「04 紀錄」按「帶到 AI 助教討論」，把比賽遇到的問題直接帶過來。":"The coach won't give you the answers; it asks questions that help you think it through. In \"04 Stats\", tap \"Discuss with AI Coach\" to bring your game problems straight here.",
+  "我的 3 對 3 角色（選填，AI 會依此調整提問角度）":"My 3-on-3 role (optional; the AI adapts its questions)","場上位置":"Position","持球手（後衛）":"Ball handler (guard)","側翼（前鋒）":"Wing (forward)","內線（長人）":"Inside (big)",
+  "這次的角色":"Role this time","教練":"Coach","球場記錄員":"Scorekeeper","儲存角色":"Save role","請選擇球場位置與團隊角色後再儲存":"Choose a position and a role before saving",
+  "① 判斷時機":"① Choose timing","② 寫下情境":"② Describe it","③ 到 ChatGPT 對話":"③ Chat in ChatGPT","④ 收尾＋一次貼回":"④ Wrap up, paste once","⑤ 族譜與後設認知評估":"⑤ Map & evaluation",
+  "① 現在是哪一種時機？":"① What is the timing?","前瞻性後設認知":"Proactive metacognition","反應性後設認知":"Reactive metacognition",
+  "我觀察到對手有什麼線索？":"What cues do I see from the opponent?","我預測接下來會發生什麼？":"What do I predict will happen next?","我打算怎麼做？為什麼？":"What do I plan to do, and why?",
+  "例：對方中鋒很會護框，我想先預判……":"e.g. Their center protects the rim well, so I want to read…",
+  "剛剛實際發生了什麼？":"What actually happened?","和我原本預期的差在哪裡？":"How was it different from what I expected?","下次我要怎麼調整？":"What will I change next time?",
+  "例：擋拆後對方直接換防，我愣住了……":"e.g. They switched right after the screen and I froze…",
+  "② 用自己的話寫下情境":"② Describe the situation in your own words","你看到了什麼？你怎麼想？哪裡卡住？":"What did you see? What do you think? Where are you stuck?",
+  "③ 複製提示詞":"③ Copy prompt","開啟 ChatGPT":"Open ChatGPT","查看提示詞內容":"View the prompt","尚未產生提示詞。":"No prompt yet.",
+  "④ 聊完了：收尾，然後一次貼回":"④ Finished chatting: wrap up, then paste back once","複製收尾指令":"Copy wrap-up command","查看收尾指令內容":"View the wrap-up command","尚未產生指令。":"No command yet.",
+  "貼到下面的框框，按「匯入並分析」。":"Paste it into the box below and tap \"Import & analyze\".",
+  "把整個 ChatGPT 對話（或最後那則回覆）貼在這裡……":"Paste the whole ChatGPT conversation (or its last reply) here…","匯入並分析":"Import & analyze",
+  "想把好幾個 ChatGPT 對話（好幾場比賽）合併成一張族譜？":"Want to combine several ChatGPT chats (several games) into one map?","複製合併分析指令":"Copy combined analysis command","清除這台裝置的對話紀錄":"Clear chat logs on this device",
+  "⑤ 我的知識族譜與後設認知評估":"⑤ My knowledge map and metacognitive evaluation",
+  "看見自己談到哪些戰術概念、概念之間怎麼連結，並依「知識族譜後設認知評估規準」檢視你的後設認知表現。":"See which tactical concepts you talked about and how they connect, and review your metacognition against the Knowledge Map Metacognitive Rubric.",
+  "評估規準說明":"About the rubric","同時繳交對話紀錄（.txt）":"Also submit the chat log (.txt)","下載圖片":"Download image",
+  "族譜和後設認知評估會放進你們小組的雲端硬碟資料夾，並分享給老師。":"Your map and evaluation go into your Drive folder and are shared with your teacher.",
+  "請先判斷：現在是「前瞻性」（事情還沒發生）還是「反應性」（事情已經發生）？":"First decide: is this proactive (it hasn't happened yet) or reactive (it already happened)?",
+  "請先用自己的話寫下你的情境。":"Please describe your situation in your own words first.",
+  "提示詞已複製，請到 ChatGPT 貼上。對話過程不用貼回來，聊完再到第 ④ 步一次匯入。":"Prompt copied. Paste it into ChatGPT. You don't need to paste anything back during the chat; import it all at step ④ when you finish.",
+  "自動複製失敗，請展開「查看提示詞內容」手動複製。":"Automatic copy failed. Open \"View the prompt\" and copy it manually.",
+  "提醒：你還沒設定「我的 3 對 3 角色」（選填）。":"Reminder: you haven't set \"My 3-on-3 role\" (optional).",
+  "確定要清除這台裝置上的全部對話紀錄嗎？清除後無法復原。":"Clear all chat logs on this device? This cannot be undone.","已清除這台裝置的對話紀錄。":"Chat logs on this device have been cleared.",
+  "目前還沒有對話紀錄。":"No chat log yet.","自動複製失敗，請手動複製下方展開的指令。":"Automatic copy failed. Please copy the command shown below manually.",
+  "收尾指令已複製 ✓ 請貼到「同一個」ChatGPT 對話送出，回覆後全選複製整頁，再貼回下面的框框。":"Wrap-up command copied ✓ Send it in the same ChatGPT chat. After the reply, select all, copy the page and paste it in the box below.",
+  "目前還沒有「我說的」對話紀錄。請先把對話匯入。":"You have no chat log yet. Please import a conversation first.",
+  "合併分析指令已複製 ✓ 請貼到「新的」ChatGPT 對話，再把回覆貼回下面的框框。":"Combined command copied ✓ Paste it into a new ChatGPT chat, then paste the reply in the box below.",
+  "請先把 ChatGPT 的內容貼到框框裡。":"Paste the ChatGPT content into the box first.",
+  "族譜已畫出，但沒有找到後設認知評估。請改用「複製收尾指令」，讓 ChatGPT 一起產生評估。":"The map is drawn, but no evaluation was found. Use \"Copy wrap-up command\" so ChatGPT creates it too.",
+  "這些對話之前已經匯入過了；也還沒有找到族譜與評估。請先把「收尾指令」貼到 ChatGPT。":"These messages were already imported, and no map or evaluation was found. Send the wrap-up command to ChatGPT first.",
+  "看不出這段內容的格式。請在 ChatGPT 頁面按 ⌘A／Ctrl+A 全選後複製，或按最後那則回覆下方的「複製」按鈕，再貼一次。":"This format wasn't recognized. On the ChatGPT page press ⌘A / Ctrl+A and copy, or tap the Copy button under the last reply, then paste again.",
+  "進攻概念":"Offense","防守概念":"Defense","後設認知策略":"Metacognitive strategy","情境條件":"Context",
+  "繪圖工具載入失敗，請確認網路連線後重新整理頁面再試一次。":"The drawing tool failed to load. Check your connection and refresh.","↔ 圖比較寬，可以左右滑動查看":"↔ Wide map: swipe sideways to view",
+  "族譜語法無法繪製（評估結果仍在下方）。可以跟 ChatGPT 說「族譜的 Mermaid 語法有錯，請修正後用同樣格式再給我一次」，再重新貼回來。":"The map could not be drawn (your evaluation is still below). Ask ChatGPT: \"The Mermaid syntax has an error. Please fix it and send it again in the same format\", then paste it back.",
+  "後設認知評估":"Metacognitive evaluation",
+  "請先完成第 ④ 步，產生你的知識族譜與評估。":"Finish step ④ first to create your map and evaluation.",
+  "請先到「01 賽程」選擇班別與組別，族譜會放進你們小組的資料夾。":"Choose your class and group in \"01 Schedule\" first so your map goes into the right folder.",
+  "正在轉成圖片……":"Converting to an image…","目前還沒有產生族譜，請先畫出族譜。":"No map yet. Please create one first.","族譜轉成圖片失敗，請重新繪製一次再試。":"Could not convert the map to an image. Please create it again.",
+  "總結：":"Summary: ","下一步：":"Next step: ","和上次":"same as last time",
+  // 評估規準
+  "後設認知知識":"Metacognitive knowledge","後設認知調節":"Metacognitive regulation","後設認知經驗":"Metacognitive experience","後設認知能力":"Metacognitive ability",
+  "陳述性知識":"Declarative knowledge","程序性知識":"Procedural knowledge","條件性知識":"Conditional knowledge","計劃":"Planning","監控":"Monitoring","評估":"Evaluating","意象":"Imagery","反思":"Reflection","情緒":"Emotion","覺察":"Awareness","靈活性":"Flexibility","適應力":"Adaptability",
+  "對自身學習內容的理解":"Understanding what you are learning","對學習過程與策略的掌握":"Command of learning processes and strategies","在不同情境下運用知識的能力":"Applying knowledge in different situations",
+  "在體育活動前設定學習目標與策略":"Setting learning goals and strategies before activity","在學習過程中進行即時自我調節":"Self-regulating in real time while learning","反思與檢核自身學習效果":"Reviewing and checking your own learning","運用心理表徵強化學習":"Using mental images to strengthen learning","回顧與改進學習策略":"Looking back and improving your strategies",
+  "學習過程中的情感反應與如何調整":"Emotional reactions while learning and how you adjust","對學習狀態的主觀意識與察覺":"Being aware of your own learning state","根據不同運動情境適時調整學習策略":"Adjusting strategies to fit the sport situation","在挑戰或變化中維持學習表現":"Maintaining performance through challenges and change",
+  "未出現":"Not seen","初步":"Beginning","發展":"Developing","精熟":"Proficient",
+
+  // ---------- 06 規則 ----------
+  "國際籃球總會（FIBA）已公布 2026 年版官方規則，自 2026 年 10 月 1 日起生效；在此之前，2024 年版規則（2024/10/1 生效）仍是現行版本。 以下同時提供兩個版本的官方原文文件，建議課程討論戰術合法性時，依照上課當下實際生效的版本為準。":"FIBA has published its 2026 Official Rules, in effect from October 1, 2026; before that date, the 2024 rules (in effect from October 1, 2024) applied. Both official documents are below. When discussing whether a tactic is legal, use the version in effect at the time.",
+  "FIBA 正式籃球規則 2026（即將生效）":"FIBA Official Basketball Rules 2026 (upcoming)","2026 年版官方規則全文，自 2026 年 10 月 1 日起正式生效，是最新一版的官方文件。":"The full 2026 Official Rules, in effect from October 1, 2026. This is the latest official document.","開啟 2026 規則 PDF":"Open 2026 Rules PDF",
+  "2026 規則異動摘要":"2026 Rule Changes Summary","整理 2026 年版相對於前一版的條文異動重點，適合快速掌握這次修改了什麼。":"Key differences from the previous edition, for a quick overview of what changed.","開啟異動摘要 PDF":"Open Changes PDF",
+  "FIBA 正式籃球規則 2024（現行版本）":"FIBA Official Basketball Rules 2024 (current version)","完整規則條文（含比賽規則與器材規格兩部分），2024/10/1 生效，2026/9/30 前仍是現行有效版本。":"The complete rules (game rules and equipment), in effect from 10/1/2024 and valid until 9/30/2026.","開啟 2024 規則 PDF":"Open 2024 Rules PDF",
+  "FIBA 官方規則總覽頁":"FIBA Official Rules Page","FIBA 官方網站的規則專區，可查詢各語言版本、規則解釋文件（Interpretations）與歷年修訂紀錄，是版本更新時最準確的查詢起點。":"The rules section of the FIBA website, with other languages, Interpretations and past revisions. It is the most reliable place to check for updates.","前往官方規則頁":"Go to official rules page",
+  "若 FIBA 之後再公布更新版本，請以「FIBA 官方規則總覽頁」上的最新文件為準。":"If FIBA publishes a newer version, follow the latest document on the FIBA Official Rules Page.",
+  "中華民國籃球協會｜C 級教練證與裁判證資訊":"Chinese Taipei Basketball Association | C-Level Coach and Referee Licenses",
+  "台灣的籃球教練與裁判分為 C、B、A 三級，由中華民國籃球協會依「特定體育團體建立運動教練（裁判）資格檢定及管理辦法」辦理講習與檢定。 以下是近年（114 年度，即西元 2025 年）官方公告的實施計畫，列出資格條件、課程時數與費用，實際場次、日期請以協會最新公告為準。":"Basketball coaches and referees in Taiwan are licensed at levels C, B and A. The Chinese Taipei Basketball Association runs the training and exams under national regulations. Below are the official plans for 2025 (ROC year 114), listing eligibility, hours and fees. Check the association's latest announcements for actual sessions and dates.",
+  "C 級教練資格檢定實施計畫":"C-Level Coach Certification Plan","資格：年滿 20 歲以上；C 級教練講習時數至少 24 小時（學科＋術科），通過測驗後取得證照，證照有效期 4 年。":"Eligibility: age 20 or older. The C-level course is at least 24 hours (theory + practice). Pass the test to earn the license, valid for 4 years.","開啟教練檢定計畫 PDF":"Open Coach Plan PDF",
+  "C 級裁判資格檢定實施計畫":"C-Level Referee Certification Plan","資格：高級中等以上學校畢業，熟悉比賽規則；費用 C 級裁判講習會新臺幣 3,000 元整，另有體能測驗（20 公尺折返跑）與筆試（70 分及格）。":"Eligibility: senior high school graduate or above, familiar with the rules. The C-level course costs NT$3,000. There is also a fitness test (20 m shuttle run) and a written exam (pass mark 70).","開啟裁判檢定計畫 PDF":"Open Referee Plan PDF",
+  "中華民國籃球協會官方網站":"Chinese Taipei Basketball Association website","查詢最新一年度的講習會場次、報名時間與公告事項，實際開課資訊與費用以官網公告及當年度實施計畫為準。":"Find the latest course sessions, registration dates and notices. The website and that year's plan are the final word on courses and fees.","前往協會官網":"Go to association website",
+  "提醒：講習會場次、費用每年可能微調，上面兩份 PDF 是 114 年度（2025 年）的公告版本，報名前請務必到協會官網確認當年度最新實施計畫。":"Note: sessions and fees may change each year. The two PDFs above are the 2025 versions, so confirm the latest plan on the association website before registering.",
+  "裁判基本手勢示範（真人影片）":"Basic Referee Signals (video)","手勢用文字或畫圖都很難呈現真正的動作節奏，所以這裡直接放真人示範的教學影片，可以看到完整的連貫動作，比任何示意圖都清楚。":"Signals are hard to show in words or drawings, so here is a live demonstration where you can see each full movement.",
+  "FIBA 官方手勢完整示範（含跳球、得分、犯規、違例等全套手勢）":"Complete FIBA official signals (jump ball, scoring, fouls, violations and more)","看完影片後，可以對照下面的文字重點快速複習每個手勢代表的意思：":"After the video, use the notes below for a quick review of what each signal means:",
+  "得分／計時":"Scoring / Clock","違例":"Violations","比賽管理":"Game management",
+  "官方裁判法文件（中華民國籃球協會編譯）":"Official Officiating Documents (translated by the Chinese Taipei Basketball Association)",
+  "沒有找到現成的簡報檔，但找到更完整的資料：中華民國籃球協會官方翻譯的 FIBA 裁判手冊全文 PDF， 其中「個人執法技巧」那份的第三章就是「官方裁判手號」專章，內容比簡報更完整、更權威，適合裁判證照課程使用。":"These are the association's official Chinese translations of the FIBA referee manuals. Chapter 3 of \"Individual Officiating Techniques\" is dedicated to the official referee signals. All documents below are in Chinese.",
+  "個人執法技巧（IOT）":"Individual Officiating Techniques (IOT)","第三章「手號與術語」收錄官方裁判手號全表與基本執法術語，是最直接對應「裁判手勢」主題的章節。":"Chapter 3, \"Signals and Terminology\", has the full table of official signals and basic officiating terms.","開啟 PDF":"Open PDF",
+  "三人裁判法－基礎版":"Three-Person Officiating: Basic","介紹三人裁判制度的基本站位、跳球程序、輪轉與涵蓋範圍，適合初學裁判先建立整體概念。":"Basic positions, jump ball procedure, rotations and coverage for three officials. A good overview for new referees.",
+  "三人裁判法－進階版":"Three-Person Officiating: Advanced","在基礎版之上，進一步說明強邊／弱邊執法、攻守轉換時的輪轉與位置調整等進階裁判法概念。":"Builds on the basics with strong-side and weak-side officiating, plus rotations and position changes in transition.",
+  "這些文件由中華民國籃球協會編譯自 FIBA 原文教材，存放於協會的線上文件系統，若連結失效，可能是協會調整了檔案路徑，建議改到協會官網或裁判委員會頁面查詢最新版本。":"These documents are translated from FIBA materials and hosted by the association. If a link stops working, look for the latest version on the association website or referee committee page.",
+  "COURT.AI 籃球戰術後設認知鷹架 ｜":"COURT.AI Basketball Tactics Metacognitive Scaffold |","隱私權政策":"Privacy Policy",
+  // 裁判手勢
+  "跳球 / 交替擁有":"Jump ball / Alternating possession","雙手向上伸直，用於跳球開始比賽，或爭球時依交替擁有箭頭判定發球權。":"Both arms straight up. Used for the opening jump ball, or for a held ball decided by the alternating possession arrow.",
+  "計時開始":"Start the clock","手掌朝下，向下劈一次，示意計時員開表計時。":"Palm down, chop downward once to tell the timer to start the clock.",
+  "計時停止":"Stop the clock","單手向上直舉，手掌張開，示意計時員停表。":"One arm straight up with an open palm to tell the timer to stop the clock.",
+  "一分罰球得分":"1 point (free throw)","食指舉起並從手腕處向下彎曲一次，表示罰球命中得一分。":"Raise the index finger and bend it down once from the wrist: a made free throw counts 1 point.",
+  "得分兩分":"2 points","單手朝進攻方向伸出比出「2」，表示該球算兩分。":"Show \"2\" with one hand toward the offense: the basket counts 2 points.",
+  "三分出手預告":"3-point attempt","球員在三分線外出手瞬間，裁判舉手比出三根手指，預告這球若進算三分。":"As a player shoots from beyond the arc, the referee raises three fingers: this will count 3 if it goes in.",
+  "三分得分確認":"3 points confirmed","球進後雙手同時舉起做出三分手勢，確認這球算三分。":"After the basket, both arms go up with the 3-point sign to confirm it counts 3.",
+  "得分取消 / 不算":"Basket cancelled","雙手在身前交叉一次，表示這球得分不算（例如犯規在先且非連續動作）。":"Cross both arms once in front of the body: the basket does not count (e.g. a foul came first and it was not a continuous motion).",
+  "24 秒重新計時":"Reset the shot clock","一手舉起食指朝上並轉一圈，示意進攻時間（24秒／14秒）重新起算。":"Raise an index finger and circle it once to reset the shot clock (24 or 14 seconds).",
+  "個人犯規":"Personal foul","一手握拳舉起，另一手指出犯規球員的背號方向。":"One fist raised; the other hand points toward the fouling player.",
+  "打手犯規":"Illegal use of hands","一手握拳舉起，另一手手刀輕拍舉起手的手腕，表示防守時打到進攻球員的手。":"One fist raised; the other hand chops the raised wrist: the defender hit the offensive player's hand.",
+  "阻擋犯規":"Blocking foul","雙手插腰，表示防守球員未取得合法防守位置而造成阻擋。":"Both hands on hips: the defender blocked without a legal guarding position.",
+  "推人犯規":"Pushing foul","雙手向前推出的動作，表示球員用身體推擠對手。":"Both hands push forward: a player pushed an opponent.",
+  "拉人 / 抱人犯規":"Holding foul","一手握拳舉起不超過頭部，另一手抓住舉起手的手腕，表示限制對手移動的犯規。":"One fist raised no higher than the head; the other hand grabs its wrist: a foul that restricted an opponent's movement.",
+  "非法用手":"Illegal hand contact","一手在身前做出小幅度拍打動作，表示防守球員手部動作影響進攻球員。":"A small slapping motion in front of the body: the defender's hand affected the offensive player.",
+  "技術犯規":"Technical foul","雙手在胸前比出「T」字形，表示對球員或教練的不當行為（無身體接觸）判罰技術犯規。":"Both hands form a \"T\" at the chest: a technical foul for non-contact misconduct by a player or coach.",
+  "違反體育精神犯規":"Unsportsmanlike foul","一手抓住另一手的手腕並高舉，用於判罰非正常防守意圖、過度接觸的犯規。":"One hand grabs the other wrist and raises it: a foul with no legitimate defensive intent or with excessive contact.",
+  "取消資格犯規":"Disqualifying foul","雙手握拳交叉高舉過頭，表示該球員因嚴重違規被取消比賽資格、直接罰出場。":"Both fists crossed above the head: the player is disqualified for a serious offense and must leave the game.",
+  "雙方犯規":"Double foul","雙手握拳向兩側平舉伸出，表示兩隊球員同時犯規，雙方犯規不罰球。":"Both fists extended out to the sides: players from both teams fouled at the same time, and no free throws are awarded.",
+  "走步違例":"Traveling","雙手在胸前做輪轉動作，表示球員持球移動步伐不合法。":"Rotate both fists in front of the chest: illegal steps while holding the ball.",
+  "兩次運球違例":"Double dribble","雙手平伸、一高一低並上下擺動，表示球員停球後又重新運球。":"Hands out, one high and one low, moving up and down: the player dribbled again after stopping.",
+  "翻球違例（持球）":"Carrying the ball","一手手掌由朝上翻轉朝下，重複一次，表示運球時手掌墊在球下方的非法動作。":"Turn one palm from up to down, twice: the hand went under the ball illegally while dribbling.",
+  "三秒違例":"3-second violation","三根手指指向限制區，表示進攻球員在禁區內停留超過三秒。":"Three fingers point to the restricted area: an offensive player stayed in the paint for more than 3 seconds.",
+  "五秒違例":"5-second violation","伸出五指、手臂向上舉起，表示球員被緊迫防守卻超過五秒未傳、投或運球。":"Five fingers with the arm raised: a closely guarded player did not pass, shoot or dribble within 5 seconds.",
+  "八秒違例":"8-second violation","雙手舉起十指張開（或明確計數手勢），表示控球隊未在八秒內將球推進前場。":"Both hands raised with fingers spread (or a clear count): the team did not bring the ball into the frontcourt within 8 seconds.",
+  "球回後場違例":"Backcourt violation","手臂朝後場方向揮動，表示前場控球隊將球非法帶回後場。":"Wave an arm toward the backcourt: the team illegally took the ball back from the frontcourt.",
+  "腳踢球違例":"Kicking the ball","手指向自己的腳，表示球員故意用腳觸球造成違例。":"Point to your own foot: a player deliberately touched the ball with a foot.",
+  "出界方向指示":"Out of bounds direction","手臂朝球出界的方向伸直指出，並說明由哪一隊擲球入界。":"Point an arm in the direction of play and show which team inbounds the ball.",
+  "換人":"Substitution","雙手在胸前交叉，示意比賽暫停進行球員替換。":"Cross both forearms in front of the chest: play stops for a substitution.",
+  "暫停":"Time-out","雙手比出「T」字形，表示某隊請求或核准暫停。":"Both hands form a \"T\": a team has asked for, or been granted, a time-out.",
+  "交替擁有方向":"Alternating possession direction","手臂指向記錄台交替擁有箭頭所指的方向，表示下一次爭球由哪一隊發球。":"Point in the direction of the possession arrow: this shows which team gets the ball on the next held ball.",
+  "繼續比賽 / 無違規":"Play on / no violation","豎起大拇指或雙手打開向下壓，表示裁判看到動作但判定不影響比賽，繼續進行。":"Thumbs up or both open hands pressed down: the referee saw the action, but it did not affect play, so the game continues."
+};
+
+const NAME_CLASS = {'週四1-2節':'Thu P1–2','週四3-4節':'Thu P3–4'};
+const groupEn = s => s.replace(/第 ?(\d+) ?組/g, 'Group $1').replace(/(\d)號半場/g, 'Court $1').replace(/（vs/g, ' (vs').replace(/）/g, ')');
+const I18N_RULES = [
+  [/^第 ?\d+ ?組$/, m => groupEn(m[0])],
+  [/^(\d+) 組・(\d+) 人$/, m => `${m[1]} groups · ${m[2]} students`],
+  [/^(\d+) 人$/, m => `${m[1]} players`],
+  [/^(\d)號半場$/, m => `Court ${m[1]}`],
+  [/^第(\d)時段$/, m => `Slot ${m[1]}`],
+  [/^預賽第(\d)名$/, m => `Prelim #${m[1]}`],
+  [/^([ABC])區第(\d)$/, m => `Zone ${m[1]} #${m[2]}`],
+  [/^([ABC])區$/, m => `Zone ${m[1]}`],
+  [/^(\d) 人組（已代入你們的名單，依隊員編號）$/, m => `${m[1]}-player group (your roster, in player-number order)`],
+  [/^(\d) 人組$/, m => `${m[1]}-player group`],
+  [/^隊員\d+(、隊員\d+)*$/, m => m[0].replace(/隊員/g, 'Player ').replace(/、/g, ', ')],
+  [/^第(\d)場([前後])4分鐘$/, m => `Game ${m[1]}, ${m[2]==='前'?'first':'last'} 4 min`],
+  [/^預賽：(.*) 決賽依預賽排名公告$/, m => `Prelims: ${m[1].replace(/ (\d+) 場/g, ' ($1 games)').replace(/、/g, ', ')}. Finals follow the prelim rankings.`],
+  [/^(\d+\/\d+ \d\d:\d\d) (\d)號半場｜vs 第(\d+)組( ✓已記錄)?$/, m => `${m[1]} Court ${m[2]} | vs Group ${m[3]}${m[4]?'  ✓ recorded':''}`],
+  [/^(\d+\/\d+ \d\d:\d\d) 決賽( ✓已記錄)?$/, m => `${m[1]} Finals${m[2]?'  ✓ recorded':''}`],
+  [/^練習賽／其他 ✓已記錄$/, () => 'Practice / other  ✓ recorded'],
+  [/^(\d+ : \d+)（vs (.+)）$/, m => `${m[1]} (vs ${tr(m[2])})`],
+  [/^戰術影片 (\d)$/, m => `Tactics clip ${m[1]}`],
+  [/^影片長度 ([\d.]+) 秒，超過 (\d+) 秒限制，請重新剪輯後再上傳。$/, m => `This video is ${m[1]} seconds, over the ${m[2]}-second limit. Please trim it and upload again.`],
+  [/^影片長度 ([\d.]+) 秒、檔案 (.+) ✓ 符合限制$/, m => `Video length ${m[1]} seconds, file size ${m[2]} ✓ Within the limit`],
+  [/^上傳中… (\d+)%$/, m => `Uploading… ${m[1]}%`],
+  [/^上傳族譜中… (\d+)%$/, m => `Uploading map… ${m[1]}%`],
+  [/^上傳後設認知評估中… (\d+)%$/, m => `Uploading evaluation… ${m[1]}%`],
+  [/^上傳對話紀錄中… (\d+)%$/, m => `Uploading chat log… ${m[1]}%`],
+  [/^已上傳至「(.+)」資料夾 ✓ （已分享給 (.+)）$/, m => `Uploaded to the "${m[1]}" folder ✓ (shared with ${m[2]})`],
+  [/^已上傳至「(.+)」資料夾 ✓ （自動分享給老師失敗，請自行到雲端硬碟把資料夾分享給老師）$/, m => `Uploaded to the "${m[1]}" folder ✓ (automatic sharing failed; please share the folder with your teacher in Drive)`],
+  [/^已上傳至「(.+)」資料夾 ✓ （尚未設定老師信箱，資料夾只存在你自己的雲端硬碟）$/, m => `Uploaded to the "${m[1]}" folder ✓ (no teacher email is set, so the folder is only in your Drive)`],
+  [/^已繳交到「(.+)」資料夾 ✓$/, m => `Submitted to the "${m[1]}" folder ✓`],
+  [/^已繳交到「(.+)」資料夾 ✓，並已分享給老師$/, m => `Submitted to the "${m[1]}" folder ✓ and shared with your teacher`],
+  [/^已繳交到「(.+)」資料夾 ✓（自動分享給老師失敗，請自行把資料夾分享給老師）$/, m => `Submitted to the "${m[1]}" folder ✓ (automatic sharing failed; please share the folder with your teacher)`],
+  [/^雲端硬碟回應錯誤（(\d+)）：(.*)$/, m => `Google Drive returned an error (${m[1]}): ${m[2]}`],
+  [/^上傳失敗（(\d+)），請稍後再試。$/, m => `Upload failed (${m[1]}). Please try again later.`],
+  [/^授權失敗：(.*)$/, m => `Authorization failed: ${m[1]}`],
+  [/^已登入：(.*)$/, m => `Signed in: ${m[1]}`],
+  [/^已加入 (\d+) 則對話紀錄，族譜與後設認知評估已產生 ✓ 請往下看第 ⑤ 步。$/, m => `Added ${m[1]} messages. Your map and evaluation are ready ✓ See step ⑤ below.`],
+  [/^對話紀錄之前已匯入過，族譜與後設認知評估已產生 ✓ 請往下看第 ⑤ 步。$/, () => 'These messages were already imported. Your map and evaluation are ready ✓ See step ⑤ below.'],
+  [/^這次只貼了回覆、沒有對話全文，族譜與後設認知評估已產生 ✓ 請往下看第 ⑤ 步。$/, () => 'Only the reply was pasted, without the full chat. Your map and evaluation are ready ✓ See step ⑤ below.'],
+  [/^已加入 (\d+) 則對話紀錄，但還沒有找到族譜與評估。請先把「收尾指令」貼到 ChatGPT，等它回覆後再全選複製貼回來。$/, m => `Added ${m[1]} messages, but no map or evaluation was found. Send the wrap-up command to ChatGPT, then select all, copy and paste back after it replies.`],
+  [/^比上次（(.+)）進步 (\d+) 分$/, m => `Up ${m[2]} points from last time (${m[1]})`],
+  [/^比上次（(.+)）少 (\d+) 分$/, m => `Down ${m[2]} points from last time (${m[1]})`],
+  [/^和上次（(.+)）一樣$/, m => `Same as last time (${m[1]})`],
+  [/^先點選這 (.+) 在場上的 3 位隊友，就會出現紀錄按鈕。$/, m => `Tap the 3 teammates on court for the ${tr(m[1]).toLowerCase()}, and the recording buttons will appear.`],
+  [/^已復原：(.+) 的＋(\d) 分$/, m => `Undone: +${m[2]} for ${m[1]}`],
+  [/^已復原：(.+) 的(.+)$/, m => `Undone: ${tr(m[2])} for ${m[1]}`],
+  [/^(\d)｜(.+)$/, m => `${m[1]} | ${tr(m[2])}`],
+  [/^這個分類（(.+)）目前還沒有影片。$/, m => `No videos in this category (${tr(m[1])}) yet.`],
+  [/^：(.+)／(.+)$/, m => `: ${tr(m[1])} / ${tr(m[2])}`],
+  [/^(.*) 若仍然失敗，可以改用螢幕截圖的方式保存。$/, m => `${tr(m[1])} If it still fails, take a screenshot instead.`],
+  [/^(週四[\d-]+節)$/, m => NAME_CLASS[m[1]] || m[1]],
+  [/^(週四[\d-]+節_第\d+組.*)$/, m => m[1]]     // 資料夾名稱維持中文，和老師雲端硬碟看到的一致
+];
+
+let i18nLang = 'zh';
+try{ if(localStorage.getItem('courtai:lang') === 'en') i18nLang = 'en'; }catch(e){}
+const i18nMissing = new Set();
+function isEn(){ return i18nLang === 'en'; }
+
+function tr(str){
+  if(!/[\u4e00-\u9fff]/.test(str)) return str;
+  const lead = str.match(/^\s*/)[0], tail = str.match(/\s*$/)[0];
+  const key = str.trim().replace(/\s+/g, ' ');
+  if(Object.prototype.hasOwnProperty.call(I18N_EN, key)) return lead + I18N_EN[key] + tail;
+  for(const [re, fn] of I18N_RULES){
+    const m = key.match(re);
+    if(m) return lead + fn(m) + tail;
+  }
+  i18nMissing.add(key);
+  return str;
+}
+function t(str){ return isEn() ? tr(str) : str; }
+
+// 提示視窗也跟著語言切換
+const nativeAlert = window.alert.bind(window), nativeConfirm = window.confirm.bind(window);
+window.alert = m => nativeAlert(t(String(m)));
+window.confirm = m => nativeConfirm(t(String(m)));
+
+const I18N_SKIP = 'script,style,svg,textarea,.rb-ev,.rb-fb,[data-noi18n],[data-en]';
+const i18nText = new WeakMap(), i18nAttr = new WeakMap();
+const I18N_ATTRS = ['placeholder','aria-label','title'];
+
+function translateTextNode(n){
+  const el = n.parentElement;
+  if(!el || el.closest(I18N_SKIP)) return;
+  const rec = i18nText.get(n), v = n.nodeValue;
+  if(rec && rec.en === v) return;
+  const en = tr(v);
+  if(en !== v){ i18nText.set(n, {zh:v, en}); n.nodeValue = en; }
+}
+function translateAttrs(el){
+  I18N_ATTRS.forEach(a=>{
+    const v = el.getAttribute(a);
+    if(!v) return;
+    const en = tr(v);
+    if(en === v) return;
+    const rec = i18nAttr.get(el) || {};
+    rec[a] = {zh:v, en};
+    i18nAttr.set(el, rec);
+    el.setAttribute(a, en);
+  });
+}
+function translateTree(root){
+  if(root.nodeType === 3){ translateTextNode(root); return; }
+  if(root.nodeType !== 1) return;
+  if(root.matches('[data-en]')) swapRich(root, true);
+  root.querySelectorAll('[data-en]').forEach(el=>swapRich(el, true));
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while(w.nextNode()) nodes.push(w.currentNode);
+  nodes.forEach(translateTextNode);
+  translateAttrs(root);
+  root.querySelectorAll('[placeholder],[aria-label],[title]').forEach(translateAttrs);
+}
+function restoreTree(root){
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  while(w.nextNode()){
+    const n = w.currentNode, rec = i18nText.get(n);
+    if(rec && n.nodeValue === rec.en) n.nodeValue = rec.zh;
+  }
+  root.querySelectorAll('[placeholder],[aria-label],[title]').forEach(el=>{
+    const rec = i18nAttr.get(el); if(!rec) return;
+    Object.entries(rec).forEach(([a,r])=>{ if(el.getAttribute(a) === r.en) el.setAttribute(a, r.zh); });
+  });
+  root.querySelectorAll('[data-en]').forEach(el=>swapRich(el, false));
+}
+// 有粗體等行內標籤的段落：英文 HTML 直接寫在元素的 data-en
+function swapRich(el, toEn){
+  if(toEn && el.dataset.i18nZh === undefined){ el.dataset.i18nZh = el.innerHTML; el.innerHTML = el.dataset.en; }
+  else if(!toEn && el.dataset.i18nZh !== undefined){ el.innerHTML = el.dataset.i18nZh; delete el.dataset.i18nZh; }
+}
+
+const i18nObserver = new MutationObserver(records=>{
+  records.forEach(r=>{
+    if(r.type === 'characterData') translateTextNode(r.target);
+    else r.addedNodes.forEach(translateTree);
+  });
+});
+function applyLang(){
+  document.documentElement.lang = isEn() ? 'en' : 'zh-Hant';
+  document.querySelectorAll('.lang-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.lang === i18nLang));
+  document.title = isEn() ? I18N_EN['COURT.AI ｜ 籃球戰術後設認知鷹架'] : 'COURT.AI ｜ 籃球戰術後設認知鷹架';
+  i18nObserver.disconnect();
+  if(isEn()){
+    translateTree(document.body);
+    i18nObserver.observe(document.body, {subtree:true, childList:true, characterData:true});
+  }else{
+    restoreTree(document.body);
+  }
+  if(typeof onLangChange === 'function') onLangChange();
+}
+function setLang(lang){
+  i18nLang = lang;
+  try{ localStorage.setItem('courtai:lang', lang); }catch(e){}
+  applyLang();
+}
+</script>
 </head>
 <body>
 
+<div class="lang-toggle" role="group" aria-label="Language">
+  <button data-lang="zh" onclick="setLang('zh')">中</button>
+  <button data-lang="en" onclick="setLang('en')">EN</button>
+</div>
+
 <div class="info-banner" id="infoBanner" hidden>
-  <div>
+  <div data-en="<b>Teacher note:</b> Google sign-in and Drive upload need the OAuth Client ID and teacher email in the CONFIG block at the top of the code, and the site domain must be registered as an authorized origin. This is a front-end-only page: the sign-in screen is a barrier, not real security, so do not put confidential data here. <code>client_secret_*.json</code> is not needed and <b>must not</b> be uploaded to GitHub. Teachers maintain the video library: sign in with the teacher email (or add <code>#teacher</code> to the URL) to edit and export the list, then paste it into VIDEO_LIBRARY in the code.">
     <b>教師須知：</b> Google 登入與雲端硬碟上傳需要在程式碼最上方的 CONFIG 區塊設定 OAuth Client ID 與老師信箱，並把網站網域登記為授權來源。
     注意：這是純前端網頁，登入畫面只是「使用門檻」而不是真正的資安防護，請勿在頁面中放置機密資料；
     <code>client_secret_*.json</code> 檔案不需要也<b>不可以</b>上傳到 GitHub。
@@ -663,7 +1082,7 @@
           <div class="sg-col group">
             <b>小組作業（每組 1 份）</b>
             <ul>
-              <li><span>03 拍攝</span>3 段 3 對 3 戰術影片，每段 ≤ 24 秒，每人至少入鏡 1 段</li>
+              <li><span>03 拍攝</span>3 段影片（1 段基本動作、2 段 3 對 3 戰術），每段 ≤ 60 秒，每人至少入鏡 1 段</li>
               <li>由組內 1 位上傳負責人上傳</li>
             </ul>
           </div>
@@ -709,7 +1128,7 @@
     <div class="video-grid" id="videoGrid"></div>
 
     <div class="teacher-tools" id="teacherVideoTools" hidden>
-    <div class="callout warn" style="margin-top:24px;">
+    <div class="callout warn" style="margin-top:24px;" data-en="<b>Teacher edit mode:</b> Adding or deleting here is saved as a draft in this browser. When finished, tap Export video list, paste the code over <code>const VIDEO_LIBRARY = [...]</code> in the HTML file and re-upload the site. The whole class will then see the new list.">
       <b>老師編輯模式：</b> 這裡的新增／刪除會先存成「你這台瀏覽器的草稿」。編輯完成後按「匯出影片清單」，
       把複製到的程式碼貼到 HTML 檔中 <code>const VIDEO_LIBRARY = [...]</code> 的位置取代原本內容，重新上傳到網站後，全班就會看到新的清單。
     </div>
@@ -742,18 +1161,20 @@
 
   <!-- ================= 3. TEAM FILMING ================= -->
   <section class="panel" id="panel-film">
-    <div class="section-head"><h2>小組影片拍攝區</h2><span class="note mono">LIMIT ≤ 24s</span></div>
-    <p class="section-desc">每組拍出 3 段 3 對 3 戰術影片。每段限制 <b>24 秒內</b>（就像一次進攻時間），一段只打一個戰術，從發動拍到出手。</p>
+    <div class="section-head"><h2>小組影片拍攝區</h2><span class="note mono">LIMIT ≤ 60s</span></div>
+    <p class="section-desc" data-en="Each group films 3 clips: <b>1 basic move and 2 3-on-3 tactics</b>. Each clip must be finished within <b>60 seconds</b>.">每組拍出 3 段影片：<b>1 段基本動作、2 段 3 對 3 戰術</b>。每段影片必須在 <b>60 秒內</b>完成。</p>
 
     <div class="tip-card">
       <b>拍攝小提醒</b>
       <ol>
-        <li>手機<b>橫拿</b>，從側邊或後方拍，畫面要看得到 3 名進攻球員和籃框。</li>
-        <li>開拍前先喊出戰術名稱，例如「擋拆！」。</li>
-        <li>24 秒內完成「發動 → 配合 → 出手」，太長請先在手機上剪短。</li>
-        <li><b>每位隊員至少要出現在 1 段影片裡</b>：3 段影片輪流換人上場，全隊都要入鏡。</li>
-        <li>場上 3 人執行戰術，<b>拍攝的同學要邊拍邊做旁白解說</b>，例如「1 號持球，2 號上來擋人，1 號往右切……」。</li>
-        <li>小組影片由組內 <b>1 位上傳負責人</b>上傳就好，避免重複。</li>
+        <li data-en="Hold your phone <b>sideways</b> and film from the side or behind, so all 3 offensive players and the basket are in frame.">手機<b>橫拿</b>，從側邊或後方拍，畫面要看得到 3 名進攻球員和籃框。</li>
+        <li data-en="First choose the move or tactic from the 3-on-3 tactics that you want to practice and film.">先選取你在 3 對 3 戰術中，你要練習及拍攝的動作或戰術。</li>
+        <li data-en="There are 3 assigned clips: <b>1 basic move and 2 3-on-3 tactics</b>.">指定三個影片作業，<b>一個為基本動作、兩個必須為 3 對 3 戰術</b>。</li>
+        <li data-en="Before you start, call out the tactic name, e.g. &quot;(2)&quot;.">開拍前先喊出戰術名稱，例如「（2）」。</li>
+        <li data-en="Finish &quot;start → teamwork → shot&quot; within 24 seconds, and film <b>every scoring chance</b>. If it runs long, trim it on your phone first.">24 秒內完成「發動 → 配合 → 出手」，<b>每一個機會都要拍出來</b>，太長請先在手機上剪短。</li>
+        <li data-en="<b>Every player must appear in at least 1 clip.</b> Rotate players across the 3 clips so the whole team is on camera."><b>每位隊員至少要出現在 1 段影片裡</b>：3 段影片輪流換人上場，全隊都要入鏡。</li>
+        <li data-en="While 3 players run the tactic, <b>the person filming narrates</b>, e.g. &quot;Player 1 has the ball, player 2 comes up to screen, player 1 cuts right…&quot;">場上 3 人執行戰術，<b>拍攝的同學要邊拍邊做旁白解說</b>，例如「1 號持球，2 號上來擋人，1 號往右切……」。</li>
+        <li data-en="Only <b>1 person from your group</b> needs to upload the team videos, to avoid duplicates.">小組影片由組內 <b>1 位上傳負責人</b>上傳就好，避免重複。</li>
       </ol>
     </div>
 
@@ -779,7 +1200,7 @@
     <div class="section-head"><h2>球員表現紀錄表</h2><span class="note mono">ROTATE @ 4:00</span></div>
     <p class="section-desc">每場第 4 分鐘輪替。輪休的同學用這頁記錄場上隊友的表現，並寫下我們隊伍遇到的問題。紀錄會存在這支手機，也可以繳交給老師。</p>
 
-    <div class="callout warn" id="statsNeedTeam">請先到「<b>01 賽程</b>」選擇你的班別和組別，這裡才會出現你們的比賽和隊友名單。</div>
+    <div class="callout warn" id="statsNeedTeam" data-en="Choose your class and group in <b>01 Schedule</b> first. Your games and teammates will then appear here.">請先到「<b>01 賽程</b>」選擇你的班別和組別，這裡才會出現你們的比賽和隊友名單。</div>
 
     <div id="statsBody" hidden>
       <div class="stat-setup">
@@ -837,7 +1258,7 @@
         <button class="ghost" onclick="downloadStatsCsv()">下載 CSV</button>
       </div>
       <p class="hint" id="statStatus" style="margin-top:8px;"></p>
-      <p class="hint">紀錄存在這支手機的瀏覽器裡：同一支手機、同一個瀏覽器重新打開網頁都還在。換手機、用無痕模式或清除瀏覽器資料就會不見（iPhone Safari 太久沒開本網站也可能被清掉），所以<b>每場結束請按「繳交到雲端硬碟」</b>保存。</p>
+      <p class="hint" data-en="Records are saved in this phone's browser and will still be there when you reopen the page on the same phone and browser. They are lost if you change phones, use private mode or clear browser data (iPhone Safari may also clear them if you don't visit for a while), so <b>tap &quot;Submit to Google Drive&quot; after each game</b>.">紀錄存在這支手機的瀏覽器裡：同一支手機、同一個瀏覽器重新打開網頁都還在。換手機、用無痕模式或清除瀏覽器資料就會不見（iPhone Safari 太久沒開本網站也可能被清掉），所以<b>每場結束請按「繳交到雲端硬碟」</b>保存。</p>
 
       <details class="fold"><summary>這支手機記錄過的場次</summary><div id="statHistory"></div></details>
     </div>
@@ -881,7 +1302,7 @@
     <div class="mode-row">
       <div class="mode-card" data-mode="proactive" onclick="setMode('proactive')">
         <div class="mode-title">前瞻性後設認知 <span class="mono">BEFORE</span></div>
-        <p class="mode-when">事情<b>還沒發生</b>：賽前、暫停時、回合開始前</p>
+        <p class="mode-when" data-en="It <b>hasn't happened yet</b>: before a game, in a time-out, before a possession">事情<b>還沒發生</b>：賽前、暫停時、回合開始前</p>
         <ul class="mode-cues">
           <li>我觀察到對手有什麼線索？</li>
           <li>我預測接下來會發生什麼？</li>
@@ -891,7 +1312,7 @@
       </div>
       <div class="mode-card" data-mode="reactive" onclick="setMode('reactive')">
         <div class="mode-title">反應性後設認知 <span class="mono">AFTER</span></div>
-        <p class="mode-when">事情<b>已經發生</b>：戰術被破、當下卡住、結果不如預期</p>
+        <p class="mode-when" data-en="It <b>already happened</b>: your play was stopped, you got stuck, or it didn't go as expected">事情<b>已經發生</b>：戰術被破、當下卡住、結果不如預期</p>
         <ul class="mode-cues">
           <li>剛剛實際發生了什麼？</li>
           <li>和我原本預期的差在哪裡？</li>
@@ -916,13 +1337,13 @@
       <div class="prompt-out" id="promptOut">尚未產生提示詞。</div>
     </details>
 
-    <p class="hint" style="margin-top:10px;">在 ChatGPT 和教練來回對話就好，<b>過程中不用貼回來</b>；聊完再做第 ④ 步。</p>
+    <p class="hint" style="margin-top:10px;" data-en="Just chat with the coach in ChatGPT. <b>You don't need to paste anything back during the chat.</b> Do step ④ when you finish.">在 ChatGPT 和教練來回對話就好，<b>過程中不用貼回來</b>；聊完再做第 ④ 步。</p>
 
     <div class="chat-log">
       <h4 class="step-title">④ 聊完了：收尾，然後一次貼回</h4>
       <ol class="import-steps">
-        <li>按「複製收尾指令」，貼到<b>同一個</b> ChatGPT 對話送出。不用再貼對話內容，ChatGPT 記得剛剛聊了什麼。</li>
-        <li>ChatGPT 回覆後，在 ChatGPT 頁面按 <b>⌘A</b>（Windows：<b>Ctrl+A</b>）全選 → 複製。<br>
+        <li data-en="Tap &quot;Copy wrap-up command&quot; and send it in the <b>same</b> ChatGPT chat. You don't need to paste the conversation; ChatGPT remembers it.">按「複製收尾指令」，貼到<b>同一個</b> ChatGPT 對話送出。不用再貼對話內容，ChatGPT 記得剛剛聊了什麼。</li>
+        <li data-en="After ChatGPT replies, press <b>⌘A</b> (Windows: <b>Ctrl+A</b>) on the ChatGPT page and copy.<br><span class='hint'>If select-all is hard on your phone, tap the Copy button under the last reply instead (you get the map and evaluation, but not the full chat).</span>">ChatGPT 回覆後，在 ChatGPT 頁面按 <b>⌘A</b>（Windows：<b>Ctrl+A</b>）全選 → 複製。<br>
           <span class="hint">手機不好全選的話，按最後那則回覆下方的「複製」按鈕也可以（只會得到族譜和評估，不含對話全文）。</span></li>
         <li>貼到下面的框框，按「匯入並分析」。</li>
       </ol>
@@ -944,7 +1365,7 @@
 
       <details class="prompt-details">
         <summary>想把好幾個 ChatGPT 對話（好幾場比賽）合併成一張族譜？</summary>
-        <p class="hint" style="margin:8px 0;">每個對話都先用上面的方式匯入。要合併時，按下面的按鈕複製「合併分析指令」（已經包含這台裝置上的全部對話紀錄），貼到一個<b>新的</b> ChatGPT 對話，再把回覆貼回上面的框框按「匯入並分析」。</p>
+        <p class="hint" style="margin:8px 0;" data-en="Import each chat as above first. To combine them, tap the button below to copy the combined analysis command (it includes every chat log on this device), paste it into a <b>new</b> ChatGPT chat, then paste the reply in the box above and tap Import &amp; analyze.">每個對話都先用上面的方式匯入。要合併時，按下面的按鈕複製「合併分析指令」（已經包含這台裝置上的全部對話紀錄），貼到一個<b>新的</b> ChatGPT 對話，再把回覆貼回上面的框框按「匯入並分析」。</p>
         <div class="handoff-actions">
           <button class="ghost small" onclick="buildAndCopyConceptPrompt()">複製合併分析指令</button>
           <button class="ghost small" onclick="clearLog()">清除這台裝置的對話紀錄</button>
@@ -1292,7 +1713,14 @@ async function initGoogleGate(){
     client_id: oauthClientId,
     callback: handleCredentialResponse
   });
-  google.accounts.id.renderButton(document.getElementById('gsiButtonHolder'), {theme:'filled_black', size:'large'});
+  renderGoogleButton();
+}
+// Google 按鈕的語言由 Google 決定，切換語言時要重畫一次
+function renderGoogleButton(){
+  if(typeof google === 'undefined' || !google.accounts) return;
+  const holder = document.getElementById('gsiButtonHolder');
+  holder.innerHTML = '';
+  google.accounts.id.renderButton(holder, {theme:'filled_black', size:'large', locale: isEn() ? 'en' : 'zh_TW'});
 }
 
 // ================= 老師模式 =================
@@ -1737,25 +2165,28 @@ function renderFilmTeam(){
 }
 
 const SLOT_COUNT = 3;
-const MAX_CLIP_SECONDS = 24;
-const TACTICS = ['擋拆（Pick & Roll）','手遞手（Handoff）','傳切（Give & Go）','無球掩護（Off-ball Screen）','背切（Backdoor Cut）','假擋真切（Slip）','其他'];
+const MAX_CLIP_SECONDS = 60;
+const BASIC_MOVES = ['擋拆（Pick & Roll）','手遞手（Handoff）','傳切（Give & Go）','無球掩護（Off-ball Screen）','背切（Backdoor Cut）','假擋真切（Slip）'];
+const TACTICS_3V3 = ['戰術（2）','戰術（3）','戰術（4）','戰術（5）','戰術（6）強弱邊的運用','戰術（7）','戰術（8）同邊雙擋','戰術（9）運用球例','戰術（12）Hand Off＋單擋'];
+// 指定三個影片作業：一個基本動作、兩個 3 對 3 戰術
+const CLIP_TASKS = [
+  {title:'影片 1：基本動作', options:BASIC_MOVES},
+  {title:'影片 2：3 對 3 戰術', options:TACTICS_3V3},
+  {title:'影片 3：3 對 3 戰術', options:TACTICS_3V3}
+];
 function buildUploadSlots(){
   const wrap = document.getElementById('uploadSlots');
   let html = '';
   for(let i=1;i<=SLOT_COUNT;i++){
     html += `
     <div class="upload-slot" id="slot-${i}">
-      <h4>戰術影片 ${i}</h4>
+      <h4>${CLIP_TASKS[i-1].title}</h4>
       <div class="field">
         <label>這段打的是什麼戰術？</label>
         <select id="tactic-${i}">
           <option value="">請選擇戰術</option>
-          ${TACTICS.map(t=>`<option>${t}</option>`).join('')}
+          ${CLIP_TASKS[i-1].options.map(t=>`<option value="${t}">${t}</option>`).join('')}
         </select>
-      </div>
-      <div class="field" style="margin-top:8px;">
-        <label>一句話說明（選填）</label>
-        <input type="text" id="tacticNote-${i}" placeholder="例如：2 號幫 1 號擋人後順下">
       </div>
       <div class="upload-box" style="margin-top:10px;">
         <p>拍攝或選擇影片</p>
@@ -1836,9 +2267,8 @@ async function uploadSlot(slot){
     return;
   }
   const folderName = getFolderName();
-  const tacticShort = tactic.replace(/（.*）/, '');
-  const note = safeFileName(document.getElementById('tacticNote-'+slot).value).slice(0, 20);
-  const fileName = [`片段${slot}`, tacticShort, note, file.name].filter(Boolean).join('_');
+  const tacticShort = tactic.replace(/（[A-Za-z].*）/, '');
+  const fileName = [`片段${slot}`, tacticShort, file.name].join('_');
   actions.innerHTML = `<span class="slot-meta" id="uploadLabel-${slot}">準備上傳…</span><progress class="upload-progress" id="uploadBar-${slot}" max="1" value="0"></progress>`;
   try{
     const folderId = await getTeamFolder(folderName);
@@ -1922,7 +2352,7 @@ function selectStatMatch(key){
       onCourt:{first:[], second:[]}, stats:{first:{}, second:{}}, issues:[], note:'', good:'', updatedAt:null};
   }
   const r = statRecords[key];
-  document.getElementById('statOpp').value = r.opp || '';
+  document.getElementById('statOpp').value = t(r.opp || '');
   document.getElementById('statNote').value = r.note || '';
   document.getElementById('statGood').value = r.good || '';
   setStatHalf(statHalf);
@@ -2111,7 +2541,13 @@ function statsToAI(){
   if(!r.issues.length && !r.note){ setStatStatus('先勾選或寫下「我們隊伍遇到的問題」，再帶到 AI 助教。', 'var(--danger)'); return; }
   const top = statTotals(r).filter(p=>p.halves.length);
   const tov = top.reduce((s,p)=>s+p.tov,0), reb = top.reduce((s,p)=>s+p.reb,0), miss = top.reduce((s,p)=>s+p.miss,0);
-  const text = [
+  const text = isEn() ? [
+    `In our 3-on-3 game just now (${tr(r.label)}${r.opp && !r.label.includes(r.opp) ? ', against '+tr(r.opp) : ''}), the score was ${myScore(r)} to ${r.oppScore||0}.`,
+    r.issues.length ? `Problems our team faced: ${r.issues.map(tr).join(', ')}.` : '',
+    r.note ? `What I noticed: ${r.note}` : '',
+    `As a team we missed ${miss} shots, had ${reb} rebounds and ${tov} turnovers.`,
+    'I want to work out where the problem was and what to change next game.'
+  ].filter(Boolean).join('\n') : [
     `剛剛的 3 對 3 比賽（${r.label}${r.opp && !r.label.includes(r.opp) ? '，對手 '+r.opp : ''}），比分 ${myScore(r)} 比 ${r.oppScore||0}。`,
     r.issues.length ? `我們隊伍遇到的問題：${r.issues.join('、')}。` : '',
     r.note ? `我觀察到：${r.note}` : '',
@@ -2136,7 +2572,6 @@ initGoogleGate();
 const VIDEO_LIBRARY = [
   // 基本戰術
   {id:'b1', videoId:'J9boIhyuMCg', title:'擋拆（Pick & Roll）｜[DV籃球夢工廠] 擋拆技巧教學', category:'basic'},
-  {id:'b2', videoId:'wsZhZp6FXz8', title:'手遞手（Handoff）｜3 vs 3 進攻戰術：Hand Off＋單擋', category:'basic'},
   {id:'b3', videoId:'5U7Z7WhyYFQ', title:'手遞手（Handoff）｜Hand Off 時的四個選擇', category:'basic'},
   {id:'b4', videoId:'LOL5ZNuP7vk', title:'傳切（Give & Go）｜The Give-and-Go', category:'basic'},
   {id:'b5', videoId:'B0182oQgOE8', title:'無球掩護（Off-ball Screen）｜Off ball screens in basketball', category:'basic'},
@@ -2150,7 +2585,8 @@ const VIDEO_LIBRARY = [
   {id:'t5', videoId:'9qk_llL0-ig', title:'3 vs 3 進攻戰術（6）強弱邊的運用｜籃球研究室', category:'tactic3'},
   {id:'t6', videoId:'6ZnKa1uQ-Ww', title:'3 vs 3 進攻戰術（7）｜籃球研究室', category:'tactic3'},
   {id:'t7', videoId:'eibsr5B-p4U', title:'3 vs 3 進攻戰術（8）同邊雙擋｜籃球研究室', category:'tactic3'},
-  {id:'t8', videoId:'t8bNiMJqMBM', title:'3 vs 3 進攻戰術（9）運用球例｜籃球研究室', category:'tactic3'}
+  {id:'t8', videoId:'t8bNiMJqMBM', title:'3 vs 3 進攻戰術（9）運用球例｜籃球研究室', category:'tactic3'},
+  {id:'t9', videoId:'wsZhZp6FXz8', title:'3 vs 3 進攻戰術（12）Hand Off＋單擋｜籃球研究室', category:'tactic3'}
 ];
 
 let currentCat = 'basic';
@@ -2333,6 +2769,7 @@ loadRole();
 let chatMode = null;   // 尚未選擇；學生必須先判斷是哪一種時機
 let reflectionLog = [];
 const MODE_NAME = {proactive:'前瞻性', reactive:'反應性'};
+const SITUATION_LABEL_EN = 'My situation:';
 
 function setMode(mode){
   chatMode = mode;
@@ -2356,6 +2793,14 @@ function currentGameTag(){ return document.getElementById('gameTag').value.trim(
 function buildRoleContext(){
   if(!currentRole) return '';
   const pos = currentRole.position;
+  if(isEn()){
+    const posEn = tr(pos);
+    return {
+      '教練': `In this discussion I'm playing the role of "coach", and I usually play as a ${posEn}. Please ask more about how our players are set up, rotations and time-out timing, and how to explain tactics to teammates.`,
+      '球員': `In this discussion I'm a "player", and my position is ${posEn}. Please ask about what I actually see from this position, the decisions I need to make and my responsibilities.`,
+      '球場記錄員': `In this discussion I'm the "scorekeeper", and I usually play as a ${posEn}. Please help me think about which cues and stats are worth watching and recording, and how to share them with teammates.`
+    }[currentRole.teamRole] || `My team role is ${tr(currentRole.teamRole)} and my position is ${posEn}.`;
+  }
   const angle = {
     '教練': `我在這次討論中扮演「教練」，平常在場上打${pos}。請多從全隊五個人的配置、輪替與暫停時機、怎麼跟球員溝通戰術這些角度問我。`,
     '球員': `我在這次討論中扮演「球員」，位置是${pos}。請從這個位置在場上實際會看到的畫面、需要做的判斷與職責來問我。`,
@@ -2364,7 +2809,29 @@ function buildRoleContext(){
   return angle;
 }
 
+function buildSystemPromptEn(){
+  const modeDesc = chatMode==='proactive'
+    ? `I'm thinking "before a game" or "before a possession": I want to predict how the opponent may defend and plan our tactics and movement before anything has happened.`
+    : `I'm describing something that "already happened" in a game, such as a play being stopped by the defense, a passing lane being cut off, or a result that wasn't what I expected. I want to work out what went wrong and what to change.`;
+  const roleLine = buildRoleContext();
+  return `Hi, I'm a student in a university basketball class. Please be my "tactical thinking coach" and talk with me in English.
+
+Please think with me in this way, rather than simply giving me the answer:
+1. I want to practice making my own tactical decisions, so please don't tell me which tactic to run or give one "right" answer. Use questions to help me think it through.
+2. You can guide me in this order: help me identify the cues on the court → have me predict what might happen → guide me to propose my own strategy → ask me to explain my reasons → finally talk about how to test it and how to reflect afterwards. Move forward one or two stages at a time, not all at once.
+3. ${modeDesc} We are playing half-court 3-on-3 (5–6 players per group, 8-minute games with a rotation at minute 4), so please guide me within a 3-on-3 context.
+4. Use plenty of questions, or give me a few options to compare, so that I state my own judgment and reasons instead of waiting to be told.
+5. If I'm not clear enough (for example I haven't said how they defended, where teammates were, or the time pressure), please ask me for those cues first, then keep guiding me.
+6. Sound like a patient coach: short and conversational, about 4–6 sentences per reply. When I still need guidance, end with 1–2 follow-up questions.
+7. If I can't resist asking you for the answer, gently remind me and hand the ball back with a question so I keep thinking.
+8. Keep checking my progress: if after a few rounds I can state the cues I saw, propose a strategy and explain my reasons (in other words, I have my own answer), stop asking follow-up questions. Briefly affirm my key points, help me turn them into one or two sentences I can take onto the court, then end the topic and remind me to go back to the platform to wrap up.
+${roleLine ? '9. ' + roleLine + '\n' : ''}
+${SITUATION_LABEL_EN}
+`;
+}
+
 function buildSystemPrompt(){
+  if(isEn()) return buildSystemPromptEn();
   const modeDesc = chatMode==='proactive'
     ? `我現在是在「比賽前」或「回合開始前」思考，想預測對手可能的防守方式、預先規劃戰術與跑位，還沒有實際執行動作。`
     : `我現在是在描述「比賽中已經發生」的狀況，例如戰術被防守破壞、傳球路線被阻斷、執行結果不如預期，想重新想清楚問題出在哪、接下來怎麼調整。`;
@@ -2511,6 +2978,63 @@ const MC_LEVELS = [
   ['精熟', '具體、說明理由，並能比較不同做法或說出情境改變時要怎麼調整']
 ];
 
+function rubricPromptTextEn(){
+  const lines = MC_RUBRIC.map(d =>
+    `[${d.en}]\n` + d.items.map(it => `- ${it.en}: ${tr(it.desc)}`).join('\n')
+  ).join('\n');
+  const lv = MC_LEVELS.map(([n,d],i) => `${i} ${tr(n)}: ${MC_LEVEL_DESC_EN[i]}`).join('\n');
+  return `${lines}\n\nLevels (0–3 for each indicator):\n${lv}`;
+}
+const MC_LEVEL_DESC_EN = [
+  'This indicator does not appear in the conversation',
+  'Mentioned, but vaguely, without connecting to a specific situation on the court',
+  'Specific and connected to a real situation on the court',
+  'Specific, gives reasons, and can compare options or say what to change if the situation changes'
+];
+
+function analysisInstructionsEn(){
+  return `Part 1: Knowledge map
+1. From what I said myself, extract the core concept nodes (for example: pick and roll, switching, time pressure), each in 1–4 words. Don't treat what the AI said as my ideas, and don't use whole sentences as nodes.
+2. Find the relationships between concepts and label every link (for example "leads to", "requires", "is a precondition for", "often occurs with", "is countered by").
+3. Also draw the metacognitive strategies I used as nodes, using only these six names: Identify cues, Predict outcomes, Propose strategy, Explain reasons, Test it, Reflect and revise. Where I got stuck or unsure, add a "Stuck" node. Link these nodes to the tactical concepts they act on (for example "Predict outcomes" -->|used on| "Switching"). Don't draw strategies I didn't use.
+4. Use graph LR, put all node text in double quotes, and color four groups with the fixed classDef below: offense concepts cOff, defense concepts cDef, metacognitive strategies (including "Stuck") cMeta, context (time, fitness, score, opponent traits, etc.) cCtx.
+
+Part 2: Metacognitive evaluation
+Using the Knowledge Map Metacognitive Rubric below, give each of the 12 indicators a level:
+${rubricPromptTextEn()}
+
+Scoring principles:
+- Consider only what I said myself. Give credit only with evidence, and be conservative.
+- Evidence must quote my own words directly (20 words or fewer). If there is no evidence, write "none" and give level 0.
+- Write the feedback as one sentence in a coach's voice, saying what I can do next, without telling me which tactic to run.
+
+[Output format: please follow exactly]
+Reply with one plain-text code block only (wrapped in three backticks). Don't draw a chart or use any drawing tool, because I'll paste the text into my own analysis tool. The code block must contain the following, in order, keeping the marker lines (===GRAPH=== etc.) exactly as written:
+
+===GRAPH===
+graph LR
+  A["Pick and roll"] -->|is countered by| B["Switching"]
+  B -->|requires| C["Help defense"]
+  C -.->|often occurs with| D["Time pressure"]
+  M1["Predict outcomes"] -->|used on| B
+  M2["Stuck"] -.->|happened at| C
+  classDef cOff fill:#3a1a0d,stroke:#ff5a1f,stroke-width:2px,color:#ffd9c7;
+  classDef cDef fill:#0d2b33,stroke:#22d3ee,stroke-width:2px,color:#c7f2fa;
+  classDef cMeta fill:#241a3a,stroke:#a78bfa,stroke-width:2px,color:#ded4fb;
+  classDef cCtx fill:#1a2b1a,stroke:#7ea87f,stroke-width:2px,color:#d4ecd5;
+  class A cOff;
+  class B,C cDef;
+  class D cCtx;
+  class M1,M2 cMeta;
+===RUBRIC===
+${MC_ITEMS.map(it => `${it.en} | level number | evidence | feedback`).join('\n')}
+Summary | One or two sentences on my overall metacognitive performance
+Next step | The one thing most worth practicing in the next game
+===END===
+
+(The map above is only a format example; create the actual nodes, relationships and groups entirely from my conversation. Each RUBRIC line has four fields separated by " | ", and all 12 indicators must be included.)`;
+}
+
 function rubricPromptText(){
   const lines = MC_RUBRIC.map(d =>
     `【${d.dim}】\n` + d.items.map(it => `- ${it.name}：${it.desc}`).join('\n')
@@ -2565,7 +3089,14 @@ ${MC_ITEMS.map(it => `${it.name} | 等級數字 | 證據 | 回饋`).join('\n')}
 // 收尾指令：貼到同一個 ChatGPT 對話，ChatGPT 已經記得對話內容，所以不用附上紀錄
 const WRAPUP_TAG = '【COURT.AI 收尾分析】';
 const MERGE_TAG = '【COURT.AI 合併分析】';
+const WRAPUP_TAG_EN = '[COURT.AI wrap-up]';
+const MERGE_TAG_EN = '[COURT.AI combined analysis]';
 function buildWrapUpPrompt(){
+  if(isEn()) return `${WRAPUP_TAG_EN}
+Thanks for thinking this through with me! Our conversation ends here. Please do a wrap-up analysis based on "what I (the user) said myself in this conversation".
+Note: the coach instructions at the start of my first message are not my ideas, and what you (the AI) said does not count as my ideas either.
+
+${analysisInstructionsEn()}`;
   return `${WRAPUP_TAG}
 謝謝你剛剛陪我想！我們的對話到這裡告一段落，請根據「這個對話裡我（使用者）自己說過的話」幫我做收尾分析。
 注意：我第一則訊息前段的教練設定說明不是我的想法；你（AI）說的話也不算是我的想法。
@@ -2574,6 +3105,19 @@ ${analysisInstructions()}`;
 }
 // 合併分析：跨好幾個 ChatGPT 對話時，把這台裝置上的完整紀錄一起附上
 function buildConceptMapPrompt(){
+  if(isEn()){
+    const transcriptEn = reflectionLog.map(item => `[${item.role==='user' ? 'Me' : 'AI'}] ` + item.text).join('\n\n');
+    return `${MERGE_TAG_EN}
+Hi, below is the full record of my conversations with an AI tactics coach in a university basketball class (it may cover several games).
+Labels: [Me] is what I said; [AI] is the AI coach's reply. Please base the analysis on what I said myself.
+
+${analysisInstructionsEn()}
+
+My conversation record:
+---
+${transcriptEn}
+---`;
+  }
   const transcript = reflectionLog.map(item => logEntryLabel(item) + item.text).join('\n\n');
   return `${MERGE_TAG}
 你好，以下是我在大學籃球課中，和 AI 戰術教練對話的完整紀錄（可能橫跨好幾場比賽）。
@@ -2667,9 +3211,9 @@ function parseRubric(text){
     const parts = line.replace(/^[\s\-*•]+/, '').split(/\s*[|｜]\s*/);
     if(parts.length < 2) return;
     const key = parts[0].replace(/[*`]/g, '').trim();
-    if(/^總結/.test(key)){ summary = parts.slice(1).join('｜').trim(); return; }
-    if(/^下一步/.test(key)){ next = parts.slice(1).join('｜').trim(); return; }
-    const item = MC_ITEMS.find(it => key.includes(it.name) || (it.alias||[]).some(a => key.includes(a)));
+    if(/^(總結|summary)/i.test(key)){ summary = parts.slice(1).join('｜').trim(); return; }
+    if(/^(下一步|next)/i.test(key)){ next = parts.slice(1).join('｜').trim(); return; }
+    const item = MC_ITEMS.find(it => key.includes(it.name) || key.toLowerCase().includes(it.en) || (it.alias||[]).some(a => key.includes(a)));
     if(!item || item.name in levels) return;
     const lv = parseInt((parts[1]||'').replace(/[^0-3]/g, '').charAt(0), 10);
     if(isNaN(lv)) return;
@@ -2693,7 +3237,7 @@ async function importChatGPT(){
   // 把對話存進紀錄：略過教練設定（第 ② 步已經記過學生的情境）、收尾指令、分析結果本身，以及已經匯入過的訊息
   let added = 0;
   turns.forEach(t=>{
-    if(t.role==='user' && (t.text.includes('我的情況是：') || t.text.includes(WRAPUP_TAG) || t.text.includes(MERGE_TAG))) return;
+    if(t.role==='user' && ['我的情況是：', SITUATION_LABEL_EN, WRAPUP_TAG, MERGE_TAG, WRAPUP_TAG_EN, MERGE_TAG_EN].some(tag=>t.text.includes(tag))) return;
     if(t.role==='ai' && /={2,}\s*GRAPH\s*={2,}/i.test(t.text)) return;
     if(reflectionLog.some(item => item.role===t.role && item.text===t.text)) return;
     appendMsg(t.role, t.text);
@@ -2803,13 +3347,24 @@ async function saveEvaluation(result, history){
   }catch(e){ console.warn('評估結果儲存失敗', e); }
 }
 
+let lastRubricPrev = null;
+function dateLocale(){ return isEn() ? 'en-US' : 'zh-TW'; }
+// 語言切換後，把組合出來的內容重新產生一次
+function onLangChange(){
+  renderGoogleButton();
+  renderRubricGuide();
+  if(latestEvaluation) renderRubric(latestEvaluation, lastRubricPrev);
+  const r = currentStatRecord();
+  if(r) document.getElementById('statOpp').value = t(r.opp || '');
+}
 function renderRubric(r, prev){
+  lastRubricPrev = prev || null;
   const box = document.getElementById('rubricContainer');
   const total = evalTotal(r.levels);
   let delta = '';
   if(prev){
     const diff = total - prev.total;
-    const when = new Date(prev.at).toLocaleDateString('zh-TW');
+    const when = new Date(prev.at).toLocaleDateString(dateLocale());
     delta = diff > 0 ? `<span class="rb-delta up">比上次（${when}）進步 ${diff} 分</span>`
           : diff < 0 ? `<span class="rb-delta down">比上次（${when}）少 ${-diff} 分</span>`
           : `<span class="rb-delta">和上次（${when}）一樣</span>`;
@@ -2832,7 +3387,7 @@ function renderRubric(r, prev){
   const sum = (r.summary || r.next) ? `<div class="rb-sum">` +
     (r.summary ? `<div><b>總結：</b>${escapeHtml(r.summary)}</div>` : '') +
     (r.next ? `<div><b>下一步：</b>${escapeHtml(r.next)}</div>` : '') + `</div>` : '';
-  const meta = [r.game, new Date(r.at).toLocaleString('zh-TW')].filter(Boolean).map(escapeHtml).join('｜');
+  const meta = [t(r.game || ''), new Date(r.at).toLocaleString(dateLocale())].filter(Boolean).map(escapeHtml).join('｜');
   box.innerHTML = `<div class="rb-head"><h5>後設認知評估</h5><span class="rb-total">${total}<small> / ${MC_MAX}</small></span>${delta}<span class="rb-delta" style="margin-left:auto;">${meta}</span></div>` +
     `<div class="rb-dims">${dims}</div>${groups}${sum}`;
   box.hidden = false;
@@ -2863,6 +3418,13 @@ function buildEvaluationText(r){
 }
 
 function renderRubricGuide(){
+  if(isEn()){
+    document.getElementById('rubricGuide').innerHTML = `<div class="rb-guide" data-noi18n>` +
+      MC_RUBRIC.map(d => `<b>${tr(d.dim)}</b>: ` + d.items.map(it => `${tr(it.name)} (${tr(it.desc)})`).join('; ')).join('<br>') +
+      `<br><br><b>Levels</b>: ` + MC_LEVELS.map(([n],i) => `${i} ${tr(n)}: ${MC_LEVEL_DESC_EN[i]}`).join('; ') +
+      `<br>ChatGPT makes this evaluation from what you said yourself. It is here to help you see your own thinking and is not a grade. Talk to your teacher if you have questions about the result.</div>`;
+    return;
+  }
   document.getElementById('rubricGuide').innerHTML = `<div class="rb-guide">` +
     MC_RUBRIC.map(d => `<b>${d.dim}</b>：` + d.items.map(it => `${it.name}（${it.desc}）`).join('、')).join('<br>') +
     `<br><br><b>等級</b>：` + MC_LEVELS.map(([n,desc],i) => `${i} ${n}－${desc}`).join('；') +
@@ -3054,5 +3616,6 @@ async function downloadDiagram(containerId, filenameBase){
   }
 }
 </script>
+<script>applyLang();</script>
 </body>
 </html>
