@@ -1872,7 +1872,15 @@ const DRIVE_API = 'https://www.googleapis.com/drive/v3/files';
 
 // 取得小隊資料夾：優先使用第一次建立時記下的資料夾 ID；
 // 名單有變動時只「重新命名」該資料夾，不會再產生新的資料夾。
-async function getTeamFolder(folderName){
+// 多個上傳同時進行時要排隊：前一個建立好並記下 ID，下一個才會沿用同一個資料夾。
+let teamFolderQueue = Promise.resolve();
+function getTeamFolder(folderName){
+  const result = teamFolderQueue.then(()=>findOrCreateTeamFolder(folderName));
+  teamFolderQueue = result.catch(()=>{});
+  return result;
+}
+
+async function findOrCreateTeamFolder(folderName){
   let savedId = null;
   try{
     const res = await window.storage.get('drive:folderId', false);
@@ -1893,14 +1901,14 @@ async function getTeamFolder(folderName){
         return savedId;
       }
     }catch(e){
-      if(e instanceof DriveAuthError) throw e;
-      // 404（資料夾被刪除或換了 Google 帳號）→ 往下重新尋找／建立
+      // 只有 403／404（資料夾被刪除或換了 Google 帳號）才重新尋找；其他錯誤（如網路中斷）不能因此多建資料夾
+      if(e.status !== 403 && e.status !== 404) throw e;
     }
   }
 
   // 本機沒有紀錄時，先用名稱找找看（drive.file 權限只看得到本平台建立的檔案）
   const q = encodeURIComponent(`name = '${folderName.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
-  const found = await (await driveFetch(`${DRIVE_API}?q=${q}&fields=files(id,name)`)).json();
+  const found = await (await driveFetch(`${DRIVE_API}?q=${q}&orderBy=createdTime&fields=files(id,name)`)).json();
   let folderId = found.files && found.files.length ? found.files[0].id : null;
 
   if(!folderId){
@@ -1916,7 +1924,15 @@ async function getTeamFolder(folderName){
 }
 
 // 同一個資料夾只分享給老師一次，避免老師每次都收到重複的通知信。
-async function shareFolderWithTeacher(folderId){
+const sharePending = {};
+function shareFolderWithTeacher(folderId){
+  if(!sharePending[folderId]){
+    sharePending[folderId] = shareFolderOnce(folderId).finally(()=>{ delete sharePending[folderId]; });
+  }
+  return sharePending[folderId];
+}
+
+async function shareFolderOnce(folderId){
   if(!teacherEmail) return false;
   const key = 'drive:sharedTo:' + folderId;
   try{
