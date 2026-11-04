@@ -522,6 +522,28 @@
   .sop .mode-when{margin:4px 0 6px;line-height:1.5;}
   .mode-tag{font-size:10.5px;color:var(--text-dim);}
 
+  /* ===== 07 課堂表現及期末成績 ===== */
+  .gr-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+  .gr-tile{background:#fff;border:1px solid var(--hair);border-radius:14px;padding:12px;box-shadow:0 2px 8px rgba(28,37,54,0.05);}
+  .gr-tile b{display:block;font-size:12px;color:var(--cyan);}
+  .gr-tile strong{display:block;font-size:22px;margin:4px 0 2px;font-variant-numeric:tabular-nums;}
+  .gr-tile small{display:block;font-size:11.5px;color:var(--text-dim);line-height:1.5;}
+  .gr-row{display:grid;grid-template-columns:96px 1fr 150px;gap:12px;align-items:center;background:#fff;border:1px solid var(--hair);border-radius:14px;padding:11px 14px;margin-bottom:8px;}
+  .gr-date b{display:block;font-size:15px;}
+  .gr-date small{font-size:11.5px;color:var(--text-dim);}
+  .gr-marks{display:flex;flex-wrap:wrap;gap:6px;}
+  .gr-mark{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--panel-3);color:var(--text-dim);}
+  .gr-mark.on{background:rgba(22,163,74,0.13);color:var(--success);font-weight:700;}
+  .gr-score{font-size:12.5px;color:var(--text-dim);}
+  .gr-score b{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums;}
+  .gr-score .rb-delta{margin-left:4px;}
+  .gr-list{margin:6px 0 0;padding-left:20px;font-size:13.5px;line-height:1.8;}
+  @media (max-width: 820px){
+    .gr-tiles{grid-template-columns:1fr 1fr;}
+    .gr-row{grid-template-columns:1fr;gap:6px;}
+    .gr-date b,.gr-date small{display:inline;margin-right:8px;}
+  }
+
   /* ===== 中／英切換 ===== */
   .lang-toggle{
     position:absolute;top:12px;right:14px;z-index:1000;display:flex;gap:2px;padding:3px;
@@ -638,6 +660,18 @@ const I18N_EN = {
   "登入資料讀取失敗，請重新整理頁面再試一次。":"Could not read your sign-in details. Please refresh and try again.",
   "正在載入 Google 登入服務…":"Loading Google sign-in…",
   "Google 登入服務無法載入，請確認網路連線（或學校網路是否封鎖 Google）後重新整理頁面。":"Google sign-in could not load. Check your connection (or whether the campus network blocks Google) and refresh.",
+
+  // ---------- 07 成績 ----------
+  "課堂表現及期末成績規範":"Class Performance & Final Grade","成績":"Grades",
+  "比賽共 4 節課：預賽 2 節（11/26、12/10）、決賽 2 節（12/17、12/24）。上面看自己的進度，下面是規範。":"There are 4 game sessions: 2 preliminary (11/26, 12/10) and 2 final (12/17, 12/24). Your progress is at the top and the requirements are below.",
+  "我的進度":"My progress","成績規範":"Requirements","兩班各要紀錄幾次":"How many records each class needs",
+  "出席 4 節比賽":"Attend all 4 game sessions","每場對打 4 分鐘，紀錄 4 分鐘":"Play 4 minutes and record 4 minutes each game",
+  "和 AI 助教討論，再回小組交流":"Talk with the AI coach, then share with your group",
+  "每節繳交 1 張反思知識族譜":"Submit 1 reflective knowledge map each session","期末作業":"Final assignments",
+  "參與 4 節課應有的出賽":"Play in all your games across the 4 sessions","繳交輪休時每一場的紀錄":"Submit your record for every game you recorded",
+  "繳交 4 節課的反思知識族譜":"Submit reflective knowledge maps for all 4 sessions","繳交 3 部練習影片":"Submit 3 practice videos",
+  "班別":"Class","每組場數":"Games per group","6 人組":"6-player group","5 人組":"5-player group",
+  "各項要繳幾份，請看「07 成績」。":"See 07 Grades for how many of each you need to submit.",
 
   // ---------- 01 賽程 ----------
   "3 對 3 賽制與賽程":"3-on-3 Format & Schedule",
@@ -1098,6 +1132,7 @@ function setLang(lang){
   <button data-tab="stats"><span class="n">04</span><span class="full">表現紀錄表</span><span class="short">紀錄</span></button>
   <button data-tab="chat"><span class="n">05</span><span class="full">AI 後設認知助教</span><span class="short">AI 助教</span></button>
   <button data-tab="rules"><span class="n">06</span><span class="full">籃球規則與裁判法</span><span class="short">規則</span></button>
+  <button data-tab="grades"><span class="n">07</span><span class="full">課堂表現及期末成績規範</span><span class="short">成績</span></button>
 </nav>
 
 <main>
@@ -1134,6 +1169,7 @@ function setLang(lang){
           </div>
         </div>
         <p class="hint">檔案會存到你自己 Google 雲端硬碟裡的「班別_組別_姓名」資料夾，並自動分享給老師。上傳前請先點選「我是」自己的名字。</p>
+        <p class="hint">各項要繳幾份，請看「07 成績」。</p>
       </div>
 
       <h4 class="step-title">賽程表</h4>
@@ -1564,6 +1600,53 @@ function setLang(lang){
     </p>
   </section>
 
+  <!-- ================= 7. GRADES ================= -->
+  <section class="panel" id="panel-grades">
+    <div class="section-head"><h2>課堂表現及期末成績規範</h2></div>
+    <p class="section-desc">比賽共 4 節課：預賽 2 節（11/26、12/10）、決賽 2 節（12/17、12/24）。上面看自己的進度，下面是規範。</p>
+
+    <h4 class="step-title">我的進度</h4>
+    <div id="gradeProgress"></div>
+
+    <h4 class="step-title">成績規範</h4>
+    <div class="sop">
+      <div class="sop-step"><div class="sop-n">1</div><div class="sop-body">
+        <h4>出席 4 節比賽</h4>
+        <p class="sop-do" data-en="You must attend and take part in the games in all 4 sessions (2 preliminary, 2 final).">學生必須出席並參與 4 節課（預賽 2 節、決賽 2 節）的比賽。</p>
+      </div></div>
+      <div class="sop-step"><div class="sop-n">2</div><div class="sop-body">
+        <h4>每場對打 4 分鐘，紀錄 4 分鐘</h4>
+        <p class="sop-do" data-en="In each game of each session, you play for 4 minutes and also record for 4 minutes. Each time you finish recording, submit your record and reflection once in <b>04 Stats</b>.">每節課的每場比賽，除了參與 4 分鐘對打，也要進行 4 分鐘紀錄。每紀錄完 1 次，就到<b>「04 紀錄」</b>繳交 1 次紀錄及反思資料。</p>
+        <p class="hint" data-en="5-player groups follow the rotation table, so you may not record in every game. Your own number is shown in My progress above.">5 人組依輪替表進行，不一定每場都輪到紀錄。你自己要紀錄幾次，請看上方「我的進度」。</p>
+      </div></div>
+      <div class="sop-step"><div class="sop-n">3</div><div class="sop-body">
+        <h4>和 AI 助教討論，再回小組交流</h4>
+        <p class="sop-do" data-en="After playing and recording in each session, discuss with the coach in <b>05 AI Coach</b>, then go back to your group and share your ideas.">每節參賽及紀錄完，都要到<b>「05 AI 助教」</b>討論。討論完回到小組隊伍中交流意見。</p>
+      </div></div>
+      <div class="sop-step"><div class="sop-n">4</div><div class="sop-body">
+        <h4>每節繳交 1 張反思知識族譜</h4>
+        <p class="sop-do" data-en="After talking with the AI coach, submit 1 reflective knowledge map for each session, then check here whether your metacognition score has improved.">和 AI 助教討論後，每節課都要繳交 1 張反思知識族譜，並自己到這一頁看後設認知分數有沒有進步。</p>
+      </div></div>
+      <div class="sop-step"><div class="sop-n">5</div><div class="sop-body">
+        <h4>期末作業</h4>
+        <p class="sop-do" data-en="<b>Each student</b>"><b>每位同學</b></p>
+        <ul class="gr-list">
+          <li>參與 4 節課應有的出賽</li>
+          <li>繳交輪休時每一場的紀錄</li>
+          <li>繳交 4 節課的反思知識族譜</li>
+        </ul>
+        <p class="sop-do" style="margin-top:10px;" data-en="<b>Each group</b>"><b>每個小組</b></p>
+        <ul class="gr-list">
+          <li>繳交 3 部練習影片</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <h4 class="step-title">兩班各要紀錄幾次</h4>
+    <div id="gradeClassTable"></div>
+    <p class="hint" data-en="1 submission = the stat sheet for 1 game. In 5-player groups, the number depends on your player number in the rotation table in 01 Schedule. Practice games do not count.">1 次＝繳交 1 場的紀錄表。5 人組的次數依「01 賽程」輪替表的隊員編號計算。練習賽不列入。</p>
+  </section>
+
 </main>
 
 <footer style="border-top:1px solid var(--hair);padding:18px 28px;font-size:12px;color:var(--text-dim);text-align:center;">
@@ -1705,6 +1788,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
     btn.classList.add('active');
     document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
     document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab === 'grades') renderGrades();
     window.scrollTo({top:0});
   });
 });
@@ -2664,6 +2748,8 @@ async function submitStats(){
     await shareFolderWithTeacher(folderId);
     const blob = new Blob([buildStatsCsv(r)], {type:'text/csv'});
     await uploadFileToDrive(blob, `${statFileBase(r)}_${fileStamp()}.csv`, folderId, p=>setStatStatus(`上傳中… ${Math.round(p*100)}%`));
+    r.submittedAt = new Date().toISOString();
+    saveStatRecords();
     setStatStatus(`已繳交到「${folderName}」資料夾 ✓`, 'var(--success)');
   }catch(err){
     console.error(err);
@@ -3496,6 +3582,7 @@ function dateLocale(){ return isEn() ? 'en-US' : 'zh-TW'; }
 function onLangChange(){
   renderGoogleButton();
   renderRubricGuide();
+  renderGrades();
   if(latestEvaluation) renderRubric(latestEvaluation, lastRubricPrev);
   const r = currentStatRecord();
   if(r) document.getElementById('statOpp').value = t(r.opp || '');
@@ -3595,6 +3682,136 @@ async function restoreLatestEvaluation(){
 }
 restoreLatestEvaluation();
 
+// ================= 7. 課堂表現及期末成績 =================
+const GRAPH_SUBMIT_KEY = 'graph:submitted';
+const REQUIRED_SESSIONS = 4;
+const REQUIRED_CLIPS = 3;
+
+function gradeText(zh, en){ return isEn() ? en : zh; }
+
+// 這位隊員在 games 場比賽中，有幾場輪到紀錄（輪替表每 2 場循環；1 場的前後段都輪休也只繳 1 份）
+function requiredRecords(size, memberNo, games){
+  const rows = ROTATION[size];
+  if(!rows) return games;
+  let count = 0;
+  for(let g = 0; g < games; g++){
+    const i = (g % 2) * 2;
+    if(rows[i][2].includes(memberNo) || rows[i+1][2].includes(memberNo)) count++;
+  }
+  return count;
+}
+function prelimGames(cls){
+  return SCHEDULE_DATA[cls].days.filter(d=>d.title.includes('預賽'))
+    .reduce((n,d)=>n + d.matches.filter(m=>m.a==='第1組' || m.b==='第1組').length, 0);
+}
+// 決賽場數依預賽排名而定，回傳可能的場數（週四 1-2 節為 3 或 4 場）
+function finalGameOptions(cls){
+  const count = {};
+  SCHEDULE_DATA[cls].days.filter(d=>d.title.includes('決賽')).forEach(d=>d.matches.forEach(m=>{
+    count[m.a] = (count[m.a] || 0) + 1;
+    count[m.b] = (count[m.b] || 0) + 1;
+  }));
+  return [...new Set(Object.values(count))].sort((a,b)=>a-b);
+}
+function totalGameOptions(cls){ return finalGameOptions(cls).map(n=>n + prelimGames(cls)); }
+function rangeText(values){
+  const list = [...new Set(values)];
+  return list.length > 1 ? `${list[0]}${gradeText('～','–')}${list[list.length-1]}` : String(list[0]);
+}
+
+// 把時間對應到第幾節：當節之後、下一節之前的補交都算當節；第一節之前的不算
+function sessionIndexOf(iso, days){
+  const at = new Date(iso);
+  let idx = -1;
+  days.forEach((d,i)=>{
+    const [mm, dd] = d.date.split('/').map(Number);
+    if(new Date(at.getFullYear(), mm-1, dd) <= at) idx = i;
+  });
+  return idx;
+}
+
+function renderGradeClassTable(){
+  const rows = Object.keys(CLASSES).map(cls=>{
+    const totals = totalGameOptions(cls);
+    const members = [1,2,3,4,5].map(no=>rangeText(totals.map(n=>requiredRecords(5, no, n))));
+    const groups = new Map();
+    members.forEach((v,i)=>{ groups.set(v, [...(groups.get(v) || []), i+1]); });
+    const five = [...groups].map(([v,nos])=>
+      gradeText(`隊員 ${nos.join('、')}：${v} 次`, `Player ${nos.join(', ')}: ${v}`)).join('<br>');
+    return `<tr><td>${CLASSES[cls].short}</td><td>${rangeText(totals)}</td><td class="rec">${rangeText(totals)}</td><td class="rec">${five}</td></tr>`;
+  }).join('');
+  document.getElementById('gradeClassTable').innerHTML = `<div class="table-wrap"><table class="rot-table">
+    <thead><tr><th>班別</th><th>每組場數</th><th>6 人組</th><th>5 人組</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+async function renderGrades(){
+  renderGradeClassTable();
+  const box = document.getElementById('gradeProgress');
+  const team = currentTeam();
+  if(!team){
+    box.innerHTML = `<div class="callout warn">${gradeText('請先到<b>「01 賽程」</b>選擇班別、組別和自己的名字，這裡就會顯示你的進度。', 'Choose your class, group and name in <b>01 Schedule</b> first. Your progress will then appear here.')}</div>`;
+    return;
+  }
+  const days = SCHEDULE_DATA[team.cls].days;
+  const memberNo = team.members.indexOf(team.me) + 1;
+  const need = memberNo ? rangeText(totalGameOptions(team.cls).map(n=>requiredRecords(team.members.length, memberNo, n))) : '？';
+
+  const recordsBySession = days.map(()=>0);
+  Object.values(statRecords).forEach(r=>{
+    const [cls, group, date] = r.key.split('|');
+    const i = days.findIndex(d=>d.date === date);
+    if(r.submittedAt && cls === team.cls && String(group) === String(team.group) && i >= 0) recordsBySession[i]++;
+  });
+  const graphBySession = days.map(()=>false);
+  lsGet(GRAPH_SUBMIT_KEY, []).forEach(at=>{
+    const i = sessionIndexOf(at, days);
+    if(i >= 0) graphBySession[i] = true;
+  });
+  // 同一節有多次評估時，以最後一次為準
+  const scoreBySession = days.map(()=>null);
+  (await loadEvalHistory()).forEach(h=>{
+    const i = sessionIndexOf(h.at, days);
+    if(i >= 0) scoreBySession[i] = h.total;
+  });
+
+  const records = recordsBySession.reduce((a,b)=>a+b, 0);
+  const graphs = graphBySession.filter(Boolean).length;
+  const clips = Object.keys(lsGet('film:done:' + getFolderName(), {})).length;
+  const tile = (title, value, note)=>`<div class="gr-tile"><b>${title}</b><strong>${value}</strong><small>${note}</small></div>`;
+  const tiles = [
+    tile(gradeText('出賽','Games'), `${REQUIRED_SESSIONS} ${gradeText('節','sessions')}`, gradeText('由老師點名','Attendance taken by your teacher')),
+    tile(gradeText('輪休紀錄','Records'), `${records} / ${need}`, memberNo ? gradeText(`你是 ${team.members.length} 人組隊員 ${memberNo}`, `Player ${memberNo} in a ${team.members.length}-player group`) : gradeText('請先到 01 點選自己的名字','Choose your name in 01 first')),
+    tile(gradeText('反思知識族譜','Knowledge maps'), `${graphs} / ${REQUIRED_SESSIONS}`, gradeText('每節 1 張','1 per session')),
+    tile(gradeText('小組影片','Group clips'), `${clips} / ${REQUIRED_CLIPS}`, gradeText('只顯示這台裝置上傳的','Only clips uploaded on this device'))
+  ].join('');
+
+  let last = null;
+  const rows = days.map((d,i)=>{
+    const score = scoreBySession[i];
+    let delta = '';
+    if(score !== null && last !== null){
+      const diff = score - last;
+      delta = diff > 0 ? `<span class="rb-delta up">${gradeText(`進步 ${diff} 分`, `Up ${diff}`)}</span>`
+            : diff < 0 ? `<span class="rb-delta down">${gradeText(`少 ${-diff} 分`, `Down ${-diff}`)}</span>`
+            : `<span class="rb-delta">${gradeText('一樣','Same')}</span>`;
+    }
+    if(score !== null) last = score;
+    const mark = (on, text)=>`<span class="gr-mark${on?' on':''}">${text}</span>`;
+    return `<div class="gr-row">
+      <div class="gr-date"><b>${d.date}</b><small>${d.title}</small></div>
+      <div class="gr-marks">
+        ${mark(recordsBySession[i] > 0, gradeText(`紀錄 ${recordsBySession[i]} 份`, `${recordsBySession[i]} record${recordsBySession[i]===1?'':'s'}`))}
+        ${mark(score !== null, gradeText('AI 討論','AI talk') + (score !== null ? ' ✓' : ''))}
+        ${mark(graphBySession[i], gradeText('族譜','Map') + (graphBySession[i] ? ' ✓' : ''))}
+      </div>
+      <div class="gr-score">${score !== null ? `<b>${score}</b> / ${MC_MAX}${delta}<div class="rb-bar"><i style="width:${Math.round(score/MC_MAX*100)}%"></i></div>` : gradeText('尚無分數','No score yet')}</div>
+    </div>`;
+  }).join('');
+  box.innerHTML = `<div class="gr-tiles">${tiles}</div>${rows}
+    <p class="hint">${gradeText('這裡只統計<b>這台裝置</b>上的繳交，換手機或清除瀏覽器資料就看不到。正式成績以老師雲端硬碟收到的檔案為準。', 'This page counts submissions made on <b>this device</b> only, so changing phones or clearing browser data hides them. Your grade is based on the files your teacher receives in Google Drive.')}</p>`;
+}
+
 // ---------- 繳交思考族譜到雲端硬碟（與比賽影片同一個小隊資料夾） ----------
 function setGraphStatus(text, color){
   const el = document.getElementById('graphSubmitStatus');
@@ -3650,6 +3867,7 @@ async function submitKnowledgeGraph(){
         setGraphStatus(`上傳對話紀錄中… ${Math.round(p*100)}%`);
       });
     }
+    lsSet(GRAPH_SUBMIT_KEY, [...lsGet(GRAPH_SUBMIT_KEY, []), new Date().toISOString()]);
     const shareNote = !teacherEmail ? '' : shared ? '，並已分享給老師' : '（自動分享給老師失敗，請自行把資料夾分享給老師）';
     setGraphStatus(`已繳交到「${folderName}」資料夾 ✓${shareNote}`, 'var(--success)');
   }catch(err){
