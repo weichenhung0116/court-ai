@@ -693,7 +693,7 @@ const I18N_EN = {
   "我是（點自己的名字，紀錄表和 AI 助教會用到）：":"I am (tap your name; the stat sheet and AI coach use it):",
   "當天課程流程":"Class plan for the day","我的比賽":"My game","決賽隊伍依預賽排名代入，12/10 預賽結束後由老師公告。":"Finals teams depend on the prelim rankings. Your teacher will announce them after the 12/10 prelims.",
   "時間":"Time","上場":"On court","輪休・負責紀錄":"Resting · Recording",
-  "5 人組要跨場次累計，讓每個人的上場時間平衡。輪休的同學請到「04 紀錄」記錄場上隊友。":"5-player groups should balance playing time across games. Players who are resting record their teammates in \"04 Stats\".",
+  "5 人組每 5 場輪一輪，場次跨比賽日累計（第 6 場起從頭開始）。每場有 1 人打滿 8 分鐘，其他 4 人上場 4 分鐘、紀錄 4 分鐘。輪休的同學請到「04 紀錄」記錄場上隊友。":"5-player groups rotate every 5 games, counting games across all game days (start again from game 6). In each game, 1 player plays all 8 minutes and the other 4 play 4 minutes and record for 4 minutes. Players who are resting record their teammates in \"04 Stats\".",
   "6 人組每場每人都上場 4 分鐘。輪休的同學請到「04 紀錄」記錄場上隊友。":"In 6-player groups, everyone plays 4 minutes each game. Players who are resting record their teammates in \"04 Stats\".",
   "預賽第 1 天":"Prelims Day 1","預賽第 2 天":"Prelims Day 2","決賽":"Finals","決賽第 1 天":"Finals Day 1","決賽第 2 天":"Finals Day 2",
   "決賽上組":"Upper bracket","決賽下組":"Lower bracket","金盃":"Gold Cup","銀盃":"Silver Cup","銅盃":"Bronze Cup",
@@ -802,7 +802,6 @@ const I18N_EN = {
   "手機：按最後一則回覆下方的複製鍵。電腦：按 ⌘A／Ctrl+A 全選整頁再複製，對話紀錄會一起存下來。":"Phone: tap the Copy button under the last reply. Computer: press ⌘A / Ctrl+A to select the whole page, then copy, so your chat log is saved too.",
   "貼在這裡……":"Paste here…","產生族譜與評估":"Create map & evaluation","結果：我的知識族譜與後設認知評估":"Results: my knowledge map and metacognitive evaluation",
   "完成第 5 步後，族譜和評估會出現在這裡。確認後按「繳交到雲端硬碟」。":"Your map and evaluation appear here after step 5. Check them, then tap \"Submit to Google Drive\".",
-  "進階選項（可以跳過）":"Advanced options (you can skip these)","把好幾個 ChatGPT 對話合併成一張族譜":"Combine several ChatGPT chats into one map",
   "請先做第 1 步：選擇事情「還沒發生」或「已經發生」。":"Do step 1 first: choose \"Not yet\" or \"Already happened\".",
   "提示詞已複製 ✓ 請到 ChatGPT 貼上送出，聊天內容不用貼回來。":"Prompt copied ✓ Paste and send it in ChatGPT. You don't need to paste the chat back.",
   "自動複製失敗，請手動複製下方的提示詞。":"Automatic copy failed. Please copy the prompt below manually.","自動複製失敗，請手動複製第 4 步下方的指令。":"Automatic copy failed. Please copy the command under step 4 manually.",
@@ -937,6 +936,8 @@ const I18N_RULES = [
   [/^(\d) 人組$/, m => `${m[1]}-player group`],
   [/^隊員\d+(、隊員\d+)*$/, m => m[0].replace(/隊員/g, 'Player ').replace(/、/g, ', ')],
   [/^第(\d)場([前後])4分鐘$/, m => `Game ${m[1]}, ${m[2]==='前'?'first':'last'} 4 min`],
+  [/^第(\d+)、(\d+)場([前後])4分鐘$/, m => `Games ${m[1]} & ${m[2]}, ${m[3]==='前'?'first':'last'} 4 min`],
+  [/^我的第(\d+)場$/, m => `My game ${m[1]}`],
   [/^預賽：(.*) 決賽依預賽排名公告$/, m => `Prelims: ${m[1].replace(/ (\d+) 場/g, ' ($1 games)').replace(/、/g, ', ')}. Finals follow the prelim rankings.`],
   [/^(\d+\/\d+ \d\d:\d\d) (\d)號半場｜vs 第(\d+)組( ✓已記錄)?$/, m => `${m[1]} Court ${m[2]} | vs Group ${m[3]}${m[4]?'  ✓ recorded':''}`],
   [/^(\d+\/\d+ \d\d:\d\d) 決賽( ✓已記錄)?$/, m => `${m[1]} Finals${m[2]?'  ✓ recorded':''}`],
@@ -1447,40 +1448,6 @@ function setLang(lang){
       </div>
     </div>
 
-    <h4 class="step-title">進階選項（可以跳過）</h4>
-    <details class="fold" id="roleFold">
-      <summary>我的 3 對 3 角色（選填，AI 會依此調整提問角度）<span class="fold-status" id="roleSaveStatus"></span></summary>
-      <div class="role-cols" style="margin-top:12px;">
-        <div class="role-group">
-          <h3>場上位置</h3>
-          <div class="chip-set" id="positionChips">
-            <div class="chip" data-val="持球手（後衛）">持球手（後衛）</div>
-            <div class="chip" data-val="側翼（前鋒）">側翼（前鋒）</div>
-            <div class="chip" data-val="內線（長人）">內線（長人）</div>
-          </div>
-        </div>
-        <div class="role-group">
-          <h3>這次的角色</h3>
-          <div class="chip-set" id="teamChips">
-            <div class="chip" data-val="球員">球員</div>
-            <div class="chip" data-val="教練">教練</div>
-            <div class="chip" data-val="球場記錄員">球場記錄員</div>
-          </div>
-        </div>
-      </div>
-      <div class="save-row" style="margin-top:14px;">
-        <button class="primary small" onclick="saveRole()">儲存角色</button>
-      </div>
-    </details>
-    <details class="fold">
-      <summary>把好幾個 ChatGPT 對話合併成一張族譜</summary>
-      <p class="hint" style="margin:0 0 8px;" data-en="Do steps 1–5 for each chat first. Then tap the button below and paste the command into a <b>new</b> ChatGPT chat. Finally, do step 5 with its reply.">每個對話都先做完第 1～5 步。接著按下面的按鈕，貼到一個<b>新的</b> ChatGPT 對話，再用它的回覆做第 5 步。</p>
-      <div class="handoff-actions">
-        <button class="ghost small" onclick="buildAndCopyConceptPrompt()">複製合併分析指令</button>
-        <button class="ghost small" onclick="clearLog()">清除這台裝置的對話紀錄</button>
-      </div>
-      <p class="hint" id="mergeStatus" style="margin-top:8px;"></p>
-    </details>
   </section>
 
   <!-- ================= 6. RULES ================= -->
@@ -2160,10 +2127,15 @@ const REWARD_COMMON = [
 ];
 // 每 4 分鐘固定輪替：[階段, 上場隊員編號, 輪休／紀錄隊員編號]
 const ROTATION = {
-  5:[['第1場前4分鐘',[1,2,3],[4,5]], ['第1場後4分鐘',[1,4,5],[2,3]], ['第2場前4分鐘',[2,3,4],[1,5]], ['第2場後4分鐘',[2,3,5],[1,4]]],
+  // 5 人組每 5 場一輪：每場由 1 人打滿 8 分鐘，其他 4 人上場 4 分鐘、紀錄 4 分鐘
+  5:[['第1、6場前4分鐘',[1,2,3],[4,5]], ['第1、6場後4分鐘',[1,4,5],[2,3]],
+     ['第2、7場前4分鐘',[2,3,4],[1,5]], ['第2、7場後4分鐘',[1,2,5],[3,4]],
+     ['第3、8場前4分鐘',[3,4,5],[1,2]], ['第3、8場後4分鐘',[1,2,3],[4,5]],
+     ['第4、9場前4分鐘',[1,4,5],[2,3]], ['第4、9場後4分鐘',[2,3,4],[1,5]],
+     ['第5、10場前4分鐘',[1,2,5],[3,4]], ['第5、10場後4分鐘',[3,4,5],[1,2]]],
   6:[['第1場前4分鐘',[1,2,3],[4,5,6]], ['第1場後4分鐘',[4,5,6],[1,2,3]], ['第2場前4分鐘',[1,4,5],[2,3,6]], ['第2場後4分鐘',[2,3,6],[1,4,5]]]
 };
-const ROTATION_NOTE = {5:'5 人組要跨場次累計，讓每個人的上場時間平衡。', 6:'6 人組每場每人都上場 4 分鐘。'};
+const ROTATION_NOTE = {5:'5 人組每 5 場輪一輪，場次跨比賽日累計（第 6 場起從頭開始）。每場有 1 人打滿 8 分鐘，其他 4 人上場 4 分鐘、紀錄 4 分鐘。', 6:'6 人組每場每人都上場 4 分鐘。'};
 
 let schedState = lsGet('sched:state', {cls:null, group:null, me:null, day:null});
 const CAPTAIN_KEY = 'sched:captains'; // 純前端沒有共用資料庫，隊長存在各自裝置，每位組員都要點選同一位
@@ -2283,11 +2255,14 @@ function renderMatches(){
     ? `<details class="fold slim"><summary>當天課程流程</summary>${c.dayPlan.map(([t,x])=>`<div class="plan-row"><b>${t}</b><span>${x}</span></div>`).join('')}</details>` : '';
   const day = days[i];
   const t = currentTeam();
+  // 預賽中我們隊的第幾場（跨比賽日累計），對照輪替表用
+  const myOrder = new Map();
+  days.filter(d=>d.title.includes('預賽')).forEach(d=>d.matches.filter(isMyMatch).forEach(m=>myOrder.set(m, myOrder.size + 1)));
   const list = day.matches.map(m=>{
     const mine = isMyMatch(m);
     const hl = s => t && s === teamName(t.group) ? `<b class="me">${s}</b>` : `<b>${s}</b>`;
     return `<div class="match-card${mine?' mine':''}">
-      <div class="match-meta"><span class="time">${m.time}</span><span>${m.court}</span><span class="tag">${m.tag}</span>${mine?'<span class="mine-badge">我的比賽</span>':''}</div>
+      <div class="match-meta"><span class="time">${m.time}</span><span>${m.court}</span><span class="tag">${m.tag}</span>${mine?`<span class="mine-badge">${myOrder.has(m) ? `我的第${myOrder.get(m)}場` : '我的比賽'}</span>`:''}</div>
       <div class="match-teams">${hl(m.a)}<i>vs</i>${hl(m.b)}</div>
     </div>`;
   }).join('');
@@ -2966,54 +2941,6 @@ async function resetVideoDraft(){
 }
 applyTeacherMode();
 
-// ================= 2. role selection =================
-let selectedPosition = null, selectedTeamRole = null;
-let currentRole = null; // 已儲存的角色，AI 助教提示詞會使用
-
-document.getElementById('positionChips').addEventListener('click', e=>{
-  if(!e.target.classList.contains('chip')) return;
-  document.querySelectorAll('#positionChips .chip').forEach(c=>c.classList.remove('selected'));
-  e.target.classList.add('selected');
-  selectedPosition = e.target.dataset.val;
-});
-document.getElementById('teamChips').addEventListener('click', e=>{
-  if(!e.target.classList.contains('chip')) return;
-  document.querySelectorAll('#teamChips .chip').forEach(c=>c.classList.remove('selected'));
-  e.target.classList.add('selected');
-  selectedTeamRole = e.target.dataset.val;
-});
-async function saveRole(){
-  if(!selectedPosition || !selectedTeamRole){
-    document.getElementById('roleSaveStatus').style.color = 'var(--danger)';
-    document.getElementById('roleSaveStatus').textContent = '請選擇球場位置與團隊角色後再儲存';
-    return;
-  }
-  const profile = {position:selectedPosition, teamRole:selectedTeamRole};
-  try{ await window.storage.set('profile:role', JSON.stringify(profile), false); }catch(e){}
-  currentRole = profile;
-  updateRoleBadge(profile);
-  document.getElementById('roleSaveStatus').style.color = 'var(--success)';
-  document.getElementById('roleFold').open = false;
-}
-function updateRoleBadge(profile){
-  document.getElementById('roleSaveStatus').textContent = `：${profile.teamRole}／${profile.position}`;
-}
-async function loadRole(){
-  try{
-    const res = await window.storage.get('profile:role', false);
-    if(res){
-      const profile = JSON.parse(res.value);
-      selectedPosition = profile.position;
-      selectedTeamRole = profile.teamRole;
-      currentRole = profile;
-      document.querySelectorAll('#positionChips .chip').forEach(c=>{ if(c.dataset.val===profile.position) c.classList.add('selected'); });
-      document.querySelectorAll('#teamChips .chip').forEach(c=>{ if(c.dataset.val===profile.teamRole) c.classList.add('selected'); });
-      updateRoleBadge(profile);
-    }
-  }catch(e){}
-}
-loadRole();
-
 // ================= 4. AI hand-off to ChatGPT =================
 // 刻意不提供現成的提問範例：學生要自己判斷時機（前瞻／反應）並用自己的話描述情境。
 let chatMode = null;   // 尚未選擇；學生必須先判斷是哪一種時機
@@ -3044,31 +2971,10 @@ async function loadGameTag(){
 }
 function currentGameTag(){ return document.getElementById('gameTag').value.trim(); }
 
-// 依學生在 AI 助教「我的 3 對 3 角色」儲存的位置與團隊角色，調整 AI 助教提問的角度。
-function buildRoleContext(){
-  if(!currentRole) return '';
-  const pos = currentRole.position;
-  if(isEn()){
-    const posEn = tr(pos);
-    return {
-      '教練': `In this discussion I'm playing the role of "coach", and I usually play as a ${posEn}. Please ask more about how our players are set up, rotations and time-out timing, and how to explain tactics to teammates.`,
-      '球員': `In this discussion I'm a "player", and my position is ${posEn}. Please ask about what I actually see from this position, the decisions I need to make and my responsibilities.`,
-      '球場記錄員': `In this discussion I'm the "scorekeeper", and I usually play as a ${posEn}. Please help me think about which cues and stats are worth watching and recording, and how to share them with teammates.`
-    }[currentRole.teamRole] || `My team role is ${tr(currentRole.teamRole)} and my position is ${posEn}.`;
-  }
-  const angle = {
-    '教練': `我在這次討論中扮演「教練」，平常在場上打${pos}。請多從全隊五個人的配置、輪替與暫停時機、怎麼跟球員溝通戰術這些角度問我。`,
-    '球員': `我在這次討論中扮演「球員」，位置是${pos}。請從這個位置在場上實際會看到的畫面、需要做的判斷與職責來問我。`,
-    '球場記錄員': `我在這次討論中扮演「球場記錄員」，平常在場上打${pos}。請多引導我思考哪些線索與數據值得觀察和記錄，以及怎麼把紀錄回饋給隊友與教練。`
-  }[currentRole.teamRole] || `我的團隊角色是${currentRole.teamRole}，位置是${pos}。`;
-  return angle;
-}
-
 function buildSystemPromptEn(){
   const modeDesc = chatMode==='proactive'
     ? `I'm thinking "before a game" or "before a possession": I want to predict how the opponent may defend and plan our tactics and movement before anything has happened.`
     : `I'm describing something that "already happened" in a game, such as a play being stopped by the defense, a passing lane being cut off, or a result that wasn't what I expected. I want to work out what went wrong and what to change.`;
-  const roleLine = buildRoleContext();
   return `Hi, I'm a student in a university basketball class. Please be my "tactical thinking coach" and talk with me in English.
 
 Please think with me in this way, rather than simply giving me the answer:
@@ -3080,7 +2986,6 @@ Please think with me in this way, rather than simply giving me the answer:
 6. Sound like a patient coach: short and conversational, about 4–6 sentences per reply. When I still need guidance, end with 1–2 follow-up questions.
 7. If I can't resist asking you for the answer, gently remind me and hand the ball back with a question so I keep thinking.
 8. Keep checking my progress: if after a few rounds I can state the cues I saw, propose a strategy and explain my reasons (in other words, I have my own answer), stop asking follow-up questions. Briefly affirm my key points, help me turn them into one or two sentences I can take onto the court, then end the topic and remind me to go back to the platform to wrap up.
-${roleLine ? '9. ' + roleLine + '\n' : ''}
 ${SITUATION_LABEL_EN}
 `;
 }
@@ -3091,7 +2996,6 @@ function buildSystemPrompt(){
     ? `我現在是在「比賽前」或「回合開始前」思考，想預測對手可能的防守方式、預先規劃戰術與跑位，還沒有實際執行動作。`
     : `我現在是在描述「比賽中已經發生」的狀況，例如戰術被防守破壞、傳球路線被阻斷、執行結果不如預期，想重新想清楚問題出在哪、接下來怎麼調整。`;
 
-  const roleLine = buildRoleContext();
   return `你好，我是大學籃球課的學生，想請你當我的「戰術思考教練」，用繁體中文陪我對話。
 
 想麻煩你用這樣的方式陪我想，而不是直接把答案告訴我：
@@ -3103,7 +3007,6 @@ function buildSystemPrompt(){
 6. 語氣像一位有耐心的教練就好，簡短、口語化，每次回覆大概4-6句；還需要引導時，用1-2個追問收尾。
 7. 如果我忍不住直接跟你要答案，麻煩溫和地提醒我一下，然後用一個問題把球丟回給我，讓我繼續想。
 8. 請隨時判斷我的進展：如果幾輪對話後，我已經能自己說出觀察到的線索、提出策略並說明理由（也就是有了自己的答案），就不用再繼續追問。請簡短肯定我想到的重點，幫我把它整理成一兩句可以帶上場的做法，然後結束這個話題，提醒我可以回平台做收尾。
-${roleLine ? '9. ' + roleLine + '\n' : ''}
 我的情況是：
 `;
 }
@@ -3162,25 +3065,17 @@ async function restoreLog(){
     reflectionLog.forEach(item=>appendMsg(item.role, item.text));
   }catch(e){ reflectionLog = []; }
 }
-async function clearLog(){
-  if(!reflectionLog.length) return;
-  if(!confirm('確定要清除這台裝置上的全部對話紀錄嗎？清除後無法復原。')) return;
-  reflectionLog = [];
-  try{ await window.storage.delete(LOG_KEY); }catch(e){}
-  setImportStatus('已清除這台裝置的對話紀錄。', '', 'mergeStatus');
-}
 function logEntryLabel(item){
   const who = item.role==='user' ? '我' : 'AI';
   const parts = [item.game, item.mode ? MODE_NAME[item.mode] : ''].filter(Boolean);
   return parts.length ? `【${parts.join('｜')}｜${who}】` : `【${who}】`;
 }
 function buildLogText(){
-  const roleText = currentRole ? `${currentRole.teamRole}／${currentRole.position}` : '未設定';
   const body = reflectionLog.map(item=>{
     const when = item.at ? new Date(item.at).toLocaleString('zh-TW') : '';
     return `${logEntryLabel(item)} ${when}\n${item.text}`;
   }).join('\n\n----------\n\n');
-  return `COURT.AI 戰術思考對話紀錄\n學生：${signedInName || '未登入'}\n角色：${roleText}\n匯出時間：${new Date().toLocaleString('zh-TW')}\n\n${body}`;
+  return `COURT.AI 戰術思考對話紀錄\n學生：${signedInName || '未登入'}\n匯出時間：${new Date().toLocaleString('zh-TW')}\n\n${body}`;
 }
 function downloadLog(){
   if(!reflectionLog.length){ alert('目前還沒有對話紀錄。'); return; }
@@ -3358,34 +3253,6 @@ ${analysisInstructionsEn()}`;
 
 ${analysisInstructions()}`;
 }
-// 合併分析：跨好幾個 ChatGPT 對話時，把這台裝置上的完整紀錄一起附上
-function buildConceptMapPrompt(){
-  if(isEn()){
-    const transcriptEn = reflectionLog.map(item => `[${item.role==='user' ? 'Me' : 'AI'}] ` + item.text).join('\n\n');
-    return `${MERGE_TAG_EN}
-Hi, below is the full record of my conversations with an AI tactics coach in a university basketball class (it may cover several games).
-Labels: [Me] is what I said; [AI] is the AI coach's reply. Please base the analysis on what I said myself.
-
-${analysisInstructionsEn()}
-
-My conversation record:
----
-${transcriptEn}
----`;
-  }
-  const transcript = reflectionLog.map(item => logEntryLabel(item) + item.text).join('\n\n');
-  return `${MERGE_TAG}
-你好，以下是我在大學籃球課中，和 AI 戰術教練對話的完整紀錄（可能橫跨好幾場比賽）。
-標記說明：【我】是我自己說的話，【AI】是 AI 教練的回覆。請根據我自己說的話幫我做分析。
-
-${analysisInstructions()}
-
-我的對話紀錄如下：
----
-${transcript}
----`;
-}
-
 async function copyPromptToClipboard(full, okMsg, statusId){
   const out = document.getElementById('conceptPromptOut');
   out.textContent = full;
@@ -3402,14 +3269,6 @@ async function copyPromptToClipboard(full, okMsg, statusId){
 function buildAndCopyWrapUpPrompt(){
   copyPromptToClipboard(buildWrapUpPrompt(), '收尾指令已複製 ✓ 請貼到同一個 ChatGPT 對話送出。', 'wrapStatus');
 }
-async function buildAndCopyConceptPrompt(){
-  if(!reflectionLog.some(item=>item.role==='user')){
-    alert('目前還沒有對話紀錄。請先完成第 1～5 步。');
-    return;
-  }
-  await copyPromptToClipboard(buildConceptMapPrompt(), '合併分析指令已複製 ✓ 請貼到新的 ChatGPT 對話，再把回覆貼到第 5 步。', 'mergeStatus');
-}
-
 function setImportStatus(text, color, id){
   const el = document.getElementById(id || 'importStatus');
   el.textContent = text;
@@ -3716,13 +3575,14 @@ const REQUIRED_CLIPS = 3;
 
 function gradeText(zh, en){ return isEn() ? en : zh; }
 
-// 這位隊員在 games 場比賽中，有幾場輪到紀錄（輪替表每 2 場循環；1 場的前後段都輪休也只繳 1 份）
+// 這位隊員在 games 場比賽中，有幾場輪到紀錄（輪替表每場 2 列，循環使用；1 場的前後段都輪休也只繳 1 份）
 function requiredRecords(size, memberNo, games){
   const rows = ROTATION[size];
   if(!rows) return games;
+  const cycle = rows.length / 2;
   let count = 0;
   for(let g = 0; g < games; g++){
-    const i = (g % 2) * 2;
+    const i = (g % cycle) * 2;
     if(rows[i][2].includes(memberNo) || rows[i+1][2].includes(memberNo)) count++;
   }
   return count;
